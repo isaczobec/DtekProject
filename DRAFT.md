@@ -109,13 +109,15 @@ For the functions of the game, we will reuse a lot of the math from the rasteriz
 
 Random numbers, used for example for map generation and enemy spawns, will be implemented using xorshift. It xors an input with a bitshifted copy of itself repeatedly. This is chosen as it's very time and memory efficient, which is exactly what we need for real-time number generation. The resulting number is nowhere close to truly random, but it is good enough for what we need. An example of xorshift in C can be seen below.
 
-``uint32_t xorshift(uint32_t x)
+```
+uint32_t xorshift(uint32_t x)
 {
 	x ^= x << 13;
 	x ^= x >> 17;
 	x ^= x << 5;
 	return x;
-}``
+}
+```
 
 For input, the current idea is to get a joystick for controlling the ship, which will interact with the dtek-board using the GPIO pins. moving the joystick will control yaw and pitch while pressing down the joystick will use the booster and using the dtek-boards button will fire the weapon. In order to convert the analog input of a joystick to digital for the GPIO connections on the dtek-board, an MCP3008 chip, an anolog to digital converter will be used. The input method is subject to change if we find another solution that we think is better.
 
@@ -134,3 +136,4 @@ The current intention is that Isac will mainly be focusing on the implementation
 ## 6 Reflections
 
 There is quite a bit to do on this project, so some parts of the game or input might get cut down if we do not have the time, but the main focus is to have a rasterizer and being able to display it. The game can be changed to be very simple if we run out of time. 
+
