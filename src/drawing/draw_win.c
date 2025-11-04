@@ -1,4 +1,4 @@
-// #define __WINDOWS__
+#define __WINDOWS__
 #if defined(__WINDOWS__)
 
 #include "../types.h"
@@ -28,14 +28,15 @@ void initDrawing() {
 
 /* Draw a pixel to `x,y`, coloring it `rgb`.*/
 void draw(uint16 x, uint16 y, uint8 rgb) {
-
+    int offset = x + y * PIXEL_BUFFER_X_SIZE;
+    *(_drawBuffer + offset) = rgb;
 }
 
 /* swap front and back buffers. */
 void swapBuffer() {
     SDL_UpdateTexture(tex, NULL, _drawBuffer, PIXEL_BUFFER_X_SIZE * sizeof(uint32));
     SDL_RenderClear(ren);
-    SDL_RenderCopy(ren, tex, NULL, NULL);
+    SDL_RenderTexture(ren, tex, NULL, NULL);
     SDL_RenderPresent(ren);
 }
 

@@ -22,6 +22,9 @@ void fill(uint8 rgb)
 }
 
 int main() {
+
+    initDrawing();
+
     int ctr = 0;
     while(1) {
 

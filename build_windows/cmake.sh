@@ -1,2 +1,1 @@
-cmake .. \
-    -D CMAKE_TOOLCHAIN_FILE=../mingw-toolchain.cmake
+cmake -S .. -B . -DCMAKE_TOOLCHAIN_FILE=mingw-toolchain.cmake
