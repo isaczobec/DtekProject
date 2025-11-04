@@ -1,7 +1,5 @@
 #pragma once
 
-#define __WINDOWS__
-
 // check which platform we are compiling to
 #if defined(__DTEK__)
 #define PLATFROM 1

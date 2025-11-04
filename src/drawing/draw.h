@@ -1,4 +1,5 @@
 #pragma once
+#include "../platforms.h"
 #include "../types.h"
 
 /* The current back buffer that pixels 

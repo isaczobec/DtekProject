@@ -1,9 +1,12 @@
-#if PLATFORM == DTEK
+#if defined(__DTEK__)
 
 #include "../types.h"
 #include "draw.h"
 #include "../../build_dtek/dtekv-lib.h"
 
+/* The current back buffer that pixels 
+should be drawn to while rendering a frame.
+swap using `swapBuffer().`*/
 uint8* _drawBuffer;
 const uint32 PIXEL_BUFFER_X_SIZE = 320;
 const uint32 PIXEL_BUFFER_Y_SIZE = 240;
@@ -31,8 +34,6 @@ void initDrawing() {
     print_hex32(back_buffer_ptr);
     print("\n");
 
-
-
     unsigned int screen_res_x =  *(VGA_CONTROL+2) & 0x0000FFFF;
     unsigned int screen_res_y = (*(VGA_CONTROL+2) & 0xFFFF0000) >> 16;
     print("Screen resolution is (");
@@ -43,9 +44,6 @@ void initDrawing() {
 }
 
 inline void draw(uint16 x, uint16 y, uint8 rgb) {
-
-    
-    
     int offset = x + y * PIXEL_BUFFER_X_SIZE;
     *(_drawBuffer + offset) = rgb;
 }

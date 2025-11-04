@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Libraries/SDL3-3.2.26/i686-w64-mingw32/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
