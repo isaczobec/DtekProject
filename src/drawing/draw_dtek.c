@@ -1,9 +1,8 @@
-#define __DTEK__
-#ifdef __DTEK__
+#if PLATFORM == DTEK
 
 #include "../types.h"
 #include "draw.h"
-#include "../../dtekv-lib.h"
+#include "../../build_dtek/dtekv-lib.h"
 
 uint8* _drawBuffer;
 const uint32 PIXEL_BUFFER_X_SIZE = 320;
@@ -71,5 +70,5 @@ void swapBuffer() {
     // *(VGA_CONTROL+0) = 0; // request swap
 
 }
-
 #endif
+

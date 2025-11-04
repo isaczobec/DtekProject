@@ -1,4 +1,5 @@
-#include "dtekv-lib.h"
+#include "platforms.h"
+#include "draw.h"
 
 volatile int* const VGA_CONTROL = (volatile int*)0x04000100;
 
