@@ -1,4 +1,4 @@
-#define __WINDOWS__
+// #define __WINDOWS__
 #if defined(__WINDOWS__)
 
 

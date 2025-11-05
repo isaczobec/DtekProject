@@ -1,12 +1,13 @@
 #include "platforms.h"
 #include "drawing/draw.h"
 #include "types.h"
+#include "math/math.h"
 
-
-#define __WINDOWS__
+// #define __WINDOWS__
 #if defined(__WINDOWS__)
 #define SDL_DISABLE_OLD_NAMES 0
 #include "SDL3/SDL.h"
+#include <stdio.h>
 #endif
 
 void handle_interrupt(unsigned mcause) {}
@@ -32,6 +33,25 @@ void fill(uint8 rgb)
 int main() {
 
     initDrawing();
+
+    Vec3 i = {
+        .x = 2,
+        .y = 2,
+        .z = 2
+    };
+    Vec3 j = {
+        .x = 2,
+        .y = 2,
+        .z = 2
+    };
+
+    uint32 res;
+    Vec3 resScalar;
+
+    dotProduct(&i, &j, &res);
+    addVector(&i, &j, &resScalar);
+    printf("%d\n", res);
+    printf("%d %d %d\n", resScalar.x, resScalar.y, resScalar.z);
 
     int ctr = 0;
     while(1) {
