@@ -17,3 +17,6 @@ void draw(uint16 x, uint16 y, uint8 rgb);
 
 /* swap front and back buffers. */
 void swapBuffer();
+
+/* free all resources associated with drawing. */
+void exitDrawing();

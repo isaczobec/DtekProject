@@ -1,4 +1,4 @@
-
+#define __WINDOWS__
 #if defined(__WINDOWS__)
 
 
@@ -42,6 +42,11 @@ void swapBuffer() {
     SDL_RenderClear(ren);
     SDL_RenderTexture(ren, tex, NULL, NULL);
     SDL_RenderPresent(ren);
+}
+
+void exitDrawing() {
+    // free the draw buffer
+    free(_drawBuffer);
 }
 
 #endif

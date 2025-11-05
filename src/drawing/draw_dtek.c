@@ -68,5 +68,9 @@ void swapBuffer() {
     // *(VGA_CONTROL+0) = 0; // request swap
 
 }
+
+void exitDrawing() {
+    // we dont need to do anything on the dtek board
+}
 #endif
 

@@ -37,7 +37,7 @@ int main() {
     while(1) {
 
         #if defined(__WINDOWS__)
-        SDL_Event event;
+        SDL_Event event;    
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) return 0;
         }
@@ -52,6 +52,8 @@ int main() {
         ctr = (ctr + 1) % 256;
         swapBuffer();
     }
+
+    exitDrawing();
 
     // print("writing done! exiting"); 
 
