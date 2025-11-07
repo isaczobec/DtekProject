@@ -4,6 +4,7 @@
 
 #include "../types.h"
 #include "draw.h"
+#include "../io/io.h"
 #include "SDL3/SDL.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,7 +28,7 @@ void initDrawing() {
 
     _drawBuffer = (uint8*)malloc(PIXEL_BUFFER_X_SIZE * PIXEL_BUFFER_Y_SIZE * sizeof(uint8));
 
-    printf("drawing initialized!");
+    print("drawing initialized!");
 }
 
 /* Draw a pixel to `x,y`, coloring it `rgb`.*/

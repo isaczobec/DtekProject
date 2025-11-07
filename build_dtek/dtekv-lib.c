@@ -1,4 +1,5 @@
 #include "dtekv-lib.h"
+#include "../src/io/io.h"
 
 #define JTAG_UART ((volatile unsigned int*) 0x04000040)
 #define JTAG_CTRL ((volatile unsigned int*) 0x04000044)
