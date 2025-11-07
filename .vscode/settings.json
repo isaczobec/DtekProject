@@ -2,6 +2,7 @@
     "files.associations": {
         "stdlib.h": "c",
         "dtekv-lib.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "fixed_point.h": "c"
     }
 }

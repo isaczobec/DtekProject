@@ -2,6 +2,7 @@
 #include "drawing/draw.h"
 #include "types.h"
 #include "math/math.h"
+#include "math/fixed_point.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -35,23 +36,23 @@ int main() {
     initDrawing();
 
     Vec3 i = {
-        .x = 2,
-        .y = 2,
-        .z = 2
+        .x = fpInt(-2,0),
+        .y = fpInt(-2,0),
+        .z = fpInt(-2,0),
     };
     Vec3 j = {
-        .x = 2,
-        .y = 2,
-        .z = 2
+        .x = fpInt(2,0),
+        .y = fpInt(2,0),
+        .z = fpInt(2,0),
     };
 
     uint32 res;
-    Vec3 resScalar;
+    Vec3 resVector;
 
     dotProduct(&i, &j, &res);
-    addVector(&i, &j, &resScalar);
+    addVector(&i, &j, &resVector);
     printf("%d\n", res);
-    printf("%d %d %d\n", resScalar.x, resScalar.y, resScalar.z);
+    printf("%d %d %d\n", resVector.x, resVector.y, resVector.z);
 
     int ctr = 0;
     while(1) {
