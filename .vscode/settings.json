@@ -3,6 +3,9 @@
         "stdlib.h": "c",
         "dtekv-lib.h": "c",
         "sdl.h": "c",
-        "fixed_point.h": "c"
+        "fixed_point.h": "c",
+        "draw.h": "c",
+        "platforms.h": "c",
+        "math.h": "c"
     }
 }

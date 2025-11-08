@@ -3,6 +3,8 @@
 #include "types.h"
 #include "math/math.h"
 #include "math/fixed_point.h"
+#include "io/io.h"
+#include "rasterization/rasterization.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -46,13 +48,15 @@ int main() {
         .z = fpInt(2,0),
     };
 
-    uint32 res;
+    int32 res;
     Vec3 resVector;
 
     dotProduct(&i, &j, &res);
     addVector(&i, &j, &resVector);
-    printf("%d\n", res);
-    printf("%d %d %d\n", resVector.x, resVector.y, resVector.z);
+    print_dec(res);
+    print_dec(resVector.x);
+    print_dec(resVector.y);
+    print_dec(resVector.z);
 
     int ctr = 0;
     while(1) {
@@ -65,9 +69,10 @@ int main() {
         #endif
 
         fill(ctr);
+        drawModel(models);
         // delay(16000000);
 
-        for (int i = 1000000000; i > 0; i++) {
+        for (int i = 100000; i > 0; i--) {
             
         }
         ctr = (ctr + 1) % 256;

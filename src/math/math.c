@@ -35,3 +35,13 @@ void crossProduct(Vec3* v1, Vec3* v2, Vec3* res) {
     res->y = fpAdd(fpMul(v1->z,v2->x),fpMul(v1->x,v2->z));
     res->z = fpAdd(fpMul(v1->x,v2->y),fpMul(v1->y,v2->x));
 }
+
+int32 max(int32 x, int32 y) {
+    if (x > y) return x;
+    else return y;
+}
+
+int32 min(int32 x, int32 y) {
+    if (x < y) return x;
+    else return y;
+}

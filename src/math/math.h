@@ -1,3 +1,4 @@
+#pragma once
 #include "../types.h"
 #include "fixed_point.h"
 
@@ -25,3 +26,6 @@ void mulVector(Vec3* v1, Vec3* v2, Vec3* res);
 void mulVectorScalar(Vec3* v1, int32 m, Vec3* res);
 
 void crossProduct(Vec3* v1, Vec3* v2, Vec3* res);
+
+int32 max(int32 x, int32 y);
+int32 min(int32 x, int32 y);

@@ -1,18 +1,18 @@
-SRC_DIR ?= ./
+SRC_DIR ?= ./ ../src
 OBJ_DIR ?= ./
 SOURCES ?= $(shell find $(SRC_DIR) -name '*.c' -or -name '*.S')
 OBJECTS ?= $(addsuffix .o, $(basename $(notdir $(SOURCES))))
-LINKER ?= $(SRC_DIR)/dtekv-script.lds
+LINKER ?= ./dtekv-script.lds
 
-TOOLCHAIN ?= riscv32-unknown-elf- 
-CFLAGS ?= -Wall -nostdlib -O3 -mabi=ilp32 -march=rv32imzicsr -fno-builtin
+TOOLCHAIN ?= riscv32-unknown-elf-
 
 # add DTEK platform flag macro
-CFLAGS = $(CFLAGS) -D__DTEK__=1
-
 # add the dtek build directory and all files in /src as an include path
-CFLAGS = $(CFLAGS) -I.
-CFLAGS = $(CFLAGS) -I../src/**
+CFLAGS ?= -Wall -nostdlib -O3 -mabi=ilp32 -march=rv32imzicsr -fno-builtin \
+	-D__DTEK__=1 \
+	-I. \
+	-I../src/**
+
 
 build: clean main.bin
 

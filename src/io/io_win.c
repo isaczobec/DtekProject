@@ -2,7 +2,7 @@
 #include "io.h"
 #include <stdio.h>
 
-void print(const char* string) {
+void print(char* string) {
     printf("%s",string);
 }
 

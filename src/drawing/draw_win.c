@@ -25,6 +25,7 @@ void initDrawing() {
     tex = SDL_CreateTexture(
         ren, SDL_PIXELFORMAT_RGB332, SDL_TEXTUREACCESS_STREAMING, 
         PIXEL_BUFFER_X_SIZE, PIXEL_BUFFER_Y_SIZE);
+    SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST);
 
     _drawBuffer = (uint8*)malloc(PIXEL_BUFFER_X_SIZE * PIXEL_BUFFER_Y_SIZE * sizeof(uint8));
 

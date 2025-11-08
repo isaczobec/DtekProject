@@ -1,0 +1,4 @@
+/home/isac/dev/dtek-project/build_windows/build/CMakeFiles/out.dir
+/home/isac/dev/dtek-project/build_windows/build/CMakeFiles/copy_SDL.dir
+/home/isac/dev/dtek-project/build_windows/build/CMakeFiles/edit_cache.dir
+/home/isac/dev/dtek-project/build_windows/build/CMakeFiles/rebuild_cache.dir
