@@ -13,7 +13,7 @@ void initMath() {
         for (uint32 j = 0; j < SIN_TAYLOR_TERMS; j++) {
             int32 x = fpMul(step, FP(stepIndex,0));
             int32 abs = fpDiv(fpPow(x, FP(j*2 + 1,0)), fpFactorial(FP(j*2 + 1,0)));
-            if (stepIndex % 2 == 0) {
+            if (j % 2 == 0) {
                 res += abs;
             } else {
                 res -= abs;
@@ -26,6 +26,10 @@ void initMath() {
     print_dec(_sin_samples[SIN_SAMPLES/2]);
     print("\n");
 
+}
+
+int32 fpSin(int32 angle) {
+    int32 reg = abs(fpDiv(angle,fpDiv(pi, FP(2,0))));
 }
 
 
@@ -55,7 +59,6 @@ int32 fpFactorial(int32 f) {
         res = fpMul(res, f);
     }
     return res;
-    return f;
 }
 
 void dotProduct(Vec3* v1, Vec3* v2, int32* res) {
@@ -106,4 +109,11 @@ int32 max(int32 x, int32 y) {
 int32 min(int32 x, int32 y) {
     if (x < y) return x;
     else return y;
+}
+
+int32 abs(int32 x) {
+    if (x < 0) {
+        x = fpMul(x, FP(-1,0));
+    }
+    return x;
 }
