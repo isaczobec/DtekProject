@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-9321ae52c37231107ae2e5205563097b CMakeFiles/copy_SDL

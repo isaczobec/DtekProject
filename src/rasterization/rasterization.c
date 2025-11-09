@@ -6,18 +6,20 @@
 Model models[MODEL_COUNT] = {
     {
         .vertexBuffer = (Vec3*)&vertexData,
-        .vertexCount = 3,
+        .vertexCount = 4,
         .indexBuffer = (uint16*)&indexData,
-        .indexBufferCount = 3
+        .indexBufferCount = 6
     }
 };
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
     {FP(0,0x8000),FP(0,0x8000),FP(1,0)},
     {FP(0,0),FP(0,0),FP(1,0)},
     {FP(1,0),FP(0,0),FP(1,0)},
+    {FP(1,0),FP(0,0xC000),FP(1,0)},
 };
 uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
-    0,1,2
+    0,1,2,
+    0,2,3,
 };
 
 void drawModel(const Model* model) {
@@ -25,10 +27,20 @@ void drawModel(const Model* model) {
     for (int triangleIndex = 0; triangleIndex < model->indexBufferCount; triangleIndex += 3) {
 
         // get the verticies
-        Vec3 v0 = *(model->vertexBuffer + *(model->indexBuffer + triangleIndex));
-        Vec3 v1 = *(model->vertexBuffer + *(model->indexBuffer + triangleIndex + 1));
-        Vec3 v2 = *(model->vertexBuffer + *(model->indexBuffer + triangleIndex + 2));
+        Vec3* v0 = model->vertexBuffer + *(model->indexBuffer + triangleIndex);
+        Vec3* v1 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 1);
+        Vec3* v2 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 2);
         
+        // do backface culling
+        // if this determinant is more than 0, the verticies 
+        // are oriented clockwise and turned away from the 
+        // camera. Do not continue rasterization
+        int32 clockDet = fpSub(fpMul(v0->x - v2->x, v2->y - v1->y), fpMul(v2->x - v1->x, v0->y - v2->y));
+        if (clockDet >= 0) {
+            // print("counter clockwise, returning \n");
+            return;
+        }
+
         // print("\n----\n");
         // print_dec(fpAdd(1,v0.x));
         // print(",");
@@ -43,14 +55,14 @@ void drawModel(const Model* model) {
         // print_dec(fpMul(fpAdd(1,v2.y),2));
 
         // transform the verticies from clip space (-1,1) to screen space
-        int32 p0_x = fpMul(fpAdd(v0.x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
-        int32 p0_y = fpMul(fpAdd(fpMul(v0.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
+        int32 p0_x = fpMul(fpAdd(v0->x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
+        int32 p0_y = fpMul(fpAdd(fpMul(v0->y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
 
-        int32 p1_x = fpMul(fpAdd(v1.x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
-        int32 p1_y = fpMul(fpAdd(fpMul(v1.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
+        int32 p1_x = fpMul(fpAdd(v1->x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
+        int32 p1_y = fpMul(fpAdd(fpMul(v1->y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
 
-        int32 p2_x = fpMul(fpAdd(v2.x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
-        int32 p2_y = fpMul(fpAdd(fpMul(v2.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
+        int32 p2_x = fpMul(fpAdd(v2->x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1);
+        int32 p2_y = fpMul(fpAdd(fpMul(v2->y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1);
 
         // print("\n----\n");
         // print_dec(p0_x);
@@ -79,14 +91,14 @@ void drawModel(const Model* model) {
         int32 yMin = FP_TOINT(min(min(p0_y,p1_y),p2_y));
         int32 yMax = FP_TOINT(max(max(p0_y,p1_y),p2_y));
         
-        print("\n----\n");
-        print_dec(xMin);
-        print(",");
-        print_dec(xMax);
-        print("\n");
-        print_dec(yMin);
-        print(",");
-        print_dec(yMax);
+        // print("\n----\n");
+        // print_dec(xMin);
+        // print(",");
+        // print_dec(xMax);
+        // print("\n");
+        // print_dec(yMin);
+        // print(",");
+        // print_dec(yMax);
         
         for (int i = xMin; i < xMax; i++) {
             for (int j = yMin; j < yMax; j++) {

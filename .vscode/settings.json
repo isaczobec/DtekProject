@@ -6,6 +6,7 @@
         "fixed_point.h": "c",
         "draw.h": "c",
         "platforms.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "types.h": "c"
     }
 }

@@ -35,8 +35,13 @@ void fill(uint8 rgb)
 
 int main() {
 
+    initMath();
     initDrawing();
 
+    print("pi is ");
+    print_dec(pi);
+    print("\n");
+    
     Vec3 i = {
         .x = fpInt(-2,0),
         .y = fpInt(-2,0),
@@ -72,7 +77,7 @@ int main() {
         drawModel(models);
         // delay(16000000);
 
-        for (int i = 100000; i > 0; i--) {
+        for (int i = 200000000; i > 0; i--) {
             
         }
         ctr = (ctr + 1) % 256;
