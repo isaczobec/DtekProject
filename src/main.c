@@ -35,56 +35,70 @@ void fill(uint8 rgb)
 
 int main() {
 
-    initMath();
-    initDrawing();
+    // initMath();
+    // initDrawing();
 
-    print("pi is ");
-    print_dec(pi);
-    print("\n");
+
+
+    // print("pi is ");
+    // // print_dec(pi);
+    // // print("\n");
+
+    // // print("fact is ");
+    // // print_dec(fpFactorial(FP(4,0)));
+    // // print("\n");
     
-    Vec3 i = {
-        .x = fpInt(-2,0),
-        .y = fpInt(-2,0),
-        .z = fpInt(-2,0),
-    };
-    Vec3 j = {
-        .x = fpInt(2,0),
-        .y = fpInt(2,0),
-        .z = fpInt(2,0),
-    };
+    // // print("fact is ");
+    // // print("fact is ");
+    // // print("fact is ");
+    // // print("fact is ");
+    // // print("exp is ");
+    // // print_dec(fpPow(FP(4,0),FP(4,0)));
+    // // print("\n");
+    
+    // Vec3 i = {
+    //     .x = fpInt(-2,0),
+    //     .y = fpInt(-2,0),
+    //     .z = fpInt(-2,0),
+    // };
+    // Vec3 j = {
+    //     .x = fpInt(2,0),
+    //     .y = fpInt(2,0),
+    //     .z = fpInt(2,0),
+    // };
 
-    int32 res;
-    Vec3 resVector;
+    // int32 res;
+    // Vec3 resVector;
 
-    dotProduct(&i, &j, &res);
-    addVector(&i, &j, &resVector);
-    print_dec(res);
-    print_dec(resVector.x);
-    print_dec(resVector.y);
-    print_dec(resVector.z);
+    // dotProduct(&i, &j, &res);
+    // addVector(&i, &j, &resVector);
+    // print_dec(res);
+    // print_dec(resVector.x);
+    // print_dec(resVector.y);
+    // print_dec(resVector.z);
 
-    int ctr = 0;
-    while(1) {
+    // int ctr = 0;
+    // while(1) {
 
-        #if defined(__WINDOWS__)
-        SDL_Event event;    
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) return 0;
-        }
-        #endif
+    //     #if defined(__WINDOWS__)
+    //     SDL_Event event;    
+    //     while(SDL_PollEvent(&event)) {
+    //         if (event.type == SDL_EVENT_QUIT) return 0;
+    //     }
+    //     #endif
 
-        fill(ctr);
-        drawModel(models);
-        // delay(16000000);
+    //     fill(ctr);
+    //     drawModel(models);
+    //     // delay(16000000);
 
-        for (int i = 200000000; i > 0; i--) {
+    //     for (int i = 2000000; i > 0; i--) {
             
-        }
-        ctr = (ctr + 1) % 256;
-        swapBuffer();
-    }
+    //     }
+    //     ctr = (ctr + 1) % 256;
+    //     swapBuffer();
+    // }
 
-    exitDrawing();
+    // exitDrawing();
 
     // print("writing done! exiting"); 
 

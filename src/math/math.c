@@ -4,7 +4,7 @@ const int32 pi = 0x3243F;
 int32 _sin_samples[SIN_SAMPLES];
 
 void initMath() {
-
+    
     // calculate sine samples
     int32 step = fpDiv(fpDiv(pi, FP(2,0)),FP(SIN_SAMPLES,0));
     
@@ -12,7 +12,7 @@ void initMath() {
         int32 res = 0;
         for (uint32 j = 0; j < SIN_TAYLOR_TERMS; j++) {
             int32 x = fpMul(step, FP(stepIndex,0));
-            int32 abs = fpDiv(fpPow(x, FP(j*2 + 1,0)), fpFactorial(FP(stepIndex,0)));
+            int32 abs = fpDiv(fpPow(x, FP(j*2 + 1,0)), fpFactorial(FP(j*2 + 1,0)));
             if (stepIndex % 2 == 0) {
                 res += abs;
             } else {
@@ -48,13 +48,14 @@ int32 fpPow(int32 base, int32 exponent) {
 
 int32 fpFactorial(int32 f) {
     if (FP_TOINT(f) == 0 || FP_TOINT(f) == 1) 
-        return 1;
+        return FP(1,0);
     int32 res = f;
     while(FP_TOINT(f) > 2) {
         f = f - FP(1,0);
         res = fpMul(res, f);
     }
     return res;
+    return f;
 }
 
 void dotProduct(Vec3* v1, Vec3* v2, int32* res) {
