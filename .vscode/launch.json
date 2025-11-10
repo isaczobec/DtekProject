@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build_windows/build/out.exe",
+            "program": "${workspaceFolder}/build_windows/build_folder/out.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

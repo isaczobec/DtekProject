@@ -17,16 +17,7 @@ static inline int32 fpSub(int32 x, int32 y) {
     return x - y;
 }
 static inline int32 fpMul(int32 x, int32 y) {
-    // print("x:");
-    // print_dec(x);
-    // print("\n");
-    // print("y:");
-    // print_dec(y);
-    // print("\n");
     int64 resi = (int64) x * (int64) y;
-    // print("resi:");
-    // print_dec(resi);
-    // print("\n");
     int32 res = (int32)(resi >> (SHIFT_AMOUNT));
     return res;
 }

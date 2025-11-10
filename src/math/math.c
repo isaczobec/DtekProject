@@ -29,9 +29,39 @@ void initMath() {
 }
 
 int32 fpSin(int32 angle) {
-    int32 reg = abs(fpDiv(angle,fpDiv(pi, FP(2,0))));
+
+    int8 negative = angle < 0;
+    angle = abs(angle);
+
+    // normalize angle
+    int32 cycleSize = fpMul(pi, FP(2,0));
+    int32 cycles = FP_TOINT(fpDiv(angle, cycleSize));
+    angle = fpSub(angle, fpMul(FP(cycles,0),cycleSize));
+
+    int32 quadrantLength = fpDiv(pi,FP(2,0));
+    int32 quadrant = FP_TOINT(fpDiv(angle, quadrantLength)) & 3;
+    int8 reverse = quadrant % 2 == 1;
+
+    int32 angleInsideQuadrant = fpSub(angle, fpMul(quadrantLength,FP(quadrant,0)));
+    int32 fractionAngle = fpDiv(angleInsideQuadrant, quadrantLength);
+
+    int32 res;
+    int32 sampleFrom = FP_TOINT(fpMul(fractionAngle, FP(SIN_SAMPLES,0)));
+    if (reverse) {
+        sampleFrom = SIN_SAMPLES - 1 - sampleFrom;
+    }
+    int32 sample = _sin_samples[sampleFrom];
+    if (negative)
+        sample = fpMul(sample, FP(-1,0));
+    if (quadrant > 1)
+        sample = fpMul(sample, FP(-1,0));
+    
+    return sample;
 }
 
+int32 fpCos(int32 angle) {
+    return fpSin(fpSub(fpDiv(pi,FP(2,0)),angle));
+}
 
 int32 fpPow(int32 base, int32 exponent) {
     int32 exp_int = FP_TOINT(exponent);

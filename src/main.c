@@ -50,6 +50,12 @@ int main() {
     print_dec(fpPow(FP(4,0),FP(4,0)));
     print("\n");
     
+    print("sin is ");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
+    
     Vec3 i = {
         .x = fpInt(-2,0),
         .y = fpInt(-2,0),
@@ -85,7 +91,7 @@ int main() {
         drawModel(models);
         // delay(16000000);
 
-        for (int i = 2000000; i > 0; i--) {
+        for (int i = 200000000; i > 0; i--) {
             
         }
         ctr = (ctr + 1) % 256;
