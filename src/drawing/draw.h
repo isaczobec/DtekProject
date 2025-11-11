@@ -8,6 +8,7 @@ swap using `swapBuffer().`*/
 extern uint8* _drawBuffer;
 extern const uint32 PIXEL_BUFFER_X_SIZE;
 extern const uint32 PIXEL_BUFFER_Y_SIZE;
+#define TOTAL_PIXELS 320*240
 
 /* Initialize everything needed to draw pixels to the screen.*/
 void initDrawing();

@@ -37,7 +37,9 @@ int main() {
 
     initMath();
     initDrawing();
+    initRasterization();
 
+    print("got past init");
 
     print("pi is ");
     print_dec(pi);
@@ -51,10 +53,13 @@ int main() {
     print("\n");
     
     print("sin is ");
+    print("\n");
     print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
     print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
     print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
     print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
+    print("\n");
+    print("\n");
     
     Vec3 i = {
         .x = fpInt(-2,0),
@@ -87,14 +92,17 @@ int main() {
         }
         #endif
 
-        fill(ctr);
-        drawModel(models);
+        fill(0);
+        drawModel(&testObject);
+        testObject.transform.rotation.z += FP(0,0x0400);
+        testObject.transform.pos.x = fpSin(fpMul(FP(ctr,0),FP(0,0x0100)));
+
         // delay(16000000);
 
-        for (int i = 200000000; i > 0; i--) {
+        for (int i = 200000; i > 0; i--) {
             
         }
-        ctr = (ctr + 1) % 256;
+        ctr += 1;
         swapBuffer();
     }
 

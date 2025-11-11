@@ -12,4 +12,6 @@ typedef struct {
 
 // applies scale, rotation, and position transform to a vector,
 // in that order
-void applyTransform(Vec3* v, Vec3* res, Transform* transform);
+void applyTransform(Vec3* v, Vec3* res, const Transform* transform);
+
+void chainTransforms(Transform* t1, Transform* t2, const Transform* res);

@@ -147,3 +147,69 @@ int32 abs(int32 x) {
     }
     return x;
 }
+
+int32 get(Mat3x4* mat, uint8 i, uint8 j) {
+    uint8 index = i*4 + j;
+    return mat->vals[index];
+}
+void set(Mat3x4* mat, uint8 i, uint8 j, uint32 val) {
+    uint8 index = i*4 + j;
+    mat->vals[index] = val;
+}
+
+void switchRows(Mat3x4* M, uint8 row1, uint8 row2) {
+    for (int i = 0; i < 4; i++) {
+        int32 tmp = get(M, row1, i);
+        set(M, row1, i, get(M, row2, i));
+        set(M, row2, i, tmp);
+    }
+}
+
+// pseudocode from https://www.chegg.com/homework-help/questions-and-answers/implement-pseudo-code-gaussian-elimination-pivoting-working-matlab-code-q34725272
+void reduce(Mat3x4* M) {
+    for (uint8 j = 0; j < 3; j++) {
+        
+        // find a pivot if M_jj is 0
+        if (get(M, j, j) == 0) {
+            for (uint8 k = j + 1; k < 3; k++) {
+                if (get(M, k, j) != 0) {
+                    switchRows(M, k, j);
+                    break;
+                }
+            }
+            if (get(M, j, j) == 0) {
+                return;
+            }
+        }
+        
+        for (uint8 i = j+1; i < 3; i++) {
+            int32 multiplier = fpDiv(get(M,i,j),get(M,j,j));
+
+            // subtract multiplier 
+            for (uint8 col = 0; col < 4; col++) {
+                int32 newVal = fpSub(get(M,i,col),fpMul(get(M,j,col),multiplier));
+                set(M,i,col,newVal);
+            }
+        }
+        
+    }
+
+    // do jordan elimination
+    for (uint8 j = 2; j > 0; j++) {
+        for (int8 k = j - 1; k >= 0; k--) {
+            int32 multiplier = fpDiv(get(M,k,j),get(M,j,j));
+            for (uint8 col = j; col < 4; col++) {
+                int32 newVal = fpSub(get(M,k,col),fpMul(get(M,j,col),multiplier));
+                set(M,k,col,newVal);
+            }
+        }
+    }
+
+    // normalize all elements
+    for (uint8 j = 0; j < 3; j++) {
+        set(M,j,3,fpDiv(get(M,j,3),get(M,j,j)));
+        set(M,j,j,FP(1,0));
+    }
+
+
+}

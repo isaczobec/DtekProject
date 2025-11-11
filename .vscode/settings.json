@@ -7,6 +7,10 @@
         "draw.h": "c",
         "platforms.h": "c",
         "math.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "rasterization.h": "c",
+        "transforms.h": "c",
+        "compare": "c",
+        "limits": "c"
     }
 }

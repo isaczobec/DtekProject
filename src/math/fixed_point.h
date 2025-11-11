@@ -6,6 +6,9 @@
 #define FP(i,f) (int32)(((int32)i) << SHIFT_AMOUNT | (uint32) f)
 #define FP_TOINT(f) (f >> SHIFT_AMOUNT)
 
+#define FP_MUL(x,y) ((int32)((int64) x * (int64) y >> (SHIFT_AMOUNT)))
+#define N_FP(i,f) FP_MUL(FP(i,f),FP(-1,0))
+
 static inline int32 fpInt(int16 integerPart, uint16 fractionalPart) {
     return (int32)(((int32)integerPart) << SHIFT_AMOUNT | (uint32) fractionalPart);
 }
