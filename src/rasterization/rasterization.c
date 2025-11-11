@@ -7,26 +7,54 @@
 Model models[MODEL_COUNT] = {
     {
         .vertexBuffer = (Vec3*)&vertexData,
-        .vertexCount = 3,
+        .vertexCount = 8,
         .indexBuffer = (uint16*)&indexData,
-        .indexBufferCount = 3
+        .indexBufferCount = 36  // 12 triangles * 3 vertices each
     }
 };
+
+// Cube vertices (8 corners of a cube from -0.5 to 0.5)
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
-    {FP(0,0),FP(0,0x8000),FP(0,0)},
-    {N_FP(0,0x8000),N_FP(0,0x8000),FP(0,0)},
-    {FP(0,0x8000),N_FP(0,0x8000),FP(0,0)},
+    // Front face
+    {N_FP(0,0x8000), N_FP(0,0x8000), FP(0,0x8000)},  // 0: bottom-left-front
+    {FP(0,0x8000),   N_FP(0,0x8000), FP(0,0x8000)},  // 1: bottom-right-front
+    {FP(0,0x8000),   FP(0,0x8000),   FP(0,0x8000)},  // 2: top-right-front
+    {N_FP(0,0x8000), FP(0,0x8000),   FP(0,0x8000)},  // 3: top-left-front
+    
+    // Back face
+    {N_FP(0,0x8000), N_FP(0,0x8000), N_FP(0,0x8000)}, // 4: bottom-left-back
+    {FP(0,0x8000),   N_FP(0,0x8000), N_FP(0,0x8000)}, // 5: bottom-right-back
+    {FP(0,0x8000),   FP(0,0x8000),   N_FP(0,0x8000)}, // 6: top-right-back
+    {N_FP(0,0x8000), FP(0,0x8000),   N_FP(0,0x8000)}, // 7: top-left-back
 };
+
+// Index buffer defining 12 triangles (2 per face, 6 faces)
 uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
-    0,1,2,
+    // Front face (z = +0.5)
+    0, 1, 2,    0, 2, 3,
+    
+    // Back face (z = -0.5) 
+    5, 4, 7,    5, 7, 6,
+    
+    // Left face (x = -0.5)
+    4, 0, 3,    4, 3, 7,
+    
+    // Right face (x = +0.5)
+    1, 5, 6,    1, 6, 2,
+    
+    // Top face (y = +0.5)
+    3, 2, 6,    3, 6, 7,
+    
+    // Bottom face (y = -0.5)
+    4, 5, 1,    4, 1, 0
 };
 
 ObjectInstance testObject = {
     .model = &models[0],
     .transform = {
-        .pos = {FP(0,0),FP(0,0),FP(0,0)},
+        .pos = {FP(0,0),FP(0,0),FP(-2,0)},
         .rotation = {FP(0,0),FP(0,0),FP(0,0)},
-        .scale = {FP(1,0),FP(1,0),FP(1,0)}
+        .scale = {FP(0,0x8000),FP(0,0x8000),FP(0,0x8000)}
     }
 };
 
@@ -79,7 +107,7 @@ void drawModel(const ObjectInstance* object) {
         int32 clockDet = fpSub(fpMul(v0_t.x - v2_t.x, v2_t.y - v1_t.y), fpMul(v2_t.x - v1_t.x, v0_t.y - v2_t.y));
         if (clockDet >= 0) {
             // print("counter clockwise, returning \n");
-            return;
+            continue;
         }
 
         // print("\n----\n");
@@ -173,8 +201,9 @@ void drawModel(const ObjectInstance* object) {
                     // linearly interpolate the depth
                     int32 depth = fpMul(b0,v0_t.z) + fpMul(b1,v1_t.z) + fpMul(b2,v2_t.z);
                     if (depth < getDepth(i,j)) {
-                        draw(i,j,0xFF);
-                        setDepth(i,j,depth);
+                        // draw(i,j,0xFF);
+                        draw(i,j,(uint8)triangleIndex+3);
+                        // setDepth(i,j,depth);
                     }
                 }
             } 

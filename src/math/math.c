@@ -152,7 +152,7 @@ int32 get(Mat3x4* mat, int8 i, int8 j) {
     uint8 index = i*4 + j;
     return mat->vals[index];
 }
-void set(Mat3x4* mat, int8 i, int8 j, uint32 val) {
+void set(Mat3x4* mat, int8 i, int8 j, int32 val) {
     uint8 index = i*4 + j;
     mat->vals[index] = val;
 }

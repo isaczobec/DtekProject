@@ -23,7 +23,7 @@ typedef struct {
     int32 vals[12];
 } Mat3x4;
 int32 get(Mat3x4* mat, int8 i, int8 j);
-void set(Mat3x4* mat, int8 i, int8 j, uint32 val);
+void set(Mat3x4* mat, int8 i, int8 j, int32 val);
 
 typedef struct {
     int32 x;
