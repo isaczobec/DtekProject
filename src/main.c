@@ -27,7 +27,7 @@ void fill(uint8 rgb)
     {
         for (uint16 i = 0; i < PIXEL_BUFFER_X_SIZE; i++)
         {
-            if (i % 2 == 0)
+            // if (i % 2 == 0)
             draw(i, j, rgb);
         }
     }
@@ -82,6 +82,9 @@ int main() {
     print_dec(resVector.y);
     print_dec(resVector.z);
 
+    print("DSMAdkasp");
+    print("entering loop");
+
     int ctr = 0;
     while(1) {
 
@@ -94,7 +97,7 @@ int main() {
 
         fill(0);
         drawModel(&testObject);
-        testObject.transform.rotation.z += FP(0,0x0400);
+        testObject.transform.rotation.x += FP(0,0x0400);
         testObject.transform.pos.x = fpSin(fpMul(FP(ctr,0),FP(0,0x0100)));
 
         // delay(16000000);
@@ -104,6 +107,7 @@ int main() {
         }
         ctr += 1;
         swapBuffer();
+        clearDepthBuffer();
     }
 
     exitDrawing();

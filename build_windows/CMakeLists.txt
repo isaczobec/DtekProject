@@ -8,11 +8,11 @@ IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../Libraries/SDL3-3.2.26/x86_64-w64-mingw3
 INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/../Libraries/SDL3-3.2.26/x86_64-w64-mingw32/include
 )
 
-file(GLOB SRC 
-"../src/*.c"
-"../src/*.h"
-"../src/**/*.c"
-"../src/**/*.h"
+file(GLOB_RECURSE SRC CONFIGURE_DEPENDS 
+"${CMAKE_SOURCE_DIR}/../src/*.c"
+"${CMAKE_SOURCE_DIR}/../src/*.h"
+"${CMAKE_SOURCE_DIR}/../src/**/*.c"
+"${CMAKE_SOURCE_DIR}/../src/**/*.h"
 )
 
 add_executable(out ${SRC})

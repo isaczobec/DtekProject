@@ -13,9 +13,9 @@ Model models[MODEL_COUNT] = {
     }
 };
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
-    {FP(0,0),FP(0,0x8000),FP(1,0)},
-    {N_FP(0,0x8000),N_FP(0,0x8000),FP(1,0)},
-    {FP(0,0x8000),N_FP(0,0x8000),FP(1,0)},
+    {FP(0,0),FP(0,0x8000),FP(0,0)},
+    {N_FP(0,0x8000),N_FP(0,0x8000),FP(0,0)},
+    {FP(0,0x8000),N_FP(0,0x8000),FP(0,0)},
 };
 uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
     0,1,2,
@@ -154,7 +154,28 @@ void drawModel(const ObjectInstance* object) {
                 int32 inside3 = (iFp-p2_x) * p20_y - (jFp-p2_y) * p20_x;
 
                 if (inside1 >= 0 && inside2 >= 0 && inside3 >= 0) {
-                    draw(i,j,0xFF);
+                    
+                    // print("DSMAdkasp");
+                    
+                    // calculate the depth using barycentric coordinates
+                    Mat3x4 eqSystBaryCentric = {
+                        .vals = {
+                            FP(p0_x,0), FP(p1_x,0), FP(p2_x,0), FP(i,0),
+                            FP(p0_y,0), FP(p1_y,0), FP(p2_y,0), FP(j,0),
+                            FP(1,0),    FP(1,0),    FP(1,0),    FP(1,0)
+                        }
+                    };
+                    reduce(&eqSystBaryCentric); // do gauss jordan reduction to calculate the barycentric coords
+                    int32 b0 = get(&eqSystBaryCentric, 0, 3);
+                    int32 b1 = get(&eqSystBaryCentric, 1, 3);
+                    int32 b2 = get(&eqSystBaryCentric, 2, 3);
+                    
+                    // linearly interpolate the depth
+                    int32 depth = fpMul(b0,v0_t.z) + fpMul(b1,v1_t.z) + fpMul(b2,v2_t.z);
+                    if (depth < getDepth(i,j)) {
+                        draw(i,j,0xFF);
+                        setDepth(i,j,depth);
+                    }
                 }
             } 
         } 

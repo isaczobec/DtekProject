@@ -22,8 +22,8 @@ typedef struct {
 typedef struct {
     int32 vals[12];
 } Mat3x4;
-int32 get(Mat3x4* mat, uint8 i, uint8 j);
-void set(Mat3x4* mat, uint8 i, uint8 j, uint32 val);
+int32 get(Mat3x4* mat, int8 i, int8 j);
+void set(Mat3x4* mat, int8 i, int8 j, uint32 val);
 
 typedef struct {
     int32 x;
@@ -44,7 +44,7 @@ void crossProduct(Vec3* v1, Vec3* v2, Vec3* res);
 // calculates the determinant of the matrix given by the x,y components of v1,v2
 void detXY(Vec3* v1, Vec3* v2, int32* res); 
 
-void switchRows(Mat3x4* M, uint8 row1, uint8 row2);
+void switchRows(Mat3x4* M, int8 row1, int8 row2);
 // reduces M to reduced row echeclon form
 void reduce(Mat3x4* M);
 
