@@ -106,7 +106,11 @@ int main() {
         testObject.transform.pos.x = fpMul(fpSin(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
         // testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
         testObject.transform.pos.z = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(1,0x0000));
-
+        
+        drawModel(&testObject2);
+        testObject2.transform.rotation.x += FP(0,0x0400);
+        testObject2.transform.rotation.z += FP(0,0x0200);
+        testObject2.transform.rotation.y += FP(0,0x0100);
         // delay(16000000);
 
         for (int i = 200000; i > 0; i--) {

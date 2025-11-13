@@ -32,6 +32,7 @@ int32 getDepth(uint16 i, uint16 j);
 void setDepth(uint16 i, uint16 j, int32 depth);
 
 extern ObjectInstance testObject;
+extern ObjectInstance testObject2;
 
 void initRasterization();
 void drawModel(const ObjectInstance* object);

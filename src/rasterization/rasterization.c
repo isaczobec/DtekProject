@@ -58,6 +58,14 @@ ObjectInstance testObject = {
         .scale = {FP(0,0x8000),FP(0,0x8000),FP(0,0x8000)}
     }
 };
+ObjectInstance testObject2 = {
+    .model = &models[0],
+    .transform = {
+        .pos = {FP(0,0),FP(0,0),FP(7,0)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(0,0x8000),FP(0,0x8000),FP(0,0x8000)}
+    }
+};
 
 int32 depthBuffer[TOTAL_PIXELS];
 
@@ -134,7 +142,6 @@ void drawModel(const ObjectInstance* object) {
         // camera. Do not continue rasterization
         int32 clockDet = fpSub(fpMul(v1_t.x - v0_t.x, v2_t.y - v0_t.y), fpMul(v1_t.y - v0_t.y, v2_t.x - v0_t.x));
         if (clockDet >= 0) {
-            // print("counter clockwise, returning \n");
             continue;
         }
 
@@ -176,40 +183,42 @@ void drawModel(const ObjectInstance* object) {
         int32 yMin = max(min(min(p0_y,p1_y),p2_y),0);
         int32 yMax = min(max(max(p0_y,p1_y),p2_y),PIXEL_BUFFER_Y_SIZE);
         
-        
+        int32 totalArea = p20_x * p01_y - p20_y * p01_x;
+        if (totalArea == 0) continue;
+
         // TODO: The triangle rasterization inside checking can be done 2x as effectively
         for (int i = xMin; i < xMax; i++) {
             for (int j = yMin; j < yMax; j++) {
 
-                int32 iFp = i;
-                int32 jFp = j;
+                // compute the edge functions to determine if the point (i,j) is inside the triangle, using cross products
+                int32 area0 = (i-p0_x) * p01_y - (j-p0_y) * p01_x;
+                int32 area1 = (i-p1_x) * p12_y - (j-p1_y) * p12_x;
+                int32 area2 = (i-p2_x) * p20_y - (j-p2_y) * p20_x;
 
-                // compute the dot products to determine if the point (i,j) is inside the triangle
-                int32 inside1 = (iFp-p0_x) * p01_y - (jFp-p0_y) * p01_x;
-                int32 inside2 = (iFp-p1_x) * p12_y - (jFp-p1_y) * p12_x;
-                int32 inside3 = (iFp-p2_x) * p20_y - (jFp-p2_y) * p20_x;
-
-                if (inside1 <= 0 && inside2 <= 0 && inside3 <= 0) {
-                    
-                    // print("DSMAdkasp");
+                if (area0 <= 0 && area1 <= 0 && area2 <= 0) {
                     
                     // calculate the depth using barycentric coordinates
-                    Mat3x4 eqSystBaryCentric = {
-                        .vals = {
-                            FP(p0_x,0), FP(p1_x,0), FP(p2_x,0), FP(i,0),
-                            FP(p0_y,0), FP(p1_y,0), FP(p2_y,0), FP(j,0),
-                            FP(1,0),    FP(1,0),    FP(1,0),    FP(1,0)
-                        }
-                    };
-                    reduce(&eqSystBaryCentric); // do gauss jordan reduction to calculate the barycentric coords
-                    int32 b0 = get(&eqSystBaryCentric, 0, 3);
-                    int32 b1 = get(&eqSystBaryCentric, 1, 3);
-                    int32 b2 = get(&eqSystBaryCentric, 2, 3);
+                    // Mat3x4 eqSystBaryCentric = {
+                    //     .vals = {
+                    //         FP(p0_x,0), FP(p1_x,0), FP(p2_x,0), FP(i,0),
+                    //         FP(p0_y,0), FP(p1_y,0), FP(p2_y,0), FP(j,0),
+                    //         FP(1,0),    FP(1,0),    FP(1,0),    FP(1,0)
+                    //     }
+                    // };
+                    // reduce(&eqSystBaryCentric); // do gauss jordan reduction to calculate the barycentric coords
+                    // int32 b0 = get(&eqSystBaryCentric, 0, 3);
+                    // int32 b1 = get(&eqSystBaryCentric, 1, 3);
+                    // int32 b2 = get(&eqSystBaryCentric, 2, 3);
+
+                    int32 b0 = fpDiv(FP(area0,0),FP(totalArea,0));
+                    int32 b1 = fpDiv(FP(area1,0),FP(totalArea,0));
+                    int32 b2 = fpDiv(FP(area2,0),FP(totalArea,0));
+
+                    
                     
                     // linearly interpolate the depth
                     int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
                     int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
-                    // int32 depth = fpAdd(fpAdd(fpMul(b0, view_z0), fpMul(b1, view_z1)), fpMul(b2, view_z2));
                     int32 depth = fpDiv(interpolatedDepth,interpolatedOneOverZ);
 
                     if (depth < getDepth(i,j)) {
