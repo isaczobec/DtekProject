@@ -5,6 +5,7 @@
 #include "math/fixed_point.h"
 #include "io/io.h"
 #include "rasterization/rasterization.h"
+#include "rasterization/camera.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -84,6 +85,8 @@ int main() {
 
     print("DSMAdkasp");
     print("entering loop");
+    
+    // updateCameraTransform(&camera);
 
     int ctr = 0;
     while(1) {
@@ -98,10 +101,11 @@ int main() {
         fill(0);
         drawModel(&testObject);
         testObject.transform.rotation.x += FP(0,0x0400);
-        testObject.transform.rotation.z += FP(0,0x0200);
-        testObject.transform.rotation.y += FP(0,0x0100);
+        // testObject.transform.rotation.z += FP(0,0x0200);
+        // testObject.transform.rotation.y += FP(0,0x0100);
         testObject.transform.pos.x = fpMul(fpSin(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
-        testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
+        // testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
+        testObject.transform.pos.z = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(1,0x0000));
 
         // delay(16000000);
 
