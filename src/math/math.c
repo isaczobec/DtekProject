@@ -127,6 +127,34 @@ void crossProduct(Vec3* v1, Vec3* v2, Vec3* res) {
     res->z = fpAdd(fpMul(v1->x,v2->y),fpMul(v1->y,v2->x));
 }
 
+int32 vec3Len(Vec3* len) {
+    //first need implementation of inv sqrt
+}
+
+void rotateXVec3(Vec3* v1, int32 angle) {
+    int32 oldY = v1->y;
+    int32 oldZ = v1->z;
+
+    v1->y = fpCos(angle)*oldY - fpSin(angle)*oldZ;
+    v1->z = fpSin(angle)*oldY + fpCos(angle)*oldZ;
+}
+
+void rotateYVec3(Vec3* v1, int32 angle) {
+    int32 oldX = v1->x;
+    int32 oldZ = v1->z;
+
+    v1->x = fpCos(angle)*oldX+fpSin(angle)*oldZ;
+    v1->z = fpCos(angle)*oldZ-fpSin(angle)*oldX;
+}
+
+void rotateZVec3(Vec3* v1, int32 angle) {
+    int32 oldX = v1->x;
+    int32 oldY = v1->y;
+
+    v1->x = fpCos(angle)*oldX-fpSin(angle)*oldY;
+    v1->y = fpSin(angle)*oldX+fpCos(angle)*oldY;
+}
+
 void detXY(Vec3* v1, Vec3* v2, int32* res) {
     *res = fpSub(fpMul(v1->x, v2->y), fpMul(v2->x, v1->y));
 }

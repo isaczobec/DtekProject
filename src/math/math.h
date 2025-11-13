@@ -19,6 +19,8 @@ typedef struct {
     int32 z;
 } Vec3;
 
+#define VEC3INIT (Vec3){0, 0, 0}
+
 typedef struct {
     int32 vals[12];
 } Mat3x4;
@@ -41,6 +43,10 @@ void subVector(Vec3* v1, Vec3* v2, Vec3* res);
 void mulVector(Vec3* v1, Vec3* v2, Vec3* res);
 void mulVectorScalar(Vec3* v1, int32 m, Vec3* res);
 void crossProduct(Vec3* v1, Vec3* v2, Vec3* res);
+int32 vec3Len(Vec3* v1);
+void rotateXVec3(Vec3* v1, int32 angle);
+void rotateYVec3(Vec3* v1, int32 angle);
+void rotateZVec3(Vec3* v1, int32, angle);
 // calculates the determinant of the matrix given by the x,y components of v1,v2
 void detXY(Vec3* v1, Vec3* v2, int32* res); 
 
