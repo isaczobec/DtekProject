@@ -219,6 +219,8 @@ void drawModel(const ObjectInstance* object) {
                     // linearly interpolate the depth
                     int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
                     int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
+                    
+                    if (interpolatedOneOverZ == 0) continue;
                     int32 depth = fpDiv(interpolatedDepth,interpolatedOneOverZ);
 
                     if (depth < getDepth(i,j)) {

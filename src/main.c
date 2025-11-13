@@ -98,6 +98,10 @@ int main() {
         }
         #endif
 
+        camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0040))),FP(0,0x8400));
+        camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+        updateCameraTransform(&camera);
+
         fill(0);
         drawModel(&testObject);
         testObject.transform.rotation.x += FP(0,0x0400);
