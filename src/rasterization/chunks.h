@@ -16,12 +16,14 @@
 
 #define OBJECT_MAP_SIZE (AMOUNT_CHUNKS*MAX_OBJECTS_PER_CHUNK)
 
-
+// TODO: Optimize this for faster searching?
 extern ObjectInstance _objectsDense[MAX_OBJECTS_GLOBAL];
 extern int32 _objectsDenseBackPtr; // back of the objects map
 
 extern ObjectHandle _objectHandles[MAX_OBJECTS_GLOBAL];
-extern int32 _objectsMapBackPtr; // back of the objects map
+extern int32 _objectHandlesBackPtr; // back of the objects map
+
+extern int32 totalObjects;
 
 typedef struct {
     ObjectInstance _objects[MAX_OBJECTS_PER_CHUNK];
@@ -31,13 +33,27 @@ typedef struct {
 } Chunk;
 
 extern Chunk chunks[TOTAL_CHUNKS];
+extern int32 chunkDisplacementX; // how many chunk steps we have displaced the render region on the x axis
+extern int32 chunkDisplacementY; // how many chunk steps we have displaced the render region on the y axis
 
 ObjectHandle* createObjectInstance(Model* model, Transform transform);
+
+void destroyObject(ObjectHandle* objectHandle);
 
 /* Moves an object to a chunk, updating its object handle. 
 does not clear the object data in its old location. */
 void moveObjectToChunk(int16 chunkIndex, ObjectInstance* objectInstance);
 
-int16 getChunkIndex(int16 relX, int16 relY);
+/* Moves an object from a chunk to the dense array, updating its object handle. 
+does not clear the object data in its old location. */
+void moveObjectToDenseArray(ObjectInstance* objectInstance);
+
+int16 getChunkIndexFromIJ(int16 relX, int16 relY);
+
+void moveChunks(int16 x, int16 y);
+
+int32 worldPosToChunkCoord(int32 worldX);
+
+uint8 isInRenderDistance(int32 chunkX, int32 chunkY);
 
 void initChunks();

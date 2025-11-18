@@ -8,6 +8,9 @@
 #define INDEX_DATA_TOTAL_SIZE_BYTES 2048 // how many bytes are allocated to vertex data for models
 #define MODEL_COUNT 1 // how many bytes are allocated to vertex data for models
 
+#define OBJECT_HANDLE_IN_CHUNK 0
+#define OBJECT_HANDLE_IN_DENSEARRAY 1
+
 typedef struct {
     Vec3* vertexBuffer;
     uint32 vertexCount;
@@ -24,6 +27,9 @@ typedef struct {
 } ObjectInstance;
 
 typedef struct {
+    int8 objectLocation; // can be either `OBJECT_HANDLE_IN_CHUNK` or `OBJECT_HANDLE_IN_DENSEARRAY` 
+    int32 index;
+    int32 chunkIndex;
     ObjectInstance* objectInstance;
 } ObjectHandle;
 
