@@ -16,10 +16,16 @@ typedef struct {
     uint32 indexBufferCount;
 } Model;
 
+
 typedef struct {
     Model* model;
     Transform transform;
+    int16 _handleIndex; // the index of the current object handle.
 } ObjectInstance;
+
+typedef struct {
+    ObjectInstance* objectInstance;
+} ObjectHandle;
 
 extern Model models[MODEL_COUNT];
 extern Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES]; // a buffer of all vertex data of all models. `Model.vertexBuffer` points to each models data.
