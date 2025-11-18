@@ -90,8 +90,11 @@ int main() {
     
     // updateCameraTransform(&camera);
 
-    for (int gx = -8; gx <= 8; gx++) {
-        for (int gz = -8; gz <= 8; gz++) {
+    int32 testvar = 16;
+    ObjectHandle* testHandles[testvar*testvar*4];
+    int ch = 0;
+    for (int gx = -testvar; gx <= testvar; gx++) {
+        for (int gz = -testvar; gz <= testvar; gz++) {
 
             int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
             int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
@@ -102,7 +105,7 @@ int main() {
                 .scale = { .x = FP(1,0), .y = FP(1,0), .z = FP(1,0) }
             };
 
-            createObjectInstance(&models[0], t);
+            testHandles[ch] = createObjectInstance(&models[0], t);
         }
     }
 
@@ -129,7 +132,7 @@ int main() {
 
 
             camera.position.y = FP(5,0);
-            // camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
     

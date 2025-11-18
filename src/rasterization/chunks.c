@@ -41,11 +41,11 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
     int32 chunkX = worldPosToChunkCoord(transform.pos.x);
     int32 chunkY = worldPosToChunkCoord(transform.pos.z);
 
-    print("\n coords: \n");
-    print_dec(chunkX);
-    print("\n");
-    print_dec(chunkY);
-    print("\n");
+    // print("\n coords: \n");
+    // print_dec(chunkX);
+    // print("\n");
+    // print_dec(chunkY);
+    // print("\n");
 
     ObjectHandle* handle;
     if (isInRenderDistance(chunkX, chunkY)) {
@@ -169,6 +169,42 @@ int32 worldPosToChunkCoord(int32 worldPos) {
     return chunkPos;
 }
 
+void processMovingChunk(int16 chunkX, int16 chunkY)
+{
+    int16 chunkToMoveI = (chunkX) % RENDER_REGION_SIDE_LENGTH_CHUNKS;
+    if (chunkToMoveI < 0)
+        chunkToMoveI += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard against negative modulo values
+    int16 chunkToMoveJ = (chunkY) % RENDER_REGION_SIDE_LENGTH_CHUNKS;
+    if (chunkToMoveJ < 0)
+        chunkToMoveJ += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard against negative modulo values
+    int16 chunkToMoveIndex = getChunkIndexFromIJ(chunkToMoveI, chunkToMoveJ);
+
+    // move all current objects in the chunk to the dense array
+    for (int k = 0; k < chunks[chunkToMoveIndex]._backPtr; k++)
+    {
+        moveObjectToDenseArray(&chunks[chunkToMoveIndex]._objects[k]);
+    }
+    chunks[chunkToMoveIndex]._backPtr = 0;
+
+    // move all objects in the dense array into the new chunk, that need to be there
+    int k = 0;
+    while (k < _objectsDenseBackPtr)
+    {
+        int32 objChunkX = worldPosToChunkCoord(_objectsDense[k].transform.pos.x);
+        int32 objChunkY = worldPosToChunkCoord(_objectsDense[k].transform.pos.z);
+
+        if (chunkX == objChunkX && chunkY == objChunkY)
+        {
+            moveObjectToChunk(chunkToMoveIndex, &_objectsDense[k]);
+            removeObjectFromDenseArray(k);
+        }
+        else
+        {
+            k += 1;
+        }
+    }
+}
+
 void moveChunks(int16 delta_x, int16 delta_y) {
     
     // calculate abs and sign
@@ -178,8 +214,6 @@ void moveChunks(int16 delta_x, int16 delta_y) {
     if (delta_x < 0) x_sign = -1;
     int32 y_sign = 1;
     if (delta_y < 0) y_sign = -1;
-    int32 i_start = 1; if (delta_x < 0) {i_start = -1;} else if (delta_x == 0) {i_start = 0;}
-    int32 j_start = 1; if (delta_y < 0) {j_start = -1;} else if (delta_y == 0) {j_start = 0;}
 
     print("x:\n");
     print_dec(x_sign); print("\n");
@@ -187,44 +221,41 @@ void moveChunks(int16 delta_x, int16 delta_y) {
     print("y:\n");
     print_dec(y_sign); print("\n");
     print_dec(delta_y_abs); print("\n");
-    for (int16 i = i_start; absInteger(i) <= delta_x_abs; i += x_sign) {
-        for (int16 j = j_start; absInteger(j) <= delta_y_abs; j += y_sign) {
+
+    // loop over all x
+    print("NEW");
+    for (int16 i = x_sign; absInteger(i) <= delta_x_abs; i += x_sign) {
+        for (int16 j = chunkDisplacementY - RENDER_DISTANCE_CHUNKS; 
+            j <= chunkDisplacementY + RENDER_DISTANCE_CHUNKS; j += 1) {
 
             print("Doing a loop in\n");
 
             int16 chunkX = chunkDisplacementX + x_sign * RENDER_DISTANCE_CHUNKS + i;
-            int16 chunkY = chunkDisplacementY + y_sign * RENDER_DISTANCE_CHUNKS + j;
+            int16 chunkY = j;        
 
-            int16 chunkToMoveI = (chunkX) % RENDER_REGION_SIDE_LENGTH_CHUNKS;
-            if (chunkToMoveI < 0) chunkToMoveI += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard against negative modulo values
-            int16 chunkToMoveJ = (chunkY) % RENDER_REGION_SIDE_LENGTH_CHUNKS;
-            if (chunkToMoveJ < 0) chunkToMoveJ += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard against negative modulo values
-            int16 chunkToMoveIndex = getChunkIndexFromIJ(chunkToMoveI, chunkToMoveJ);
-
-            // move all current objects in the chunk to the dense array
-            for (int k = 0; k < chunks[chunkToMoveIndex]._backPtr; k++) {
-                moveObjectToDenseArray(&chunks[chunkToMoveIndex]._objects[k]);
-            }
-            chunks[chunkToMoveIndex]._backPtr = 0;
-
-            // move all objects in the dense array into the new chunk, that need to be there
-            int k = 0;
-            while (k < _objectsDenseBackPtr) {
-                int32 objChunkX = worldPosToChunkCoord(_objectsDense[k].transform.pos.x);
-                int32 objChunkY = worldPosToChunkCoord(_objectsDense[k].transform.pos.z);
-
-                if (chunkX == objChunkX && chunkY == objChunkY) {
-                    moveObjectToChunk(chunkToMoveIndex, &_objectsDense[k]);
-                    removeObjectFromDenseArray(k);
-                } else {
-                    k += 1;
-                }
-            }
+            processMovingChunk(chunkX, chunkY);
         }
     }
+    
+    // loop over all y
+    for (int16 j = y_sign; absInteger(j) <= delta_y_abs; j += y_sign) {
+        for (int16 i = chunkDisplacementX - RENDER_DISTANCE_CHUNKS; 
+            i <= chunkDisplacementX + RENDER_DISTANCE_CHUNKS; i += 1) {
+
+            print("Doing a loop in\n");
+
+            int16 chunkY = chunkDisplacementY + y_sign * RENDER_DISTANCE_CHUNKS + j;
+            int16 chunkX = i;        
+
+            processMovingChunk(chunkX, chunkY);
+        }
+    }
+
     chunkDisplacementX += delta_x;
     chunkDisplacementY += delta_y;
 }
+
+
 
 void destroyObject(ObjectHandle* objectHandle) {
     // remove the object from its location
