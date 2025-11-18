@@ -8,7 +8,7 @@ Camera camera = {
     .cameraTransform.pos = {FP(0,0),FP(0,0),FP(0,0)},
 
     .nearClip = FP(0,0x1000),
-    .farClip = FP(256,0x0000)
+    .farClip = FP(512,0x0000)
 };
 
 void updateCameraTransform(Camera* camera) {

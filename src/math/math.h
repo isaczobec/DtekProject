@@ -60,3 +60,4 @@ int32 fpFactorial(int32 f);
 int32 max(int32 x, int32 y);
 int32 min(int32 x, int32 y);
 int32 abs(int32 x);
+int32 absInteger(int32 x);

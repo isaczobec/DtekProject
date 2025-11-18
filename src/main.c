@@ -6,6 +6,7 @@
 #include "io/io.h"
 #include "rasterization/rasterization.h"
 #include "rasterization/camera.h"
+#include "rasterization/chunks.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -39,6 +40,7 @@ int main() {
     initMath();
     initDrawing();
     initRasterization();
+    initChunks();
 
     print("got past init");
 
@@ -88,7 +90,24 @@ int main() {
     
     // updateCameraTransform(&camera);
 
+    for (int gx = -8; gx <= 8; gx++) {
+        for (int gz = -8; gz <= 8; gz++) {
+
+            int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
+            int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
+
+            Transform t = {
+                .pos = { .x = worldX, .y = FP(1,0), .z = worldZ },
+                .rotation = { .x = 0, .y = 0, .z = 0 },
+                .scale = { .x = FP(1,0), .y = FP(1,0), .z = FP(1,0) }
+            };
+
+            createObjectInstance(&models[0], t);
+        }
+    }
+
     int ctr = 0;
+    print("\nYOOBAGOOBA\n");
     while(1) {
 
         #if defined(__WINDOWS__)
@@ -98,31 +117,51 @@ int main() {
         }
         #endif
 
-        camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0040))),FP(0,0x8400));
-        camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
-        updateCameraTransform(&camera);
-
-        fill(0);
-        drawModel(&testObject);
-        testObject.transform.rotation.x += FP(0,0x0400);
-        // testObject.transform.rotation.z += FP(0,0x0200);
-        // testObject.transform.rotation.y += FP(0,0x0100);
-        testObject.transform.pos.x = fpMul(fpSin(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
-        // testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
-        testObject.transform.pos.z = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(1,0x0000));
-        
-        drawModel(&testObject2);
-        testObject2.transform.rotation.x += FP(0,0x0400);
-        testObject2.transform.rotation.z += FP(0,0x0200);
-        testObject2.transform.rotation.y += FP(0,0x0100);
-        // delay(16000000);
-
-        for (int i = 200000; i > 0; i--) {
             
-        }
-        ctr += 1;
-        swapBuffer();
-        clearDepthBuffer();
+            fill(0);
+    
+            for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
+                for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
+                    // print("drawing");
+                    drawModel(&chunks[i]._objects[objIdx]);
+                }
+            }
+
+
+            camera.position.y = FP(5,0);
+            // camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            updateCameraTransform(&camera);
+    
+            // drawModel(&testObject);
+            // testObject.transform.rotation.x += FP(0,0x0400);
+            // // testObject.transform.rotation.z += FP(0,0x0200);
+            // // testObject.transform.rotation.y += FP(0,0x0100);
+            // testObject.transform.pos.x = fpMul(fpSin(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
+            // // testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
+            // testObject.transform.pos.z = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(1,0x0000));
+            
+            // drawModel(&testObject2);
+            // testObject2.transform.rotation.x += FP(0,0x0400);
+            // testObject2.transform.rotation.z += FP(0,0x0200);
+            // testObject2.transform.rotation.y += FP(0,0x0100);
+            // // delay(16000000);
+    
+            for (int i = 2000000; i > 0; i--) {
+                
+            }
+            ctr += 1;
+            swapBuffer();
+            clearDepthBuffer();
+        
+            if (ctr % 200 == 0) {
+                moveChunks(1,0);
+                print("switch\n");
+            } else if (ctr % 200 == 100) {
+                moveChunks(-1,0);
+                print("switch_back\n");
+            }
+
     }
 
     exitDrawing();

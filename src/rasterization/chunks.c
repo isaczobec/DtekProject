@@ -19,6 +19,7 @@ int16 getChunkIndexFromIJ(int16 relX, int16 relY) {
 int16 getChunkIndexingCoord(int16 chunkWorldCoord) {
     int16 mod = chunkWorldCoord % RENDER_REGION_SIDE_LENGTH_CHUNKS;
     if (mod < 0) mod += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard agains negative modulos
+    return mod;
 }
 
 uint8 isInRenderDistance(int32 chunkX, int32 chunkY) {
@@ -38,11 +39,18 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
 
     // check if the created object should go in a chunk or the dense array
     int32 chunkX = worldPosToChunkCoord(transform.pos.x);
-    int32 chunkY = worldPosToChunkCoord(transform.pos.y);
+    int32 chunkY = worldPosToChunkCoord(transform.pos.z);
+
+    print("\n coords: \n");
+    print_dec(chunkX);
+    print("\n");
+    print_dec(chunkY);
+    print("\n");
 
     ObjectHandle* handle;
     if (isInRenderDistance(chunkX, chunkY)) {
         // the case where we add it directly to a chunk
+
 
         // get the chunk index
         int32 chunkIndexingX = getChunkIndexingCoord(chunkX);
@@ -50,7 +58,7 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
         int32 chunkIndex = getChunkIndexFromIJ(chunkIndexingX, chunkIndexingY);
 
         if (chunks[chunkIndex]._backPtr >= MAX_OBJECTS_PER_CHUNK) {
-            print("Object limit exceeded!");
+            print("\nObject limit exceeded!\n");
             return (ObjectHandle*) NULL;
         }
         
@@ -154,23 +162,35 @@ void removeObjectFromChunk(int16 chunkIndex, int16 objectIndex) {
 
 int32 worldPosToChunkCoord(int32 worldPos) {
     int32 worldChunk = fpDiv(worldPos, FP(CHUNK_SIZE,0));
-    worldChunk = fpSub(worldChunk,FP(0,0x80000000)); // subtract 1/2
-    int32 chunkPos = FP_TOINT(worldChunk); // throw away decimal part
+    worldChunk = fpSub(worldChunk,FP(0,0x8000)); // subtract 1/2
+    int32 chunkPos = FP_TOINT(worldChunk) + 1; // throw away decimal part
+    // print("\nchunkpos is\n");
+    // print_dec(chunkPos);
     return chunkPos;
 }
 
 void moveChunks(int16 delta_x, int16 delta_y) {
     
     // calculate abs and sign
-    int32 delta_x_abs = abs(delta_x);
-    int32 delta_y_abs = abs(delta_y);
+    int32 delta_x_abs = absInteger(delta_x);
+    int32 delta_y_abs = absInteger(delta_y);
     int32 x_sign = 1;
     if (delta_x < 0) x_sign = -1;
     int32 y_sign = 1;
     if (delta_y < 0) y_sign = -1;
+    int32 i_start = 1; if (delta_x < 0) {i_start = -1;} else if (delta_x == 0) {i_start = 0;}
+    int32 j_start = 1; if (delta_y < 0) {j_start = -1;} else if (delta_y == 0) {j_start = 0;}
 
-    for (int16 i = x_sign; abs(i) <= delta_x_abs; i += x_sign) {
-        for (int16 j = y_sign; abs(j) <= delta_y_abs; j += y_sign) {
+    print("x:\n");
+    print_dec(x_sign); print("\n");
+    print_dec(delta_x_abs); print("\n");
+    print("y:\n");
+    print_dec(y_sign); print("\n");
+    print_dec(delta_y_abs); print("\n");
+    for (int16 i = i_start; absInteger(i) <= delta_x_abs; i += x_sign) {
+        for (int16 j = j_start; absInteger(j) <= delta_y_abs; j += y_sign) {
+
+            print("Doing a loop in\n");
 
             int16 chunkX = chunkDisplacementX + x_sign * RENDER_DISTANCE_CHUNKS + i;
             int16 chunkY = chunkDisplacementY + y_sign * RENDER_DISTANCE_CHUNKS + j;
@@ -191,7 +211,7 @@ void moveChunks(int16 delta_x, int16 delta_y) {
             int k = 0;
             while (k < _objectsDenseBackPtr) {
                 int32 objChunkX = worldPosToChunkCoord(_objectsDense[k].transform.pos.x);
-                int32 objChunkY = worldPosToChunkCoord(_objectsDense[k].transform.pos.y);
+                int32 objChunkY = worldPosToChunkCoord(_objectsDense[k].transform.pos.z);
 
                 if (chunkX == objChunkX && chunkY == objChunkY) {
                     moveObjectToChunk(chunkToMoveIndex, &_objectsDense[k]);
@@ -202,6 +222,8 @@ void moveChunks(int16 delta_x, int16 delta_y) {
             }
         }
     }
+    chunkDisplacementX += delta_x;
+    chunkDisplacementY += delta_y;
 }
 
 void destroyObject(ObjectHandle* objectHandle) {
@@ -214,10 +236,10 @@ void destroyObject(ObjectHandle* objectHandle) {
 
     // remove the objecthandle by copying back the last element
     int32 handleIndex = objectHandle->objectInstance->_handleIndex;
-    _objectHandles[handleIndex] = _objectHandles[_objectsDenseBackPtr-1];
+    _objectHandles[handleIndex] = _objectHandles[_objectHandlesBackPtr-1];
     _objectHandles[handleIndex].objectInstance->_handleIndex = handleIndex;
 
-    _objectsDenseBackPtr -= 1;
+    _objectHandlesBackPtr -= 1;
 
     totalObjects -= 1;
 }
