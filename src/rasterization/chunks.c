@@ -16,10 +16,17 @@ int16 getChunkIndexFromIJ(int16 relX, int16 relY) {
     return relY * RENDER_REGION_SIDE_LENGTH_CHUNKS + relX;
 }
 
+
+
+
 int16 getChunkIndexingCoord(int16 chunkWorldCoord) {
     int16 mod = chunkWorldCoord % RENDER_REGION_SIDE_LENGTH_CHUNKS;
     if (mod < 0) mod += RENDER_REGION_SIDE_LENGTH_CHUNKS; // guard agains negative modulos
     return mod;
+}
+
+int16 getChunkIndexFromWorldXY(int16 x, int16 y) {
+    return getChunkIndexingCoord(y) * RENDER_REGION_SIDE_LENGTH_CHUNKS + getChunkIndexingCoord(x);
 }
 
 uint8 isInRenderDistance(int32 chunkX, int32 chunkY) {

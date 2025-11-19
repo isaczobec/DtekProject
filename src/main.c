@@ -7,6 +7,7 @@
 #include "rasterization/rasterization.h"
 #include "rasterization/camera.h"
 #include "rasterization/chunks.h"
+#include "rasterization/object_modification.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -120,7 +121,14 @@ int main() {
 
             for (int u = 0; u < 1000; u++) {
                 // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
-                testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
+
+                Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
+                objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
+                objPos.x = objPos.x + FP(0,0x0400);
+                setObjectPosition(testHandles[u], &objPos);
+
+
+                // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
     
             // drawModel(&testObject);
@@ -144,13 +152,13 @@ int main() {
             swapBuffer();
             clearDepthBuffer();
         
-            if (ctr % 200 == 0) {
-                moveChunks(1,0);
-                print("switch\n");
-            } else if (ctr % 200 == 100) {
-                moveChunks(-1,0);
-                print("switch_back\n");
-            }
+            // if (ctr % 200 == 0) {
+            //     moveChunks(1,0);
+            //     print("switch\n");
+            // } else if (ctr % 200 == 100) {
+            //     moveChunks(-1,0);
+            //     print("switch_back\n");
+            // }
 
     }
 

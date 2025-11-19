@@ -48,7 +48,23 @@ void moveObjectToChunk(int16 chunkIndex, ObjectInstance* objectInstance);
 does not clear the object data in its old location. */
 void moveObjectToDenseArray(ObjectInstance* objectInstance);
 
+/*
+ removes an object from the dense array, but does not delete
+ its object handle.
+ copies over the back element and changes that objects handle.
+*/
+void removeObjectFromChunk(int16 chunkIndex, int16 objectIndex);
+
+/*
+ removes an object from the dense array, but does not delete
+ its object handle.
+ copies over the back element and changes that objects handle.
+*/
+void removeObjectFromDenseArray(int16 objectIndex);
+
 int16 getChunkIndexFromIJ(int16 relX, int16 relY);
+
+int16 getChunkIndexFromWorldXY(int16 x, int16 y);
 
 void moveChunks(int16 x, int16 y);
 
