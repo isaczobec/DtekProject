@@ -114,6 +114,11 @@ void drawModel(const ObjectInstance* object) {
         applyTransform(&v0_model, &v0_t, &camera.cameraTransform);
         applyTransform(&v1_model, &v1_t, &camera.cameraTransform);
         applyTransform(&v2_model, &v2_t, &camera.cameraTransform);
+
+        // multiply x by aspect ratio
+        v0_t.x = fpDiv(v0_t.x, ASPECT_RATIO);
+        v1_t.x = fpDiv(v1_t.x, ASPECT_RATIO);
+        v2_t.x = fpDiv(v2_t.x, ASPECT_RATIO);
         
         int32 view_z0 = v0_t.z;
         int32 view_z1 = v1_t.z;

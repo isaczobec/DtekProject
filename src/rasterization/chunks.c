@@ -215,12 +215,12 @@ void moveChunks(int16 delta_x, int16 delta_y) {
     int32 y_sign = 1;
     if (delta_y < 0) y_sign = -1;
 
-    print("x:\n");
-    print_dec(x_sign); print("\n");
-    print_dec(delta_x_abs); print("\n");
-    print("y:\n");
-    print_dec(y_sign); print("\n");
-    print_dec(delta_y_abs); print("\n");
+    // print("x:\n");
+    // print_dec(x_sign); print("\n");
+    // print_dec(delta_x_abs); print("\n");
+    // print("y:\n");
+    // print_dec(y_sign); print("\n");
+    // print_dec(delta_y_abs); print("\n");
 
     // loop over all x
     print("NEW");
@@ -228,7 +228,7 @@ void moveChunks(int16 delta_x, int16 delta_y) {
         for (int16 j = chunkDisplacementY - RENDER_DISTANCE_CHUNKS; 
             j <= chunkDisplacementY + RENDER_DISTANCE_CHUNKS; j += 1) {
 
-            print("Doing a loop in\n");
+            // print("Doing a loop in\n");
 
             int16 chunkX = chunkDisplacementX + x_sign * RENDER_DISTANCE_CHUNKS + i;
             int16 chunkY = j;        
@@ -242,7 +242,7 @@ void moveChunks(int16 delta_x, int16 delta_y) {
         for (int16 i = chunkDisplacementX - RENDER_DISTANCE_CHUNKS; 
             i <= chunkDisplacementX + RENDER_DISTANCE_CHUNKS; i += 1) {
 
-            print("Doing a loop in\n");
+            // print("Doing a loop in\n");
 
             int16 chunkY = chunkDisplacementY + y_sign * RENDER_DISTANCE_CHUNKS + j;
             int16 chunkX = i;        

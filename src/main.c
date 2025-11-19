@@ -41,28 +41,6 @@ int main() {
     initDrawing();
     initRasterization();
     initChunks();
-
-    print("got past init");
-
-    print("pi is ");
-    print_dec(pi);
-    print("\n");
-
-    print("fact is ");
-    print_dec(fpFactorial(FP(4,0)));
-    print("\n");
-    print("exp is ");
-    print_dec(fpPow(FP(4,0),FP(4,0)));
-    print("\n");
-    
-    print("sin is ");
-    print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
-    print("\n");
-    print("\n");
     
     Vec3 i = {
         .x = fpInt(-2,0),
@@ -84,14 +62,11 @@ int main() {
     print_dec(resVector.x);
     print_dec(resVector.y);
     print_dec(resVector.z);
-
-    print("DSMAdkasp");
-    print("entering loop");
     
     // updateCameraTransform(&camera);
 
     int32 testvar = 16;
-    int32 testObjectsAmount = testvar*testvar*4;
+    int32 testObjectsAmount = (2*testvar+1)*(2*testvar+1);
     ObjectHandle* testHandles[testObjectsAmount];
     int ch = 0;
     for (int gx = -testvar; gx <= testvar; gx++) {
@@ -107,6 +82,12 @@ int main() {
             };
 
             testHandles[ch] = createObjectInstance(&models[0], t);
+
+            if (ch == 0) {
+                print("index in handle:");
+                print_dec(testHandles[ch]->index); print("\n");
+            }
+            ch += 1;
         }
     }
 
@@ -137,8 +118,9 @@ int main() {
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
 
-            for (int u = 0; u < 2; u++) {
-                // testHandles[u]->objectInstance->transform.pos.y = fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+u),FP(0,0x8400);
+            for (int u = 0; u < 1000; u++) {
+                // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
+                testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
     
             // drawModel(&testObject);
