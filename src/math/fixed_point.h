@@ -9,8 +9,6 @@
 #define FP_MUL(x,y) ((int32)((int64) x * (int64) y >> (SHIFT_AMOUNT)))
 #define N_FP(i,f) FP_MUL(FP(i,f),FP(-1,0))
 
-
-
 static inline int32 fpInt(int16 integerPart, uint16 fractionalPart) {
     return (int32)(((int32)integerPart) << SHIFT_AMOUNT | (uint32) fractionalPart);
 }
@@ -72,3 +70,4 @@ static inline int32 fpDiv(int32 x, int32 y) {
     return (int32)resi;
 }
 #endif
+

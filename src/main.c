@@ -46,6 +46,29 @@ int main() {
     initChunking();
     
 
+    print("sin is ");
+    print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
+    print("\n");
+    print("\n");
+
+    print("square root of 2 is ");
+    print_dec(fpSqr(2));print("\n");
+    
+    Vec3 i = {
+        .x = fpInt(-2,0),
+        .y = fpInt(-2,0),
+        .z = fpInt(-2,0),
+    };
+    Vec3 j = {
+        .x = fpInt(2,0),
+        .y = fpInt(2,0),
+        .z = fpInt(2,0),
+    };
+
     
     // updateCameraTransform(&camera);
 
