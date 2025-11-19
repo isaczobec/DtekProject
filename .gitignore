@@ -1,4 +1,5 @@
 DRAFT.pdf
 /Libraries/*
+!/Libraries/requirements.md
 /build_windows/build_folder/*
 /build_windows/build/*

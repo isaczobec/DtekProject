@@ -8,6 +8,9 @@
 #define INDEX_DATA_TOTAL_SIZE_BYTES 2048 // how many bytes are allocated to vertex data for models
 #define MODEL_COUNT 1 // how many bytes are allocated to vertex data for models
 
+#define OBJECT_HANDLE_IN_CHUNK 0
+#define OBJECT_HANDLE_IN_DENSEARRAY 1
+
 typedef struct {
     Vec3* vertexBuffer;
     uint32 vertexCount;
@@ -16,10 +19,19 @@ typedef struct {
     uint32 indexBufferCount;
 } Model;
 
+
 typedef struct {
     Model* model;
     Transform transform;
+    int16 _handleIndex; // the index of the current object handle.
 } ObjectInstance;
+
+typedef struct {
+    int8 objectLocation; // can be either `OBJECT_HANDLE_IN_CHUNK` or `OBJECT_HANDLE_IN_DENSEARRAY` 
+    int32 index;
+    int32 chunkIndex;
+    ObjectInstance* objectInstance;
+} ObjectHandle;
 
 extern Model models[MODEL_COUNT];
 extern Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES]; // a buffer of all vertex data of all models. `Model.vertexBuffer` points to each models data.
@@ -32,6 +44,7 @@ int32 getDepth(uint16 i, uint16 j);
 void setDepth(uint16 i, uint16 j, int32 depth);
 
 extern ObjectInstance testObject;
+extern ObjectInstance testObject2;
 
 void initRasterization();
 void drawModel(const ObjectInstance* object);

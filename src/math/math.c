@@ -176,6 +176,13 @@ int32 abs(int32 x) {
     return x;
 }
 
+int32 absInteger(int32 x) {
+    if (x < 0) {
+        x = -1 * x;
+    }
+    return x;
+}
+
 int32 get(Mat3x4* mat, int8 i, int8 j) {
     uint8 index = i*4 + j;
     return mat->vals[index];
