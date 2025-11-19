@@ -41,7 +41,7 @@ int main() {
     initMath();
     initDrawing();
     initRasterization();
-    initChunks();
+    initChunking();
     
     Vec3 i = {
         .x = fpInt(-2,0),
@@ -92,6 +92,7 @@ int main() {
         }
     }
 
+    int currentHandle = 0;
     int ctr = 0;
     print("\nYOOBAGOOBA\n");
     while(1) {
@@ -122,9 +123,11 @@ int main() {
             for (int u = 0; u < 1000; u++) {
                 // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
 
+                if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
+
                 Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
                 objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
-                objPos.x = objPos.x + FP(0,0x0400);
+                objPos.x = objPos.x + FP(0,0x0800);
                 setObjectPosition(testHandles[u], &objPos);
 
 
@@ -152,13 +155,15 @@ int main() {
             swapBuffer();
             clearDepthBuffer();
         
-            // if (ctr % 200 == 0) {
-            //     moveChunks(1,0);
-            //     print("switch\n");
-            // } else if (ctr % 200 == 100) {
-            //     moveChunks(-1,0);
-            //     print("switch_back\n");
-            // }
+            if (ctr % 5 == 0 && currentHandle <= 1000) {
+                destroyObject(testHandles[currentHandle]);
+                currentHandle += 1;
+                // moveChunks(1,0);
+                // print("switch\n");
+            } else if (ctr % 200 == 100) {
+                // moveChunks(-1,0);
+                // print("switch_back\n");
+            }
 
     }
 

@@ -3,10 +3,10 @@
 #include "../math/math.h"
 #include "../rasterization/rasterization.h"
 
-#define MAX_OBJECTS_GLOBAL 1024
+#define MAX_OBJECTS_GLOBAL 4096
 
 #define CHUNK_SIZE 32
-#define MAX_OBJECTS_PER_CHUNK 32
+#define MAX_OBJECTS_PER_CHUNK 64
 #define AMOUNT_CHUNKS_SQRT ((1 << 16)/CHUNK_SIZE) // 2^16 is largest fixed point integer we can store
 #define AMOUNT_CHUNKS (AMOUNT_CHUNKS_SQRT*AMOUNT_CHUNKS_SQRT)
 
@@ -21,7 +21,7 @@ extern ObjectInstance _objectsDense[MAX_OBJECTS_GLOBAL];
 extern int32 _objectsDenseBackPtr; // back of the objects map
 
 extern ObjectHandle _objectHandles[MAX_OBJECTS_GLOBAL];
-extern int32 _objectHandlesBackPtr; // back of the objects map
+// extern int32 _objectHandlesBackPtr; // back of the objects map
 
 extern int32 totalObjects;
 
@@ -53,14 +53,14 @@ void moveObjectToDenseArray(ObjectInstance* objectInstance);
  its object handle.
  copies over the back element and changes that objects handle.
 */
-void removeObjectFromChunk(int16 chunkIndex, int16 objectIndex);
+int removeObjectFromChunk(int16 chunkIndex, int16 objectIndex);
 
 /*
  removes an object from the dense array, but does not delete
  its object handle.
  copies over the back element and changes that objects handle.
 */
-void removeObjectFromDenseArray(int16 objectIndex);
+int removeObjectFromDenseArray(int16 objectIndex);
 
 int16 getChunkIndexFromIJ(int16 relX, int16 relY);
 
@@ -72,4 +72,4 @@ int32 worldPosToChunkCoord(int32 worldX);
 
 uint8 isInRenderDistance(int32 chunkX, int32 chunkY);
 
-void initChunks();
+void initChunking();
