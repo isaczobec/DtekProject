@@ -91,7 +91,8 @@ int main() {
     // updateCameraTransform(&camera);
 
     int32 testvar = 16;
-    ObjectHandle* testHandles[testvar*testvar*4];
+    int32 testObjectsAmount = testvar*testvar*4;
+    ObjectHandle* testHandles[testObjectsAmount];
     int ch = 0;
     for (int gx = -testvar; gx <= testvar; gx++) {
         for (int gz = -testvar; gz <= testvar; gz++) {
@@ -135,6 +136,10 @@ int main() {
             camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
+
+            for (int u = 0; u < 2; u++) {
+                // testHandles[u]->objectInstance->transform.pos.y = fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+u),FP(0,0x8400);
+            }
     
             // drawModel(&testObject);
             // testObject.transform.rotation.x += FP(0,0x0400);
