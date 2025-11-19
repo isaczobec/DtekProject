@@ -16,6 +16,7 @@
 
 #define RENDER_REGION_TOTAL_CHUNKS (RENDER_REGION_SIDE_LENGTH_CHUNKS*RENDER_REGION_SIDE_LENGTH_CHUNKS)
 
+
 // TODO: Optimize this for faster searching?
 extern ObjectInstance _objectsDense[MAX_OBJECTS_GLOBAL];
 extern int32 _objectsDenseBackPtr; // back of the objects map
@@ -36,8 +37,18 @@ extern Chunk chunks[TOTAL_CHUNKS];
 extern int32 chunkDisplacementX; // how many chunk steps we have displaced the render region on the x axis
 extern int32 chunkDisplacementY; // how many chunk steps we have displaced the render region on the y axis
 
+/*
+Creates an object with the given model and transform.
+Returns a pointer to an object handle, which is used
+to refernce the object (it is passed to relevant functions).
+sets the handles status to `OBJECT_STATUS_ALIVE`
+*/
 ObjectHandle* createObjectInstance(Model* model, Transform transform);
 
+/*
+Destroys an object associated with the given objectHandle.
+Sets the handles status to `OBJECT_STATUS_ISDESTROYED`. 
+*/
 void destroyObject(ObjectHandle* objectHandle);
 
 /* Moves an object to a chunk, updating its object handle. 

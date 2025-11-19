@@ -15,3 +15,13 @@ void updateCameraTransform(Camera* camera) {
     mulVectorScalar(&camera->position, FP(-1,0), &camera->cameraTransform.pos);
     mulVectorScalar(&camera->rotation, FP(-1,0), &camera->cameraTransform.rotation);
 }
+
+void centerRenderRegionAtCamera(Camera* camera) {
+    int32 chunkX = worldPosToChunkCoord(fpMul(camera->cameraTransform.pos.x,FP(-1,0)));
+    int32 chunkY = worldPosToChunkCoord(fpMul(camera->cameraTransform.pos.z,FP(-1,0)));
+    int32 deltaX = chunkX - chunkDisplacementX;
+    int32 deltaY = chunkY - chunkDisplacementY;
+    if (deltaX != 0 || deltaY != 0) {
+        moveChunks(deltaX, deltaY);
+    }
+}

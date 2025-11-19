@@ -116,9 +116,11 @@ int main() {
 
 
             camera.position.y = FP(5,0);
+            camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
             camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
+            centerRenderRegionAtCamera(&camera);
 
             for (int u = 0; u < 1000; u++) {
                 // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
@@ -126,10 +128,14 @@ int main() {
                 if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
 
                 Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
-                objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
-                objPos.x = objPos.x + FP(0,0x0800);
+                objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x00F0))+FP(u,0)),FP(2,0x0000));
+                
+                // objPos.x = objPos.x + FP(0,0x0800);
                 setObjectPosition(testHandles[u], &objPos);
-
+                
+                testHandles[u]->objectInstance->transform.rotation.x = fpMul(FP(-ctr,0),FP(0,0x0800))+FP(u,0);
+                testHandles[u]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400))+FP(u,0);
+                testHandles[u]->objectInstance->transform.rotation.z = fpMul(FP(-ctr,0),FP(0,0x0200))+FP(u,0);
 
                 // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
@@ -155,15 +161,15 @@ int main() {
             swapBuffer();
             clearDepthBuffer();
         
-            if (ctr % 5 == 0 && currentHandle <= 1000) {
-                destroyObject(testHandles[currentHandle]);
-                currentHandle += 1;
-                // moveChunks(1,0);
-                // print("switch\n");
-            } else if (ctr % 200 == 100) {
-                // moveChunks(-1,0);
-                // print("switch_back\n");
-            }
+            // if (ctr % 5 == 0 && currentHandle <= 1000) {
+            //     destroyObject(testHandles[currentHandle]);
+            //     currentHandle += 1;
+            //     // moveChunks(1,0);
+            //     // print("switch\n");
+            // } else if (ctr % 200 == 100) {
+            //     // moveChunks(-1,0);
+            //     // print("switch_back\n");
+            // }
 
     }
 

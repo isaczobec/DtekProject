@@ -1,6 +1,7 @@
 #pragma once
 #include "../math/math.h"
 #include "../math/transforms.h"
+#include "chunks.h"
 
 typedef struct {
 
@@ -15,3 +16,5 @@ typedef struct {
 extern Camera camera;
 
 void updateCameraTransform(Camera* camera);
+
+void centerRenderRegionAtCamera(Camera* camera);
