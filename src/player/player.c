@@ -5,9 +5,9 @@ void useThruster(Player* player) {
 }
 
 void updatePitch(Player* player) {
-    player->dir = rotateYVec3(player->dir, PITCHSPEED);
+    rotateYVec3(&player->dir, PITCHSPEED);
 }
 
 void updateYaw(Player* player) {
-    player->dir = rotateZVec3(player->dir, YAWSPEED);
+    rotateZVec3(&player->dir, YAWSPEED);
 }
