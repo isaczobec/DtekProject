@@ -1,7 +1,9 @@
 #include "chunks.h"
 
 ObjectHandle _objectHandles[MAX_OBJECTS_GLOBAL];
-int32 _objectHandlesBackPtr = 0; // back of the objects map
+/* A stack of which indicies into _objectHandles are free. index 0 is the top of the stack.*/
+int32 _freeListHandles[MAX_OBJECTS_GLOBAL];
+int32 _freeListHandlesTopPtr = 0; // back of the objects map
 
 ObjectInstance _objectsDense[MAX_OBJECTS_GLOBAL];
 int32 _objectsDenseBackPtr = 0; // back of the objects map
@@ -22,6 +24,10 @@ int16 getChunkIndexingCoord(int16 chunkWorldCoord) {
     return mod;
 }
 
+int16 getChunkIndexFromWorldXY(int16 x, int16 y) {
+    return getChunkIndexingCoord(y) * RENDER_REGION_SIDE_LENGTH_CHUNKS + getChunkIndexingCoord(x);
+}
+
 uint8 isInRenderDistance(int32 chunkX, int32 chunkY) {
     return chunkX <= chunkDisplacementX + RENDER_DISTANCE_CHUNKS
         && chunkX >= chunkDisplacementX - RENDER_DISTANCE_CHUNKS
@@ -32,7 +38,7 @@ uint8 isInRenderDistance(int32 chunkX, int32 chunkY) {
 ObjectHandle* createObjectInstance(Model* model, Transform transform) {
 
     // copy the values to the dense objects array
-    if (_objectsDenseBackPtr >= MAX_OBJECTS_GLOBAL) {
+    if (_freeListHandlesTopPtr >= MAX_OBJECTS_GLOBAL) {
         print("Object limit exceeded!");
         return (ObjectHandle*) NULL;
     }
@@ -48,9 +54,9 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
     // print("\n");
 
     ObjectHandle* handle;
+    int32 freePtr = _freeListHandles[_freeListHandlesTopPtr]; // get a pointer to a free handle slot
     if (isInRenderDistance(chunkX, chunkY)) {
         // the case where we add it directly to a chunk
-
 
         // get the chunk index
         int32 chunkIndexingX = getChunkIndexingCoord(chunkX);
@@ -66,17 +72,16 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
         chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr].transform = transform;
         chunks[chunkIndex]._backPtr += 1;
 
-        _objectHandles[_objectHandlesBackPtr].objectInstance = &chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1];
-        _objectHandles[_objectHandlesBackPtr].objectLocation = OBJECT_HANDLE_IN_CHUNK;
-        _objectHandles[_objectHandlesBackPtr].index = chunks[chunkIndex]._backPtr-1;
-        _objectHandles[_objectHandlesBackPtr].chunkIndex = chunkIndex;
-        handle = &_objectHandles[_objectHandlesBackPtr];
-        _objectHandlesBackPtr += 1;
+        _objectHandles[freePtr].objectInstance = &chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1];
+        _objectHandles[freePtr].objectLocation = OBJECT_HANDLE_IN_CHUNK;
+        _objectHandles[freePtr].index = chunks[chunkIndex]._backPtr-1;
+        _objectHandles[freePtr].chunkIndex = chunkIndex;
+        handle = &_objectHandles[freePtr];
+
         
         // set the object handle pointer
-        chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1]._handleIndex = _objectHandlesBackPtr-1;
+        chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1]._handleIndex = freePtr;
         
-
     } else {
         // copy the values to the dense objects array
         _objectsDense[_objectsDenseBackPtr].model = model;
@@ -84,22 +89,29 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
         _objectsDenseBackPtr += 1;
         
         // create an object handle
-        _objectHandles[_objectHandlesBackPtr].objectInstance = &_objectsDense[_objectsDenseBackPtr-1];
-        _objectHandles[_objectHandlesBackPtr].objectLocation = OBJECT_HANDLE_IN_DENSEARRAY;
-        _objectHandles[_objectHandlesBackPtr].index = _objectsDenseBackPtr-1;
-        handle = &_objectHandles[_objectHandlesBackPtr];
-        _objectHandlesBackPtr += 1;
-    
+        _objectHandles[freePtr].objectInstance = &_objectsDense[_objectsDenseBackPtr-1];
+        _objectHandles[freePtr].objectLocation = OBJECT_HANDLE_IN_DENSEARRAY;
+        _objectHandles[freePtr].index = _objectsDenseBackPtr-1;
+        handle = &_objectHandles[freePtr];
+        
         // set the object handle pointer
-        _objectsDense[_objectsDenseBackPtr-1]._handleIndex = _objectHandlesBackPtr-1;
+        _objectsDense[_objectsDenseBackPtr-1]._handleIndex = freePtr;
     }
-
+    _freeListHandlesTopPtr += 1;
+    
     totalObjects += 1;
+    handle->status = OBJECT_STATUS_ISALIVE;
     return handle;
 
 }
 
 void moveObjectToChunk(int16 chunkIndex, ObjectInstance* objectInstance) {
+
+    if (chunks[chunkIndex]._backPtr >= MAX_OBJECTS_PER_CHUNK) {
+        print("\nObject limit exceeded!\n");
+        return;
+    }
+
     chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr] = *objectInstance;
     chunks[chunkIndex]._backPtr += 1;
 
@@ -113,6 +125,7 @@ void moveObjectToChunk(int16 chunkIndex, ObjectInstance* objectInstance) {
 }
 
 void moveObjectToDenseArray(ObjectInstance* objectInstance) {
+
     _objectsDense[_objectsDenseBackPtr] = *objectInstance;
     _objectsDenseBackPtr += 1;
     
@@ -129,7 +142,13 @@ void moveObjectToDenseArray(ObjectInstance* objectInstance) {
  its object handle.
  copies over the back element and changes that objects handle.
 */
-void removeObjectFromDenseArray(int16 objectIndex) {
+int removeObjectFromDenseArray(int16 objectIndex) {
+
+    if (objectIndex < 0 || objectIndex >= _objectsDenseBackPtr) {
+        print("\nThe object is out of bounds for the dense array! cannot remove it!\n");
+        return -1;
+    }
+
     _objectsDense[objectIndex] = _objectsDense[_objectsDenseBackPtr-1];
     _objectsDenseBackPtr -= 1;
 
@@ -139,6 +158,7 @@ void removeObjectFromDenseArray(int16 objectIndex) {
         handle->objectInstance = &_objectsDense[objectIndex];
         handle->index = objectIndex;
     }
+    return 0;
 }
 
 /*
@@ -146,7 +166,13 @@ void removeObjectFromDenseArray(int16 objectIndex) {
  its object handle.
  copies over the back element and changes that objects handle.
 */
-void removeObjectFromChunk(int16 chunkIndex, int16 objectIndex) {
+int removeObjectFromChunk(int16 chunkIndex, int16 objectIndex) {
+
+    if (objectIndex < 0 || objectIndex >= chunks[chunkIndex]._backPtr) {
+        print("\nThe object is out of bounds for the chunk! cannot remove it!\n");
+        return -1;
+    }
+
     chunks[chunkIndex]._objects[objectIndex] = chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1];
     chunks[chunkIndex]._backPtr -= 1;
 
@@ -156,9 +182,9 @@ void removeObjectFromChunk(int16 chunkIndex, int16 objectIndex) {
         handle->objectInstance = &chunks[chunkIndex]._objects[objectIndex];
         handle->index = objectIndex;
     }
+
+    return 0;
 }
-
-
 
 int32 worldPosToChunkCoord(int32 worldPos) {
     int32 worldChunk = fpDiv(worldPos, FP(CHUNK_SIZE,0));
@@ -215,20 +241,20 @@ void moveChunks(int16 delta_x, int16 delta_y) {
     int32 y_sign = 1;
     if (delta_y < 0) y_sign = -1;
 
-    print("x:\n");
-    print_dec(x_sign); print("\n");
-    print_dec(delta_x_abs); print("\n");
-    print("y:\n");
-    print_dec(y_sign); print("\n");
-    print_dec(delta_y_abs); print("\n");
+    // print("x:\n");
+    // print_dec(x_sign); print("\n");
+    // print_dec(delta_x_abs); print("\n");
+    // print("y:\n");
+    // print_dec(y_sign); print("\n");
+    // print_dec(delta_y_abs); print("\n");
 
     // loop over all x
-    print("NEW");
+    // print("NEW");
     for (int16 i = x_sign; absInteger(i) <= delta_x_abs; i += x_sign) {
         for (int16 j = chunkDisplacementY - RENDER_DISTANCE_CHUNKS; 
             j <= chunkDisplacementY + RENDER_DISTANCE_CHUNKS; j += 1) {
 
-            print("Doing a loop in\n");
+            // print("Doing a loop in\n");
 
             int16 chunkX = chunkDisplacementX + x_sign * RENDER_DISTANCE_CHUNKS + i;
             int16 chunkY = j;        
@@ -242,7 +268,7 @@ void moveChunks(int16 delta_x, int16 delta_y) {
         for (int16 i = chunkDisplacementX - RENDER_DISTANCE_CHUNKS; 
             i <= chunkDisplacementX + RENDER_DISTANCE_CHUNKS; i += 1) {
 
-            print("Doing a loop in\n");
+            // print("Doing a loop in\n");
 
             int16 chunkY = chunkDisplacementY + y_sign * RENDER_DISTANCE_CHUNKS + j;
             int16 chunkX = i;        
@@ -258,6 +284,7 @@ void moveChunks(int16 delta_x, int16 delta_y) {
 
 
 void destroyObject(ObjectHandle* objectHandle) {
+
     // remove the object from its location
     if (objectHandle->objectLocation == OBJECT_HANDLE_IN_DENSEARRAY) {
         removeObjectFromDenseArray(objectHandle->index);
@@ -267,16 +294,20 @@ void destroyObject(ObjectHandle* objectHandle) {
 
     // remove the objecthandle by copying back the last element
     int32 handleIndex = objectHandle->objectInstance->_handleIndex;
-    _objectHandles[handleIndex] = _objectHandles[_objectHandlesBackPtr-1];
-    _objectHandles[handleIndex].objectInstance->_handleIndex = handleIndex;
+    _freeListHandlesTopPtr -= 1;
+    _freeListHandles[_freeListHandlesTopPtr] = handleIndex;
 
-    _objectHandlesBackPtr -= 1;
+    objectHandle->status = OBJECT_STATUS_ISDESTROYED;
 
     totalObjects -= 1;
 }
 
-void initChunks() {
+void initChunking() {
     for (int i = 0; i < TOTAL_CHUNKS; i++) {
         chunks[i]._backPtr = 0;
+    }
+
+    for (int i = 0; i < MAX_OBJECTS_GLOBAL; i++) {
+        _freeListHandles[i] = i;
     }
 }

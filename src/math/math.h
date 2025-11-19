@@ -2,7 +2,7 @@
 #include "../types.h"
 #include "fixed_point.h"
 
-#define SIN_SAMPLES 128      // how many points in the range [0, pi/2] of the sine function we sample
+#define SIN_SAMPLES 512      // how many points in the range [0, pi/2] of the sine function we sample
 #define SIN_TAYLOR_TERMS 6  // how many taylor terms we use to calculate each sample of the sine function
 
 extern const int32 pi;

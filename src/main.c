@@ -7,6 +7,7 @@
 #include "rasterization/rasterization.h"
 #include "rasterization/camera.h"
 #include "rasterization/chunks.h"
+#include "rasterization/object_modification.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -40,29 +41,7 @@ int main() {
     initMath();
     initDrawing();
     initRasterization();
-    initChunks();
-
-    print("got past init");
-
-    print("pi is ");
-    print_dec(pi);
-    print("\n");
-
-    print("fact is ");
-    print_dec(fpFactorial(FP(4,0)));
-    print("\n");
-    print("exp is ");
-    print_dec(fpPow(FP(4,0),FP(4,0)));
-    print("\n");
-    
-    print("sin is ");
-    print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
-    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
-    print("\n");
-    print("\n");
+    initChunking();
     
     Vec3 i = {
         .x = fpInt(-2,0),
@@ -84,14 +63,11 @@ int main() {
     print_dec(resVector.x);
     print_dec(resVector.y);
     print_dec(resVector.z);
-
-    print("DSMAdkasp");
-    print("entering loop");
     
     // updateCameraTransform(&camera);
 
     int32 testvar = 16;
-    int32 testObjectsAmount = testvar*testvar*4;
+    int32 testObjectsAmount = (2*testvar+1)*(2*testvar+1);
     ObjectHandle* testHandles[testObjectsAmount];
     int ch = 0;
     for (int gx = -testvar; gx <= testvar; gx++) {
@@ -107,9 +83,16 @@ int main() {
             };
 
             testHandles[ch] = createObjectInstance(&models[0], t);
+
+            if (ch == 0) {
+                print("index in handle:");
+                print_dec(testHandles[ch]->index); print("\n");
+            }
+            ch += 1;
         }
     }
 
+    int currentHandle = 0;
     int ctr = 0;
     print("\nYOOBAGOOBA\n");
     while(1) {
@@ -133,12 +116,28 @@ int main() {
 
 
             camera.position.y = FP(5,0);
+            camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
             camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
+            centerRenderRegionAtCamera(&camera);
 
-            for (int u = 0; u < 2; u++) {
-                // testHandles[u]->objectInstance->transform.pos.y = fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+u),FP(0,0x8400);
+            for (int u = 0; u < 1000; u++) {
+                // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
+
+                if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
+
+                Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
+                objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x00F0))+FP(u,0)),FP(2,0x0000));
+                
+                // objPos.x = objPos.x + FP(0,0x0800);
+                setObjectPosition(testHandles[u], &objPos);
+                
+                testHandles[u]->objectInstance->transform.rotation.x = fpMul(FP(-ctr,0),FP(0,0x0800))+FP(u,0);
+                testHandles[u]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400))+FP(u,0);
+                testHandles[u]->objectInstance->transform.rotation.z = fpMul(FP(-ctr,0),FP(0,0x0200))+FP(u,0);
+
+                // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
     
             // drawModel(&testObject);
@@ -162,13 +161,15 @@ int main() {
             swapBuffer();
             clearDepthBuffer();
         
-            if (ctr % 200 == 0) {
-                moveChunks(1,0);
-                print("switch\n");
-            } else if (ctr % 200 == 100) {
-                moveChunks(-1,0);
-                print("switch_back\n");
-            }
+            // if (ctr % 5 == 0 && currentHandle <= 1000) {
+            //     destroyObject(testHandles[currentHandle]);
+            //     currentHandle += 1;
+            //     // moveChunks(1,0);
+            //     // print("switch\n");
+            // } else if (ctr % 200 == 100) {
+            //     // moveChunks(-1,0);
+            //     // print("switch_back\n");
+            // }
 
     }
 

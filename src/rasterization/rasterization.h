@@ -11,6 +11,9 @@
 #define OBJECT_HANDLE_IN_CHUNK 0
 #define OBJECT_HANDLE_IN_DENSEARRAY 1
 
+#define OBJECT_STATUS_ISALIVE 0
+#define OBJECT_STATUS_ISDESTROYED 1
+
 typedef struct {
     Vec3* vertexBuffer;
     uint32 vertexCount;
@@ -31,6 +34,7 @@ typedef struct {
     int32 index;
     int32 chunkIndex;
     ObjectInstance* objectInstance;
+    uint8 status;
 } ObjectHandle;
 
 extern Model models[MODEL_COUNT];
