@@ -39,7 +39,7 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
 
     // copy the values to the dense objects array
     if (_freeListHandlesTopPtr >= MAX_OBJECTS_GLOBAL) {
-        print("Object limit exceeded!");
+        print("Object limit exceeded when creating object!");
         return (ObjectHandle*) NULL;
     }
 
@@ -64,7 +64,8 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
         int32 chunkIndex = getChunkIndexFromIJ(chunkIndexingX, chunkIndexingY);
 
         if (chunks[chunkIndex]._backPtr >= MAX_OBJECTS_PER_CHUNK) {
-            print("\nObject limit exceeded!\n");
+            print("\nObject limit exceeded when creating object instance in chunk!\n");
+            print("backpointer is "); print_dec(chunks[chunkIndex]._backPtr); print(" and max objects are "); print_dec(MAX_OBJECTS_PER_CHUNK); print("\n");
             return (ObjectHandle*) NULL;
         }
         
@@ -108,7 +109,7 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
 void moveObjectToChunk(int16 chunkIndex, ObjectInstance* objectInstance) {
 
     if (chunks[chunkIndex]._backPtr >= MAX_OBJECTS_PER_CHUNK) {
-        print("\nObject limit exceeded!\n");
+        print("\nObject limit exceeded when moving to chunk!\n");
         return;
     }
 

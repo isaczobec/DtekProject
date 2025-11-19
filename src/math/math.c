@@ -3,8 +3,18 @@
 const int32 pi = 0x3243F;
 int32 _sin_samples[SIN_SAMPLES];
 
+// long long __divdi3(long long a, long long b) {
+//     return a / b;
+// }
+
 void initMath() {
     
+    int32 testDiv = FP_TOINT(fpDiv(FP(74,0),FP(2,0))); 
+    print("test div yields "); print_dec(testDiv); print("\n");
+
+    int32 testMul = FP_TOINT(fpMul(FP(74,0),FP(2,0))); 
+    print("test div yields "); print_dec(testMul); print("\n");
+
     // calculate sine samples
     int32 step = fpDiv(fpDiv(pi, FP(2,0)),FP(SIN_SAMPLES,0));
     
@@ -129,6 +139,7 @@ void crossProduct(Vec3* v1, Vec3* v2, Vec3* res) {
 
 int32 vec3Len(Vec3* len) {
     //first need implementation of inv sqrt
+    return 0;
 }
 
 void rotateXVec3(Vec3* v1, int32 angle) {

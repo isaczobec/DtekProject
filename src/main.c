@@ -38,43 +38,26 @@ void fill(uint8 rgb)
 
 int main() {
 
+    print("Starting..\n");
+
     initMath();
     initDrawing();
     initRasterization();
     initChunking();
     
-    Vec3 i = {
-        .x = fpInt(-2,0),
-        .y = fpInt(-2,0),
-        .z = fpInt(-2,0),
-    };
-    Vec3 j = {
-        .x = fpInt(2,0),
-        .y = fpInt(2,0),
-        .z = fpInt(2,0),
-    };
 
-    int32 res;
-    Vec3 resVector;
-
-    dotProduct(&i, &j, &res);
-    addVector(&i, &j, &resVector);
-    print_dec(res);
-    print_dec(resVector.x);
-    print_dec(resVector.y);
-    print_dec(resVector.z);
     
     // updateCameraTransform(&camera);
 
-    int32 testvar = 16;
+    int32 testvar = 8;
     int32 testObjectsAmount = (2*testvar+1)*(2*testvar+1);
     ObjectHandle* testHandles[testObjectsAmount];
     int ch = 0;
     for (int gx = -testvar; gx <= testvar; gx++) {
         for (int gz = -testvar; gz <= testvar; gz++) {
 
-            int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
-            int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(4,0)));
+            int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
+            int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
 
             Transform t = {
                 .pos = { .x = worldX, .y = FP(1,0), .z = worldZ },
@@ -106,6 +89,7 @@ int main() {
 
             
             fill(0);
+            print("hello\n");
     
             for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                 for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
@@ -113,6 +97,8 @@ int main() {
                     drawModel(&chunks[i]._objects[objIdx]);
                 }
             }
+            print("drew all modles\n");
+
 
             drawModel(&testObject);
 
@@ -124,7 +110,10 @@ int main() {
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
 
-            for (int u = 0; u < 1000; u++) {
+            print("updated camera\n");
+
+
+            for (int u = 0; u < 10; u++) {
                 // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
 
                 if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
@@ -141,6 +130,8 @@ int main() {
 
                 // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
+            print("moved objects \n");
+
     
             // drawModel(&testObject);
             // testObject.transform.rotation.x += FP(0,0x0400);
@@ -156,12 +147,15 @@ int main() {
             // testObject2.transform.rotation.y += FP(0,0x0100);
             // // delay(16000000);
     
-            for (int i = 2000000; i > 0; i--) {
+            // for (int i = 200; i > 0; i--) {
                 
-            }
+            // }
             ctr += 1;
             swapBuffer();
             clearDepthBuffer();
+
+            print("swapped and cleared\n");
+
         
             // if (ctr % 5 == 0 && currentHandle <= 1000) {
             //     destroyObject(testHandles[currentHandle]);

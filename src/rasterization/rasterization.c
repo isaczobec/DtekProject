@@ -120,10 +120,6 @@ void drawModel(const ObjectInstance* object) {
         v1_t.x = fpDiv(v1_t.x, ASPECT_RATIO);
         v2_t.x = fpDiv(v2_t.x, ASPECT_RATIO);
         
-        int32 view_z0 = v0_t.z;
-        int32 view_z1 = v1_t.z;
-        int32 view_z2 = v2_t.z;
-        
         // check that the triangle is past the near clip plane but not past the far clip plane
         if (v0_t.z < camera.nearClip || v1_t.z < camera.nearClip || v2_t.z < camera.nearClip
             || v0_t.z > camera.farClip || v1_t.z > camera.farClip || v2_t.z > camera.farClip) 
@@ -192,8 +188,8 @@ void drawModel(const ObjectInstance* object) {
         if (totalArea == 0) continue;
 
         // TODO: The triangle rasterization inside checking can be done 2x as effectively
-        for (int i = xMin; i < xMax; i++) {
-            for (int j = yMin; j < yMax; j++) {
+        for (int j = yMin; j < yMax; j++) {
+            for (int i = xMin; i < xMax; i++) {
 
                 // compute the edge functions to determine if the point (i,j) is inside the triangle, using cross products
                 int32 area0 = (i-p0_x) * p01_y - (j-p0_y) * p01_x;
@@ -201,26 +197,13 @@ void drawModel(const ObjectInstance* object) {
                 int32 area2 = (i-p2_x) * p20_y - (j-p2_y) * p20_x;
 
                 if (area0 <= 0 && area1 <= 0 && area2 <= 0) {
-                    
-                    // calculate the depth using barycentric coordinates
-                    // Mat3x4 eqSystBaryCentric = {
-                    //     .vals = {
-                    //         FP(p0_x,0), FP(p1_x,0), FP(p2_x,0), FP(i,0),
-                    //         FP(p0_y,0), FP(p1_y,0), FP(p2_y,0), FP(j,0),
-                    //         FP(1,0),    FP(1,0),    FP(1,0),    FP(1,0)
-                    //     }
-                    // };
-                    // reduce(&eqSystBaryCentric); // do gauss jordan reduction to calculate the barycentric coords
-                    // int32 b0 = get(&eqSystBaryCentric, 0, 3);
-                    // int32 b1 = get(&eqSystBaryCentric, 1, 3);
-                    // int32 b2 = get(&eqSystBaryCentric, 2, 3);
 
                     int32 b0 = fpDiv(FP(area0,0),FP(totalArea,0));
                     int32 b1 = fpDiv(FP(area1,0),FP(totalArea,0));
                     int32 b2 = fpDiv(FP(area2,0),FP(totalArea,0));
 
                     
-                    
+                    // source about perspective correct interpolation: https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
                     // linearly interpolate the depth
                     int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
                     int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
