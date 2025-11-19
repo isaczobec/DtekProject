@@ -53,9 +53,9 @@ uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
 ObjectInstance testObject = {
     .model = &models[0],
     .transform = {
-        .pos = {FP(0,0),FP(0,0),FP(5,0)},
+        .pos = {FP(0,0),FP(5,0),FP(5,0)},
         .rotation = {FP(0,0),FP(0,0),FP(0,0)},
-        .scale = {FP(0,0x8000),FP(0,0x8000),FP(0,0x8000)}
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
     }
 };
 ObjectInstance testObject2 = {
@@ -111,9 +111,9 @@ void drawModel(const ObjectInstance* object) {
         Vec3 v0_t;
         Vec3 v1_t;
         Vec3 v2_t;
-        applyTransform(&v0_model, &v0_t, &camera.cameraTransform);
-        applyTransform(&v1_model, &v1_t, &camera.cameraTransform);
-        applyTransform(&v2_model, &v2_t, &camera.cameraTransform);
+        applyCameraTransform(&v0_model, &v0_t, &camera);
+        applyCameraTransform(&v1_model, &v1_t, &camera);
+        applyCameraTransform(&v2_model, &v2_t, &camera);
 
         // multiply x by aspect ratio
         v0_t.x = fpDiv(v0_t.x, ASPECT_RATIO);

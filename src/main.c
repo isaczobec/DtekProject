@@ -114,11 +114,13 @@ int main() {
                 }
             }
 
+            drawModel(&testObject);
 
             camera.position.y = FP(5,0);
+            // camera.rotation.x = FP(0,0x8000);
             camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
-            camera.rotation.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
-            // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            // camera.rotation.z = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
 

@@ -8,7 +8,8 @@ typedef struct {
     int32 nearClip;
     int32 farClip;
 
-    Transform cameraTransform;
+    Transform cameraPositionTransform;
+    Transform cameraRotationTransform;
     Vec3 position;
     Vec3 rotation;
 } Camera;
@@ -18,3 +19,5 @@ extern Camera camera;
 void updateCameraTransform(Camera* camera);
 
 void centerRenderRegionAtCamera(Camera* camera);
+
+void applyCameraTransform(Vec3* v, Vec3* res, Camera* camera); 
