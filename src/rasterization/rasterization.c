@@ -5,49 +5,37 @@
 #include "../math/transforms.h"
 #include "camera.h"
 
-Model models[MODEL_COUNT] = {
-    {
-        .vertexBuffer = &vertexData[0],
-        .vertexCount = 8,
-        .indexBuffer = &indexData[0],
-        .indexBufferCount = 36  // 12 triangles * 3 vertices each
-    }
-};
-
-// Cube vertices (8 corners of a cube from -0.5 to 0.5)
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
-    // Front face
-    {N_FP(0,0x8000), N_FP(0,0x8000), FP(0,0x8000)},  // 0: bottom-left-front
-    {FP(0,0x8000),   N_FP(0,0x8000), FP(0,0x8000)},  // 1: bottom-right-front
-    {FP(0,0x8000),   FP(0,0x8000),   FP(0,0x8000)},  // 2: top-right-front
-    {N_FP(0,0x8000), FP(0,0x8000),   FP(0,0x8000)},  // 3: top-left-front
-    
-    // Back face
-    {N_FP(0,0x8000), N_FP(0,0x8000), N_FP(0,0x8000)}, // 4: bottom-left-back
-    {FP(0,0x8000),   N_FP(0,0x8000), N_FP(0,0x8000)}, // 5: bottom-right-back
-    {FP(0,0x8000),   FP(0,0x8000),   N_FP(0,0x8000)}, // 6: top-right-back
-    {N_FP(0,0x8000), FP(0,0x8000),   N_FP(0,0x8000)}, // 7: top-left-back
+    {0x10000, 0x10000, -0x10000},
+    {0x10000, -0x10000, -0x10000},
+    {0x10000, 0x10000, 0x10000},
+    {0x10000, -0x10000, 0x10000},
+    {-0x10000, 0x10000, -0x10000},
+    {-0x10000, -0x10000, -0x10000},
+    {-0x10000, 0x10000, 0x10000},
+    {-0x10000, -0x10000, 0x10000},
 };
-
-// Index buffer defining 12 triangles (2 per face, 6 faces)
 uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
-    // Front face (z = +0.5)
-    0, 1, 2,    0, 2, 3,
-    
-    // Back face (z = -0.5) 
-    5, 4, 7,    5, 7, 6,
-    
-    // Left face (x = -0.5)
-    4, 0, 3,    4, 3, 7,
-    
-    // Right face (x = +0.5)
-    1, 5, 6,    1, 6, 2,
-    
-    // Top face (y = +0.5)
-    3, 2, 6,    3, 6, 7,
-    
-    // Bottom face (y = -0.5)
-    4, 5, 1,    4, 1, 0
+    4, 2, 0,
+    2, 7, 3,
+    6, 5, 7,
+    1, 7, 5,
+    0, 3, 1,
+    4, 1, 5,
+    4, 6, 2,
+    2, 6, 7,
+    6, 4, 5,
+    1, 3, 7,
+    0, 2, 3,
+    4, 0, 1,
+};
+Model models[MODEL_COUNT] = {
+{
+.vertexBuffer = &vertexData[0],
+.vertexCount = 8,
+.indexBuffer = &indexData[0],
+.indexBufferCount = 36  // 12 triangles * 3 vertices each
+} ,
 };
 
 ObjectInstance testObject = {
