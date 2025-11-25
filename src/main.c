@@ -89,7 +89,7 @@ int main() {
 
             
             fill(0);
-            print("hello\n");
+            // print("hello\n");
     
             for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                 for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
@@ -97,7 +97,7 @@ int main() {
                     drawModel(&chunks[i]._objects[objIdx]);
                 }
             }
-            print("drew all modles\n");
+            // print("drew all modles\n");
 
 
             drawModel(&testObject);
@@ -110,7 +110,7 @@ int main() {
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
 
-            print("updated camera\n");
+            // print("updated camera\n");
 
 
             for (int u = 0; u < 10; u++) {
@@ -130,7 +130,7 @@ int main() {
 
                 // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
             }
-            print("moved objects \n");
+            // print("moved objects \n");
 
     
             // drawModel(&testObject);
@@ -154,7 +154,7 @@ int main() {
             swapBuffer();
             clearDepthBuffer();
 
-            print("swapped and cleared\n");
+            // print("swapped and cleared\n");
 
         
             // if (ctr % 5 == 0 && currentHandle <= 1000) {
