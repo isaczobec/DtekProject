@@ -4,6 +4,7 @@
 #include "../io/io.h"
 #include "../math/transforms.h"
 #include "camera.h"
+#include "color.h"
 
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
     {0x10000, 0x10000, -0x10000},
@@ -37,6 +38,10 @@ Model models[MODEL_COUNT] = {
 .indexBufferCount = 36  // 12 triangles * 3 vertices each
 } ,
 };
+
+Vec3 lightVec = {-0x8000, -0x8000, 0x0};
+int32 minLightLevel = 0x4000;
+
 
 ObjectInstance testObject = {
     .model = &models[0],
@@ -87,6 +92,17 @@ void drawModel(const ObjectInstance* object) {
         Vec3* v0 = model->vertexBuffer + *(model->indexBuffer + triangleIndex);
         Vec3* v1 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 1);
         Vec3* v2 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 2);
+
+        // calculate the normal of the face and the dot product with the light vec
+        Vec3 v01;
+        Vec3 v02;
+        subVector(v1, v0, &v01);
+        subVector(v2, v0, &v02);
+        Vec3 normal;
+        crossProduct(&v02, &v01, &normal);
+        int32 lightDot;
+        dotProduct(&lightVec, &normal, &lightDot);
+        lightDot = max(fpMul(lightDot,FP(-1,0)),minLightLevel);
         
         // apply the objects transform matrix and then the camera transform to the verticies
         Vec3 v0_model;
@@ -201,7 +217,11 @@ void drawModel(const ObjectInstance* object) {
 
                     if (depth < getDepth(i,j)) {
                         // draw(i,j,0xFF);
-                        draw(i,j,(uint8)triangleIndex+8);
+
+                        // print_dec(lightDot); print("\n");
+                        uint8 color = multiplyColor((uint8)triangleIndex+8,lightDot);
+
+                        draw(i,j,color);
                         setDepth(i,j,depth);
                     }
                 }

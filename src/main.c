@@ -8,6 +8,7 @@
 #include "rasterization/camera.h"
 #include "rasterization/chunks.h"
 #include "rasterization/object_modification.h"
+#include "rasterization/color.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -39,6 +40,8 @@ void fill(uint8 rgb)
 int main() {
 
     print("Starting..\n");
+    
+    print_hex32(multiplyColor(0xFF,0x00008000));
 
     initMath();
     initDrawing();
