@@ -83,6 +83,53 @@ int main() {
     //     }
     // }
 
+    ObjectHandle* handles[6];
+
+    Transform t0 = {
+        .pos = {FP(0,0),FP(2,0),FP(5,0)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[0] = createObjectInstance(&models[0], t0);
+
+    Transform t1 = {
+        .pos = {FP(4,0),FP(2,0),FP(5,0)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[1] = createObjectInstance(&models[1], t1);
+
+    Transform t2 = {
+        .pos = {N_FP(4,0),FP(2,0),FP(5,0)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[2] = createObjectInstance(&models[2], t2);
+
+    Transform t3 = {
+        .pos = {FP(4,0),FP(2,0),FP(9,0x8000)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[3] = createObjectInstance(&models[3], t3);
+
+    Transform t4 = {
+        .pos = {FP(0,0),FP(2,0),FP(9,0x8000)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[4] = createObjectInstance(&models[4], t4);
+
+    Transform t5 = {
+        .pos = {N_FP(4,0),FP(2,0),FP(9,0x8000)},
+        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
+        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
+    };
+    handles[5] = createObjectInstance(&models[5], t5);
+
+    camera.position.y = FP(12,0);
+    camera.rotation.x = FP(0,0x8800);
+
     int currentHandle = 0;
     int ctr = 0;
     print("\nYOOBAGOOBA\n");
@@ -108,9 +155,13 @@ int main() {
             // print("drew all modles\n");
 
 
-            drawModel(&testObject);
+            handles[0]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
+            handles[1]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
+            handles[2]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
+            handles[3]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
+            handles[4]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
+            handles[5]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
 
-            camera.position.y = FP(5,0);
             // camera.rotation.x = FP(0,0x8000);
             // camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
             // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));

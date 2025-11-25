@@ -5,29 +5,11 @@
 #include "../math/transforms.h"
 #include "camera.h"
 #include "color.h"
+#include "models.h"
 
 
-
-Vec3 lightVec = {N_FP(0,0x8000), N_FP(0,0x8000), N_FP(0,0x8000)};
+Vec3 lightVec = {N_FP(0,0x4000), FP(1,0x0000), N_FP(0,0x4000)};
 int32 minLightLevel = FP(0,0x4000);
-
-
-ObjectInstance testObject = {
-    .model = &models[0],
-    .transform = {
-        .pos = {FP(0,0),FP(5,0),FP(5,0)},
-        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
-        .scale = {FP(2,0x8000),FP(2,0x8000),FP(2,0x8000)}
-    }
-};
-ObjectInstance testObject2 = {
-    .model = &models[0],
-    .transform = {
-        .pos = {FP(0,0),FP(0,0),FP(7,0)},
-        .rotation = {FP(0,0),FP(0,0),FP(0,0)},
-        .scale = {FP(0,0x8000),FP(0,0x8000),FP(0,0x8000)}
-    }
-};
 
 int32 depthBuffer[TOTAL_PIXELS];
 
