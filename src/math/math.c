@@ -132,9 +132,16 @@ void mulVectorScalar(Vec3* v1, int32 m, Vec3* res) {
 }
 
 void crossProduct(Vec3* v1, Vec3* v2, Vec3* res) {
-    res->x = fpAdd(fpMul(v1->y,v2->z),fpMul(v1->z,v2->y));
-    res->y = fpAdd(fpMul(v1->z,v2->x),fpMul(v1->x,v2->z));
-    res->z = fpAdd(fpMul(v1->x,v2->y),fpMul(v1->y,v2->x));
+    res->x = fpSub(fpMul(v1->y,v2->z),fpMul(v1->z,v2->y));
+    res->y = fpSub(fpMul(v1->z,v2->x),fpMul(v1->x,v2->z));
+    res->z = fpSub(fpMul(v1->x,v2->y),fpMul(v1->y,v2->x));
+}
+
+void normalize(Vec3* v, Vec3* res) {
+    int32 norm = fpSqrt(fpMul(v->x,v->x) + fpMul(v->y,v->y) + fpMul(v->z,v->z));
+    res->x = fpDiv(v->x, norm);
+    res->y = fpDiv(v->y, norm);
+    res->z = fpDiv(v->z, norm);
 }
 
 int32 vec3Len(Vec3* len) {
@@ -264,4 +271,18 @@ void reduce(Mat3x4* M) {
     }
 
 
+}
+
+int32 fpSqrt(int32 f) {
+    int32 x_n = f << 1;
+    if (x_n < FP(1,0)) x_n = FP(1,0);
+
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+    x_n = fpMul(x_n + fpDiv(f,x_n),FP(0,0x8000));
+
+    return x_n;
 }

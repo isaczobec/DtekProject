@@ -4,9 +4,9 @@
 #include "../math/transforms.h"
 #include "../drawing/draw.h"
 
-#define VERTEX_DATA_TOTAL_SIZE_BYTES 2048 // how many bytes are allocated to vertex data for models
-#define INDEX_DATA_TOTAL_SIZE_BYTES 2048 // how many bytes are allocated to vertex data for models
-#define MODEL_COUNT 1 // how many bytes are allocated to vertex data for models
+#define VERTEX_DATA_TOTAL_SIZE_BYTES 8192 // how many bytes are allocated to vertex data for models
+#define INDEX_DATA_TOTAL_SIZE_BYTES 8192 // how many bytes are allocated to vertex data for models
+#define MODEL_COUNT 7 // how many bytes are allocated to vertex data for models
 
 #define OBJECT_HANDLE_IN_CHUNK 0
 #define OBJECT_HANDLE_IN_DENSEARRAY 1

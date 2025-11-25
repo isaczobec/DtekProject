@@ -64,6 +64,8 @@ int32 fpCos(int32 angle);
 int32 fpPow(int32 base, int32 exponent); 
 // asumes f >= 0. Uses fixed point.
 int32 fpFactorial(int32 f); 
+int32 fpSqrt(int32 f);
+void normalize(Vec3* v, Vec3* res);
 
 int32 max(int32 x, int32 y);
 int32 min(int32 x, int32 y);

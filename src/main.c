@@ -48,35 +48,40 @@ int main() {
     initRasterization();
     initChunking();
     
+    Vec3 a = {FP(1,0), FP(2,0), FP(1,0)};
+    Vec3 n;
+    normalize(&a, &n);
+    print_dec(n.x); print(" "); print_dec(n.y); print(" "); print_dec(n.z); print("\n");
+    
 
     
     // updateCameraTransform(&camera);
 
-    int32 testvar = 8;
-    int32 testObjectsAmount = (2*testvar+1)*(2*testvar+1);
-    ObjectHandle* testHandles[testObjectsAmount];
-    int ch = 0;
-    for (int gx = -testvar; gx <= testvar; gx++) {
-        for (int gz = -testvar; gz <= testvar; gz++) {
+    // int32 testvar = 8;
+    // int32 testObjectsAmount = (2*testvar+1)*(2*testvar+1);
+    // ObjectHandle* testHandles[testObjectsAmount];
+    // int ch = 0;
+    // for (int gx = -testvar; gx <= testvar; gx++) {
+    //     for (int gz = -testvar; gz <= testvar; gz++) {
 
-            int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
-            int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
+    //         int32 worldX = fpMul(FP(gx,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
+    //         int32 worldZ = fpMul(FP(gz,0), fpDiv(FP(CHUNK_SIZE,0),FP(2,0)));
 
-            Transform t = {
-                .pos = { .x = worldX, .y = FP(1,0), .z = worldZ },
-                .rotation = { .x = 0, .y = 0, .z = 0 },
-                .scale = { .x = FP(1,0), .y = FP(1,0), .z = FP(1,0) }
-            };
+    //         Transform t = {
+    //             .pos = { .x = worldX, .y = FP(1,0), .z = worldZ },
+    //             .rotation = { .x = 0, .y = 0, .z = 0 },
+    //             .scale = { .x = FP(1,0), .y = FP(1,0), .z = FP(1,0) }
+    //         };
 
-            testHandles[ch] = createObjectInstance(&models[0], t);
+    //         testHandles[ch] = createObjectInstance(&models[0], t);
 
-            if (ch == 0) {
-                print("index in handle:");
-                print_dec(testHandles[ch]->index); print("\n");
-            }
-            ch += 1;
-        }
-    }
+    //         if (ch == 0) {
+    //             print("index in handle:");
+    //             print_dec(testHandles[ch]->index); print("\n");
+    //         }
+    //         ch += 1;
+    //     }
+    // }
 
     int currentHandle = 0;
     int ctr = 0;
@@ -107,8 +112,8 @@ int main() {
 
             camera.position.y = FP(5,0);
             // camera.rotation.x = FP(0,0x8000);
-            camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
-            camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
+            // camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
+            // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             // camera.rotation.z = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
@@ -116,23 +121,23 @@ int main() {
             // print("updated camera\n");
 
 
-            for (int u = 0; u < 10; u++) {
-                // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
+            // for (int u = 0; u < 10; u++) {
+            //     // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
 
-                if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
+            //     if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
 
-                Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
-                objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x00F0))+FP(u,0)),FP(2,0x0000));
+            //     Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
+            //     objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x00F0))+FP(u,0)),FP(2,0x0000));
                 
-                // objPos.x = objPos.x + FP(0,0x0800);
-                setObjectPosition(testHandles[u], &objPos);
+            //     // objPos.x = objPos.x + FP(0,0x0800);
+            //     setObjectPosition(testHandles[u], &objPos);
                 
-                testHandles[u]->objectInstance->transform.rotation.x = fpMul(FP(-ctr,0),FP(0,0x0800))+FP(u,0);
-                testHandles[u]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400))+FP(u,0);
-                testHandles[u]->objectInstance->transform.rotation.z = fpMul(FP(-ctr,0),FP(0,0x0200))+FP(u,0);
+            //     testHandles[u]->objectInstance->transform.rotation.x = fpMul(FP(-ctr,0),FP(0,0x0800))+FP(u,0);
+            //     testHandles[u]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400))+FP(u,0);
+            //     testHandles[u]->objectInstance->transform.rotation.z = fpMul(FP(-ctr,0),FP(0,0x0200))+FP(u,0);
 
-                // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
-            }
+            //     // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
+            // }
             // print("moved objects \n");
 
     

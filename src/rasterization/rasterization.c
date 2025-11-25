@@ -6,41 +6,10 @@
 #include "camera.h"
 #include "color.h"
 
-Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {
-    {0x10000, 0x10000, -0x10000},
-    {0x10000, -0x10000, -0x10000},
-    {0x10000, 0x10000, 0x10000},
-    {0x10000, -0x10000, 0x10000},
-    {-0x10000, 0x10000, -0x10000},
-    {-0x10000, -0x10000, -0x10000},
-    {-0x10000, 0x10000, 0x10000},
-    {-0x10000, -0x10000, 0x10000},
-};
-uint16 indexData[INDEX_DATA_TOTAL_SIZE_BYTES] = {
-    4, 2, 0,
-    2, 7, 3,
-    6, 5, 7,
-    1, 7, 5,
-    0, 3, 1,
-    4, 1, 5,
-    4, 6, 2,
-    2, 6, 7,
-    6, 4, 5,
-    1, 3, 7,
-    0, 2, 3,
-    4, 0, 1,
-};
-Model models[MODEL_COUNT] = {
-{
-.vertexBuffer = &vertexData[0],
-.vertexCount = 8,
-.indexBuffer = &indexData[0],
-.indexBufferCount = 36  // 12 triangles * 3 vertices each
-} ,
-};
 
-Vec3 lightVec = {-0x8000, -0x8000, 0x0};
-int32 minLightLevel = 0x4000;
+
+Vec3 lightVec = {N_FP(0,0x8000), N_FP(0,0x8000), N_FP(0,0x8000)};
+int32 minLightLevel = FP(0,0x4000);
 
 
 ObjectInstance testObject = {
@@ -79,6 +48,10 @@ void setDepth(uint16 i, uint16 j, int32 depth) {
 }
 
 void initRasterization() {
+    // normalize light vector
+    normalize(&lightVec, &lightVec);
+
+    // clear depth buffer
     clearDepthBuffer();
 }
 
@@ -93,18 +66,8 @@ void drawModel(const ObjectInstance* object) {
         Vec3* v1 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 1);
         Vec3* v2 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 2);
 
-        // calculate the normal of the face and the dot product with the light vec
-        Vec3 v01;
-        Vec3 v02;
-        subVector(v1, v0, &v01);
-        subVector(v2, v0, &v02);
-        Vec3 normal;
-        crossProduct(&v02, &v01, &normal);
-        int32 lightDot;
-        dotProduct(&lightVec, &normal, &lightDot);
-        lightDot = max(fpMul(lightDot,FP(-1,0)),minLightLevel);
         
-        // apply the objects transform matrix and then the camera transform to the verticies
+        // apply the objects transform matrix 
         Vec3 v0_model;
         Vec3 v1_model;
         Vec3 v2_model;
@@ -112,6 +75,24 @@ void drawModel(const ObjectInstance* object) {
         applyTransform(v1, &v1_model, &object->transform);
         applyTransform(v2, &v2_model, &object->transform);
 
+        // calculate the normal of the face and the dot product with the light vec
+        Vec3 v01;
+        Vec3 v02;
+        subVector(&v1_model, &v0_model, &v01);
+        subVector(&v2_model, &v0_model, &v02);
+        Vec3 cross;
+        Vec3 normal;
+        crossProduct(&v01, &v02, &cross);
+        normalize(&cross, &normal);
+        // print_dec(cross.x); print(" "); print_dec(cross.y); print(" "); print_dec(cross.z); print("\n");
+        // print_dec(normal.x); print(" "); print_dec(normal.y); print(" "); print_dec(normal.z); print("\n");
+        int32 lightDot;
+        dotProduct(&lightVec, &normal, &lightDot);
+        // lightDot = fpMul(lightDot, FP(30,0));
+        // print_dec(lightDot); print("\n");
+        lightDot = max(lightDot,minLightLevel);
+        // print_dec(lightDot); print("\n");
+        
         Vec3 v0_t;
         Vec3 v1_t;
         Vec3 v2_t;
@@ -219,7 +200,8 @@ void drawModel(const ObjectInstance* object) {
                         // draw(i,j,0xFF);
 
                         // print_dec(lightDot); print("\n");
-                        uint8 color = multiplyColor((uint8)triangleIndex+8,lightDot);
+                        uint8 color = multiplyColor(0xFF,lightDot);
+                        // uint8 color = multiplyColor((uint8)triangleIndex+8,lightDot);
 
                         draw(i,j,color);
                         setDepth(i,j,depth);

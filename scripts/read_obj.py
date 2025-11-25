@@ -42,11 +42,13 @@ class Triangle():
 class Model():
     def __init__(
             self, 
+            name: str,
             vertex_data_start: int, 
             vertex_data_count: int,
             index_data_start: int, 
             index_data_count: int,
             ):
+        self.name = name
         self.vertex_data_start: int = vertex_data_start 
         self.vertex_data_count: int = vertex_data_count
         self.index_data_start: int = index_data_start
@@ -113,6 +115,7 @@ def read_obj(path: str):
                     index_ptr += 3
             
             models.append(Model(
+                filename.split(".")[0],
                 v_start,
                 vertex_ptr - v_start,
                 i_start,
@@ -134,6 +137,9 @@ def read_obj(path: str):
     for model in models:
         print(model,",",end="")
     print("\n",MODELS_END_LINE,sep="")
+
+    for i,model in enumerate(models):
+        print(f'Model* m_{model.name} = &models[{i}]')
 
 def main():
     read_obj(sys.argv[1])
