@@ -55,8 +55,6 @@ int main() {
     print("\n");
     print("\n");
 
-    print("square root of 2 is ");
-    print_dec(fpSqr(2));print("\n");
     
     Vec3 i = {
         .x = fpInt(-2,0),
