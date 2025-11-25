@@ -30,4 +30,20 @@ const uint64 rank_h = 0x8080808080808080;
 const uint64 rank_g = 0x4040404040404040;
 const uint64 rank_a = 0x0101010101010101;
 const uint64 rank_b = 0x0202020202020202;
-const uint64 file_1 = 0xFF0000000000000000FF;
+const uint64 file_1_8 = 0xFF000000000000FF;
+const uint64 file_2 = 0x00FF000000000000;
+const uint64 file_7 = 0x000000000000FF00;
+
+void make_move(*game, int32 move, uint64 curpos) {
+
+}
+
+void check_legal_move(*game, int32 move, uint64 curpos) {
+    int current_piece = 0;
+    for (int i = 0; i < 11; i++) {
+        if(game->position.StatePerPiece[i]&curpos) {
+            current_piece = i-6 * game->turn;
+            break;
+        }
+    }
+}
