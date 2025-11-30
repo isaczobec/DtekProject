@@ -8,6 +8,7 @@
 #include "rasterization/camera.h"
 #include "rasterization/chunks.h"
 #include "rasterization/object_modification.h"
+#include "chess_engine/chess.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -45,6 +46,17 @@ int main() {
     initRasterization();
     initChunking();
     
+    Game game = GAMEINIT;
+    game.positions.StatePerPiece[5] += (uint64)1<<37;
+    game.positions.StatePerSide[0] += (uint64)1<<37;
+    game.positions.StatePerSide[2] += (uint64)1<<37;
+    game.positions.StatePerPiece[5] += (uint64)1<<40;
+    game.positions.StatePerSide[1] += (uint64)1<<40;
+    game.positions.StatePerSide[2] += (uint64)1<<40;
+
+    print_board(game.positions.StatePerSide[2]);
+
+    print_board(check_legal_moves(&game, (uint64)1<<62, 2));
 
     print("sin is ");
     print("\n");
