@@ -58,8 +58,8 @@ int not_outside(uint64 curpos, int direction) {
 }
 
 int horse_block(uint64 curpos, int direction) {
-    if (curpos&rank_a && (direction == 6 || direction == -6 || direction == 15 || -15) ||
-        curpos&rank_h && (direction == 10 || direction == -10 || direction == 17 || -17) ||
+    if (curpos&rank_a && (direction == 10 || direction == -10 || direction == 17 || -17) ||
+        curpos&rank_h && (direction == 6 || direction == -6 || direction == 15 || -15) ||
         curpos&rank_b && (direction == 10 || direction == -10) ||
         curpos&rank_g && (direction == 6 || direction == -6)) {
         return 0;
