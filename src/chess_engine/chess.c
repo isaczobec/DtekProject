@@ -177,14 +177,27 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             break;
         }
     }
+    Game temp_game = *game;
 
     if (newpos&check_legal_moves(game, curpos, current_piece)) {
-        game->positions.StatePerSide[game->turn] -= curpos;
-        game->positions.StatePerPiece[current_piece+game->turn*6] -=curpos;
-        game->positions.StatePerSide[game->turn] += newpos;
-        game->positions.StatePerPiece[current_piece+game->turn*6] +=newpos;
+        temp_game.positions.StatePerSide[game->turn] -= curpos;
+        temp_game.positions.StatePerPiece[current_piece+game->turn*6] -=curpos;
+        temp_game.positions.StatePerSide[game->turn] += newpos;
+        temp_game.positions.StatePerPiece[current_piece+game->turn*6] +=newpos;
+        temp_game.positions.StatePerSide[2] -=curpos;
+        temp_game.positions.StatePerSide[2] += newpos;
+
+        for (int i = 0; i < 6; i++) {
+            if (temp_game.positions.StatePerPiece[i+!game->turn*6]&newpos) {
+                temp_game.positions.StatePerPiece[i+!game->turn*6] -= newpos;
+                temp_game.positions.StatePerSide[!game->turn] -= newpos;
+                temp_game.positions.StatePerSide[2] -=newpos;
+            }}
+        *game = temp_game;
+        game->turn = !game->turn;
         return 1;
     }
+
     return 0;
 }
 
