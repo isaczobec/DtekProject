@@ -39,6 +39,8 @@ void initRasterization() {
 
 void drawModel(const ObjectInstance* object) {
 
+    if (object->objectInstanceFlags & OBJECTINSTANCE_FLAG_HIDDEN) {return;}
+
     Model* model = object->model;
 
     for (int triangleIndex = 0; triangleIndex < model->indexBufferCount; triangleIndex += 3) {
@@ -164,29 +166,43 @@ void drawModel(const ObjectInstance* object) {
                 int32 area2 = (i-p2_x) * p20_y - (j-p2_y) * p20_x;
 
                 if (area0 <= 0 && area1 <= 0 && area2 <= 0) {
-
-                    int32 b0 = fpDiv(FP(area0,0),FP(totalArea,0));
-                    int32 b1 = fpDiv(FP(area1,0),FP(totalArea,0));
-                    int32 b2 = fpDiv(FP(area2,0),FP(totalArea,0));
-
                     
-                    // source about perspective correct interpolation: https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
-                    // linearly interpolate the depth
-                    int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
-                    int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
-                    
-                    if (interpolatedOneOverZ == 0) continue;
-                    int32 depth = fpDiv(interpolatedDepth,interpolatedOneOverZ);
+                    if (object->objectInstanceFlags & OBJECTINSTANCE_ONLY_RENDER_EDGES) {
+                        if (area0 <= EDGE_LIMIT && area1 <= EDGE_LIMIT && area2 <= EDGE_LIMIT)
+                            continue;
+                    }
+
+                    int32 depth;
+                    if (object->objectInstanceFlags & OBJECTINSTANCE_FLAG_BOTTOM_DEPTH_CHECK) {
+                        depth = 0x7FFFFFFD; // second possible positive 32 bit integer in twos complement;
+                    } else {
+                        int32 b0 = fpDiv(FP(area0,0),FP(totalArea,0));
+                        int32 b1 = fpDiv(FP(area1,0),FP(totalArea,0));
+                        int32 b2 = fpDiv(FP(area2,0),FP(totalArea,0));
+                        
+                        // source about perspective correct interpolation: https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
+                        // linearly interpolate the depth
+                        int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
+                        int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
+                        
+                        if (interpolatedOneOverZ == 0) continue;
+                        depth = fpDiv(interpolatedDepth,interpolatedOneOverZ);
+                    }
+
 
                     if (depth < getDepth(i,j)) {
                         // draw(i,j,0xFF);
 
                         // print_dec(lightDot); print("\n");
-                        uint8 color = multiplyColor(0xFF,lightDot);
+                        uint8 color = multiplyColor(object->color,lightDot);
                         // uint8 color = multiplyColor((uint8)triangleIndex+8,lightDot);
 
-                        draw(i,j,color);
-                        setDepth(i,j,depth);
+                        if (object->objectInstanceFlags & OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER) {
+                            drawToGizmoLayer(&gizmoLayer, i, j, color);
+                        } else {
+                            draw(i,j,color);
+                            setDepth(i,j,depth);
+                        }
                     }
                 }
             } 

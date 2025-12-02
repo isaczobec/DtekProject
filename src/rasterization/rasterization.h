@@ -14,6 +14,8 @@
 #define OBJECT_STATUS_ISALIVE 0
 #define OBJECT_STATUS_ISDESTROYED 1
 
+#define EDGE_LIMIT -40
+
 typedef struct {
     Vec3* vertexBuffer;
     uint32 vertexCount;
@@ -23,10 +25,17 @@ typedef struct {
 } Model;
 
 
+#define OBJECTINSTANCE_FLAG_BOTTOM_DEPTH_CHECK (1<<0)
+#define OBJECTINSTANCE_FLAG_HIDDEN             (1<<1)
+#define OBJECTINSTANCE_ONLY_RENDER_EDGES       (1<<2)
+#define OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER   (1<<3)
+
 typedef struct {
     Model* model;
     Transform transform;
     int16 _handleIndex; // the index of the current object handle.
+    uint8 color;
+    uint8 objectInstanceFlags;
 } ObjectInstance;
 
 typedef struct {

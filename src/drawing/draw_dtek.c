@@ -18,6 +18,8 @@ volatile uint32* const VGA_CONTROL = (volatile uint32*)0x04000100;
 volatile uint8* buffer = (volatile uint8*)0x08000000;
 volatile uint8* back_buffer = (volatile uint8*)0x08000000 + PIXEL_BUFFER_Y_SIZE * PIXEL_BUFFER_X_SIZE * sizeof(char);
 
+GizmoLayer gizmoLayer;
+
 void initDrawing() {
     print("Hello from DTEK-V board!\n");
 
@@ -41,6 +43,9 @@ void initDrawing() {
     print(", ");
     print_dec(screen_res_y);
     print(").");
+
+    initGizmoLayer(&gizmoLayer);
+
 }
 
 inline void draw(uint16 x, uint16 y, uint8 rgb) {
@@ -72,5 +77,24 @@ void swapBuffer() {
 void exitDrawing() {
     // we dont need to do anything on the dtek board
 }
+
+void initGizmoLayer(GizmoLayer* layer) {
+    // set all pixel colors in the gizmo stack to the 'transparent color'
+    layer->gizmoTopPtr = 0;
+}
+void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color) {
+    int index = x + y * PIXEL_BUFFER_X_SIZE;
+    layer->gizmoStack[layer->gizmoTopPtr].index = index;
+    layer->gizmoStack[layer->gizmoTopPtr].prevColor = _drawBuffer[index];
+    _drawBuffer[index] = color;
+    layer->gizmoTopPtr++;
+}
+void clearGizmoLayer(GizmoLayer* layer) {
+    for (int i = layer->gizmoTopPtr - 1; i >= 0; i--) {
+        _drawBuffer[layer->gizmoStack[i].index] = layer->gizmoStack->prevColor;
+    }
+    layer->gizmoTopPtr = 0;
+}
+
 #endif
 

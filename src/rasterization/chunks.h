@@ -42,7 +42,7 @@ Returns a pointer to an object handle, which is used
 to refernce the object (it is passed to relevant functions).
 sets the handles status to `OBJECT_STATUS_ALIVE`
 */
-ObjectHandle* createObjectInstance(Model* model, Transform transform);
+ObjectHandle* createObjectInstance(Model* model, Transform transform, uint8 color);
 
 /*
 Destroys an object associated with the given objectHandle.

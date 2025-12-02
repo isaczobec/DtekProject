@@ -35,7 +35,7 @@ uint8 isInRenderDistance(int32 chunkX, int32 chunkY) {
         && chunkY >= chunkDisplacementY - RENDER_DISTANCE_CHUNKS;
 }
 
-ObjectHandle* createObjectInstance(Model* model, Transform transform) {
+ObjectHandle* createObjectInstance(Model* model, Transform transform, uint8 color) {
 
     // copy the values to the dense objects array
     if (_freeListHandlesTopPtr >= MAX_OBJECTS_GLOBAL) {
@@ -71,6 +71,8 @@ ObjectHandle* createObjectInstance(Model* model, Transform transform) {
         
         chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr].model = model;
         chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr].transform = transform;
+        chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr].color = color;
+        chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr].objectInstanceFlags = 0;
         chunks[chunkIndex]._backPtr += 1;
 
         _objectHandles[freePtr].objectInstance = &chunks[chunkIndex]._objects[chunks[chunkIndex]._backPtr-1];

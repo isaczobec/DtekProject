@@ -9,12 +9,19 @@
 #include "../rasterization/object_modification.h"
 #include "../rasterization/color.h"
 #include "../rasterization/models.h"
+#include "../rasterization/chessboard_model.h"
+
+#define GAMESTATE_UNITIALIZED 1
+#define GAMESTATE_ACTIVE 2
 
 static const int32 SQUARE_SIZE = FP(1,0x5CCC);
 static const int32 BOARD_LEFT_CORNER_X = N_FP(5,0);
 static const int32 BOARD_LEFT_CORNER_Y = FP(1,0);
 
+static const uint8 COLOR_ARR[AMOUNT_SIDES] = {0xFF, 0xF0};
+
 extern Game game;
 extern ObjectHandle* pices_handles[AMOUNT_PIECES];
 
 void gameInit();
+void setSelectedSquare(uint8 selected);

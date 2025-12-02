@@ -19,8 +19,6 @@
 #include <stdio.h>
 #endif
 
-void handle_interrupt(unsigned mcause) {}
-
 void delay(unsigned int cycles) {
     for (int i = 0; i < cycles; i++) {
         asm volatile ("nop");
@@ -40,6 +38,8 @@ void fill(uint8 rgb)
 }
 
 int main() {
+
+    init();
 
     print("Starting..\n");
     
@@ -113,6 +113,22 @@ int main() {
             // camera.rotation.z = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
+
+            // for (int i = 0; i < 100000; i++) {
+            //     //wait
+            // }
+            for (uint16 x = 5; x < 10; x++) {
+                for (uint16 y = 5; y < 10; y++) {
+                    drawToGizmoLayer(&gizmoLayer, x, y, 0xF0);
+                }    
+            }
+            swapBuffer();
+            // for (int i = 0; i < 100000; i++) {
+            //     //wait
+            // }
+            clearGizmoLayer(&gizmoLayer);
+            // print("cleared\n");
+            swapBuffer();
 
             // print("updated camera\n");
 

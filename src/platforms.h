@@ -14,3 +14,5 @@
 // define more readable macros for windows and dtek
 #define DTEK 1
 #define WINDOWS 2
+
+void init();
