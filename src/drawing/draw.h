@@ -15,7 +15,7 @@ extern const uint32 PIXEL_BUFFER_Y_SIZE;
 #define ASPECT_RATIO fpDiv(FP(PIXEL_BUFFER_X_SIZE,0), FP(PIXEL_BUFFER_Y_SIZE,0))
 
 typedef struct {
-    uint16 index;
+    uint32 index;
     uint8 prevColor;
 } GizmoPixel;
 

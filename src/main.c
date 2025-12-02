@@ -86,106 +86,35 @@ int main() {
             if (event.type == SDL_EVENT_QUIT) return 0;
         }
         #endif
-
-            
+        
+        
+            clearGizmoLayer(&gizmoLayer);
+            clearDepthBuffer();
             fill(0);
-            // print("hello\n");
-    
+            
+            updateCameraTransform(&camera);
+            centerRenderRegionAtCamera(&camera);
             for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                 for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
                     // print("drawing");
                     drawModel(&chunks[i]._objects[objIdx]);
                 }
             }
-            // print("drew all modles\n");
 
-
-            // handles[0]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-            // handles[1]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-            // handles[2]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-            // handles[3]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-            // handles[4]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-            // handles[5]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400));
-
-            // camera.rotation.x = FP(0,0x8000);
-            // camera.position.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(50,0x8400));
-            // camera.rotation.x = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
-            // camera.rotation.z = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))),FP(0,0x8400));
-            updateCameraTransform(&camera);
-            centerRenderRegionAtCamera(&camera);
-
-            // for (int i = 0; i < 100000; i++) {
-            //     //wait
-            // }
-            for (uint16 x = 5; x < 10; x++) {
-                for (uint16 y = 5; y < 10; y++) {
-                    drawToGizmoLayer(&gizmoLayer, x, y, 0xF0);
-                }    
-            }
             swapBuffer();
-            // for (int i = 0; i < 100000; i++) {
-            //     //wait
-            // }
-            clearGizmoLayer(&gizmoLayer);
-            // print("cleared\n");
-            swapBuffer();
-
-            // print("updated camera\n");
-
-
-            // for (int u = 0; u < 10; u++) {
-            //     // print("test handle index: "); print_dec(testHandles[u]->index); print("\n");
-
-            //     if (testHandles[u]->status!=OBJECT_STATUS_ISALIVE) continue;
-
-            //     Vec3 objPos = testHandles[u]->objectInstance->transform.pos;
-            //     objPos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x00F0))+FP(u,0)),FP(2,0x0000));
-                
-            //     // objPos.x = objPos.x + FP(0,0x0800);
-            //     setObjectPosition(testHandles[u], &objPos);
-                
-            //     testHandles[u]->objectInstance->transform.rotation.x = fpMul(FP(-ctr,0),FP(0,0x0800))+FP(u,0);
-            //     testHandles[u]->objectInstance->transform.rotation.y = fpMul(FP(-ctr,0),FP(0,0x0400))+FP(u,0);
-            //     testHandles[u]->objectInstance->transform.rotation.z = fpMul(FP(-ctr,0),FP(0,0x0200))+FP(u,0);
-
-            //     // testHandles[u]->objectInstance->transform.pos.y = fpMul(fpSin(fpMul(FP(-ctr,0),FP(0,0x0080))+FP(u,0)),FP(2,0x0000));
-            // }
-            // print("moved objects \n");
-
-    
-            // drawModel(&testObject);
-            // testObject.transform.rotation.x += FP(0,0x0400);
-            // // testObject.transform.rotation.z += FP(0,0x0200);
-            // // testObject.transform.rotation.y += FP(0,0x0100);
-            // testObject.transform.pos.x = fpMul(fpSin(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
-            // // testObject.transform.pos.y = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(0,0x8000));
-            // testObject.transform.pos.z = fpMul(fpCos(fpMul(FP(ctr,0),FP(0,0x0100))),FP(1,0x0000));
             
-            // drawModel(&testObject2);
-            // testObject2.transform.rotation.x += FP(0,0x0400);
-            // testObject2.transform.rotation.z += FP(0,0x0200);
-            // testObject2.transform.rotation.y += FP(0,0x0100);
-            // // delay(16000000);
-    
-            // for (int i = 200; i > 0; i--) {
-                
-            // }
+            gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
+            while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
+                asm volatile ("nop");
+                // if (gameState == GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
+                //     print("gamestate changed to waiting to render, doing rendering!\n");
+                //     break;
+                // } else {
+                //     print("a");
+                // }
+            } 
+
             ctr += 1;
-            swapBuffer();
-            clearDepthBuffer();
-
-            // print("swapped and cleared\n");
-
-        
-            // if (ctr % 5 == 0 && currentHandle <= 1000) {
-            //     destroyObject(testHandles[currentHandle]);
-            //     currentHandle += 1;
-            //     // moveChunks(1,0);
-            //     // print("switch\n");
-            // } else if (ctr % 200 == 100) {
-            //     // moveChunks(-1,0);
-            //     // print("switch_back\n");
-            // }
 
     }
 

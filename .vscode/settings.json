@@ -16,7 +16,8 @@
         "object_modification.h": "c",
         "chess.h": "c",
         "chunks.h": "c",
-        "color.h": "c"
+        "color.h": "c",
+        "models.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

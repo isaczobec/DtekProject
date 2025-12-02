@@ -12,7 +12,8 @@
 #include "../rasterization/chessboard_model.h"
 
 #define GAMESTATE_UNITIALIZED 1
-#define GAMESTATE_ACTIVE 2
+#define GAMESTATE_ACTIVE_WAITING_FOR_MOVE 2
+#define GAMESTATE_ACTIVE_WAITING_TO_RENDER 3
 
 static const int32 SQUARE_SIZE = FP(1,0x5CCC);
 static const int32 BOARD_LEFT_CORNER_X = N_FP(5,0);
@@ -22,6 +23,10 @@ static const uint8 COLOR_ARR[AMOUNT_SIDES] = {0xFF, 0xF0};
 
 extern Game game;
 extern ObjectHandle* pices_handles[AMOUNT_PIECES];
+extern uint8 gameState;
 
+void setStateToWaitingForInput(uint8 draw);
 void gameInit();
+void updateBoardWithPieces();
 void setSelectedSquare(uint8 selected);
+void confirmSelectedSquare();

@@ -4,7 +4,10 @@ Game game;
 
 // Array to easily refer to the models for each piece
 Model* models_map[AMOUNT_PIECES_TYPES];
+
+#define NO_PIECE ((ObjectHandle*)0x00)
 ObjectHandle* pices_handles[AMOUNT_PIECES];
+uint8 pieces_ptr = 0;
 
 Vec3 boardVertexData[128*2];
 uint16 boardIndexData[192*2];
@@ -21,7 +24,17 @@ Model selectorSquareModel;
 ObjectHandle* selector1SquareHandle;
 ObjectHandle* selector2SquareHandle;
 
+#define NO_POS 0xFF
+
 uint8 gameState=GAMESTATE_UNITIALIZED;
+uint8 hoveredPos1 = 0;
+uint8 hoveredPos2 = 1;
+uint8 selectedPos1 = NO_POS;
+uint8 selectedPos2 = NO_POS;
+
+uint8 getBoardIndex(uint8 x, uint8 y) {
+    return y*BOARD_LEN + x;
+}
 
 void gameInit() {
 
@@ -62,54 +75,123 @@ void gameInit() {
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER;
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
 
-    int32 current_piece_ptr = 0;
-    // create pieces
-    for (uint32 pieceIdx = 0; pieceIdx < AMOUNT_PIECES_TYPES; ++pieceIdx) {
-        for (uint32 squareIdx = 0; squareIdx < AMOUNT_SQUARES; ++squareIdx) {
-            for (uint32 sideIdx=0; sideIdx < AMOUNT_SIDES; ++sideIdx) {
+    // init the piece array with null pointers
+    for (int i = 0; i < AMOUNT_PIECES; i++) {
+        pices_handles[i] = NO_PIECE;
+    }
 
-                if (game.positions.StatePerPiece[sideIdx*AMOUNT_PIECES_TYPES + pieceIdx] & (1ULL << squareIdx)) {
+    updateBoardWithPieces();
+    print("Initialized game!");
+}
+
+void updateBoardWithPieces()
+{
+    // delete existing pieces
+    for (int i = 0; i < AMOUNT_PIECES; i++)
+    {
+        if (pices_handles[i] != NO_PIECE)
+        {
+            destroyObject(pices_handles[i]);
+            pices_handles[i] = NO_PIECE;
+        }
+    }
+    int current_piece_index = 0;
+
+    // create pieces
+    for (uint32 pieceIdx = 0; pieceIdx < AMOUNT_PIECES_TYPES; ++pieceIdx)
+    {
+        for (uint32 squareIdx = 0; squareIdx < AMOUNT_SQUARES; ++squareIdx)
+        {
+            for (uint32 sideIdx = 0; sideIdx < AMOUNT_SIDES; ++sideIdx)
+            {
+                if (game.positions.StatePerPiece[sideIdx * AMOUNT_PIECES_TYPES + pieceIdx] & (1ULL << squareIdx))
+                {
+
                     // there was a piece here, create it
                     int32 boardX = squareIdx % BOARD_LEN;
                     int32 boardY = squareIdx / BOARD_LEN;
-                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX,0),SQUARE_SIZE);
-                    int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY,0),SQUARE_SIZE);
-    
-                    print("\nboard x is"); print_dec(boardX);
-                    print("\nboard y is"); print_dec(boardY);
-                    print("\nworld x is"); print_dec(xWorldPos);
-                    print("\nworld y is"); print_dec(yWorldPos);
-    
+                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE);
+                    int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY, 0), SQUARE_SIZE);
+
                     Transform t = {
                         .pos = {xWorldPos, 0, yWorldPos},
                         .rotation = {0, 0, 0},
-                        .scale = {FP(1,0), FP(1,0), FP(1,0)}
-                    };
-                    pices_handles[current_piece_ptr] = createObjectInstance(models_map[pieceIdx], t, COLOR_ARR[sideIdx]);
-                    current_piece_ptr += 1;
-    
+                        .scale = {FP(1, 0), FP(1, 0), FP(1, 0)}};
+                    pices_handles[current_piece_index] = createObjectInstance(models_map[pieceIdx], t, COLOR_ARR[sideIdx]);
+                    current_piece_index += 1;
                 }
             }
         }
     }
-    print("Initialized game, setting gamestate to GAMESTATE_ACTIVE!");
-    gameState = GAMESTATE_ACTIVE;
+    pieces_ptr = current_piece_index;
 }
 
 void setSelectedSquare(uint8 selected) {
-    if (gameState != GAMESTATE_ACTIVE) {
+
+    if (gameState != GAMESTATE_ACTIVE_WAITING_FOR_MOVE || selected == selectedPos1) {
         return;
     }
-    print("clearing gizmo layer\n");
+    
+    ObjectHandle* selectorToMove;
+    if (selectedPos1 == NO_POS) {
+        selectorToMove = selector1SquareHandle;
+        hoveredPos1 = selected;
+    } else {
+        selectorToMove = selector2SquareHandle;
+        hoveredPos2 = selected;
+    }
+
+    // print("clearing gizmo layer\n");
     clearGizmoLayer(&gizmoLayer);
     
-    print("moving and rendering\n");
+    // print("moving and rendering\n");
     uint8 boardY = selected / 8;
     uint8 boardX = selected % 8;
     int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX,0),SQUARE_SIZE);
     int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY,0),SQUARE_SIZE);
     Vec3 newPos = {xWorldPos, N_FP(0,0x3000), yWorldPos};
-    setObjectPosition(selector1SquareHandle, &newPos);
-    drawModel(selector1SquareHandle->objectInstance);
-    print("jsdaiods");
+    setObjectPosition(selectorToMove, &newPos);
+    drawModel(selectorToMove->objectInstance);
+    // print("jsdaiods");
+}
+
+void confirmSelectedSquare() {
+    if (gameState != GAMESTATE_ACTIVE_WAITING_FOR_MOVE) 
+        return;
+
+    if (selectedPos1 == NO_POS) {
+        selectedPos1 = hoveredPos1;
+        hoveredPos2 = (hoveredPos1+1) % 64;
+        selector2SquareHandle->objectInstance->objectInstanceFlags &= ~OBJECTINSTANCE_FLAG_HIDDEN;
+        setSelectedSquare(hoveredPos2);
+    } else {
+        selectedPos2 = hoveredPos2;
+        
+        int res = make_move(&game, 1ULL<<selectedPos1, 1ULL<<selectedPos2);
+
+        if (res == 0) {
+            print("move was illegal!\n");
+            setStateToWaitingForInput(1);
+            return;
+        }
+
+        print("performing move...\n");
+        updateBoardWithPieces();
+
+        setStateToWaitingForInput(0);
+        gameState = GAMESTATE_ACTIVE_WAITING_TO_RENDER;
+        return;
+    }
+}
+
+void setStateToWaitingForInput(uint8 draw) {
+    hoveredPos1 = 0;
+    hoveredPos2 = 1;
+    selectedPos1 = NO_POS;
+    selectedPos2 = NO_POS;
+    selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
+    if (draw) {
+        clearGizmoLayer(&gizmoLayer);
+        drawModel(selector1SquareHandle->objectInstance);
+    }
 }

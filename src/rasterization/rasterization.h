@@ -14,7 +14,7 @@
 #define OBJECT_STATUS_ISALIVE 0
 #define OBJECT_STATUS_ISDESTROYED 1
 
-#define EDGE_LIMIT -40
+#define EDGE_LIMIT -20
 
 typedef struct {
     Vec3* vertexBuffer;

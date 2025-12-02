@@ -5,6 +5,7 @@
 
 // pointer to the switches
 volatile int* const SWITCH_POINTER = (volatile int*)0x04000010;
+volatile int* const BUTTON_POINTER = (volatile int*)0x040000D0;
 
 extern void enable_interrupt(void);
 
@@ -18,23 +19,32 @@ void handle_switch_interrupt() {
     setSelectedSquare(position_switch_mask);
 }
 
+void handle_button_interrupt() {
+    // print("button interrupt\n");
+    int buttonPressed = (*BUTTON_POINTER) & 1;
+    if (buttonPressed) {
+        confirmSelectedSquare();
+    }
+}
+
 void handle_interrupt(unsigned cause) 
 {
     
-    print("interrupt recieved!\n");
+    // print("interrupt recieved!\n");
     if (cause == 17) {
-        print("switch interrupt\n");
+        // print("switch interrupt\n");
         *(SWITCH_POINTER + 3) &= (~1);
         *(SWITCH_POINTER + 3) &= (~(1<<1));
         *(SWITCH_POINTER + 3) &= (~(1<<2));
         *(SWITCH_POINTER + 3) &= (~(1<<3));
         *(SWITCH_POINTER + 3) &= (~(1<<4));
         *(SWITCH_POINTER + 3) &= (~(1<<5));
-
+        
         handle_switch_interrupt();
     } 
-    else if (cause == 16) {
-        print("timer interrupt\n");
+    else if (cause == 18) {
+        *(BUTTON_POINTER + 3) &= (~1);
+        handle_button_interrupt();
     }
 
     return;
@@ -50,6 +60,9 @@ void init() {
     *(SWITCH_POINTER + 2) = *(SWITCH_POINTER + 2) | 1<<3;
     *(SWITCH_POINTER + 2) = *(SWITCH_POINTER + 2) | 1<<4;
     *(SWITCH_POINTER + 2) = *(SWITCH_POINTER + 2) | 1<<5;
+    
+    // make the button generate IRQs
+    *(BUTTON_POINTER + 2) = *(BUTTON_POINTER + 2) | 1;
 }
 
 

@@ -288,6 +288,9 @@ void moveChunks(int16 delta_x, int16 delta_y) {
 
 void destroyObject(ObjectHandle* objectHandle) {
 
+    // get handle index
+    int32 handleIndex = (int32)(objectHandle - &_objectHandles[0]);
+
     // remove the object from its location
     if (objectHandle->objectLocation == OBJECT_HANDLE_IN_DENSEARRAY) {
         removeObjectFromDenseArray(objectHandle->index);
@@ -295,8 +298,7 @@ void destroyObject(ObjectHandle* objectHandle) {
         removeObjectFromChunk(objectHandle->chunkIndex, objectHandle->index);
     }
 
-    // remove the objecthandle by copying back the last element
-    int32 handleIndex = objectHandle->objectInstance->_handleIndex;
+    // put this handle index back on the free list
     _freeListHandlesTopPtr -= 1;
     _freeListHandles[_freeListHandlesTopPtr] = handleIndex;
 

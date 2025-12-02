@@ -83,6 +83,9 @@ void initGizmoLayer(GizmoLayer* layer) {
     layer->gizmoTopPtr = 0;
 }
 void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color) {
+
+    if (x >= PIXEL_BUFFER_X_SIZE || y >= PIXEL_BUFFER_Y_SIZE || layer->gizmoTopPtr >= TOTAL_PIXELS) return;
+    
     int index = x + y * PIXEL_BUFFER_X_SIZE;
     layer->gizmoStack[layer->gizmoTopPtr].index = index;
     layer->gizmoStack[layer->gizmoTopPtr].prevColor = _drawBuffer[index];
@@ -91,7 +94,7 @@ void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color) {
 }
 void clearGizmoLayer(GizmoLayer* layer) {
     for (int i = layer->gizmoTopPtr - 1; i >= 0; i--) {
-        _drawBuffer[layer->gizmoStack[i].index] = layer->gizmoStack->prevColor;
+        _drawBuffer[layer->gizmoStack[i].index] = layer->gizmoStack[i].prevColor;
     }
     layer->gizmoTopPtr = 0;
 }
