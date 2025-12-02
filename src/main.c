@@ -9,6 +9,7 @@
 #include "rasterization/chunks.h"
 #include "rasterization/object_modification.h"
 #include "rasterization/color.h"
+#include "chess_engine/chess.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -48,11 +49,44 @@ int main() {
     initRasterization();
     initChunking();
     
-    Vec3 a = {FP(1,0), FP(2,0), FP(1,0)};
-    Vec3 n;
-    normalize(&a, &n);
-    print_dec(n.x); print(" "); print_dec(n.y); print(" "); print_dec(n.z); print("\n");
+    Game game = GAMEINIT;
+    game.positions.StatePerPiece[0] += (uint64)1<<37;
+    game.positions.StatePerSide[0] += (uint64)1<<37;
+    game.positions.StatePerSide[2] += (uint64)1<<37;
+    game.positions.StatePerPiece[10] += (uint64)1<<30;
+    game.positions.StatePerSide[1] += (uint64)1<<30;
+    game.positions.StatePerSide[2] += (uint64)1<<30;
+
+    print_board(game.positions.StatePerSide[2]);
+
+    print_board(check_legal_moves(&game, (uint64)1<<37, 0));
+
+    make_move(&game, (uint64)1<<37, (uint64)1<<30);
+
+    print_board(game.positions.StatePerSide[2]);
+
+
+
+    print("sin is ");
+    print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(1,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(2,0)),FP(3,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(3,0)),FP(4,0))));print("\n");
+    print_dec(fpSin(fpDiv(fpMul(pi,FP(-1,0)),FP(6,0))));print("\n");
+    print("\n");
+    print("\n");
+
     
+    Vec3 i = {
+        .x = fpInt(-2,0),
+        .y = fpInt(-2,0),
+        .z = fpInt(-2,0),
+    };
+    Vec3 j = {
+        .x = fpInt(2,0),
+        .y = fpInt(2,0),
+        .z = fpInt(2,0),
+    };
 
     
     // updateCameraTransform(&camera);
