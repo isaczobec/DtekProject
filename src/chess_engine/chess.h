@@ -15,6 +15,13 @@ static const int32 ROOK = 3;
 static const int32 QUEEN = 4;
 static const int32 KING = 5;
 
+#define AMOUNT_PIECES_TYPES 6
+#define AMOUNT_SQUARES 64
+#define BOARD_LEN 8
+#define AMOUNT_SIDES 2
+#define AMOUNT_PIECES 32
+
+
 //Identifier for each colour
 static const int32 WHITE = 0;
 static const int32 BLACK = 1;

@@ -1,4 +1,5 @@
 #include "chess.h"
+#include "../io/io.h"
 
 //shorthand for checking one square in each direction
 const int32 UP = 8;
@@ -122,7 +123,8 @@ uint64 check_pawn_moves(Game *game, uint64 curpos) {
     uint64 legal_moves = 0;
     if (not_blocked_by_piece(game, shift(curpos, 2*game->turn*DOWN+UP))) {
         legal_moves += shift(curpos, 2*game->turn*DOWN+UP);
-        printf("\n%d\n", 2*game->turn*DOWN+UP);
+
+        print("\n"); print_dec(2*game->turn*DOWN+UP); print("\n");
         if(file_2&curpos || file_7&curpos && not_blocked_by_piece(game, shift(curpos, (2*game->turn*DOWN+UP)*2))) {
             legal_moves += shift(curpos, (2*game->turn*DOWN+UP)*2);
         }
@@ -202,7 +204,7 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
 }
 
 void print_board(uint64 position) {
-    printf("\n");
+    print("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             char dig = ' ';
@@ -212,8 +214,8 @@ void print_board(uint64 position) {
             } else {
                 dig = '0';
             }
-            printf("%c ", dig);
+            print(&dig);
         }
-        printf("\n");
+        print("\n");
     }
 }

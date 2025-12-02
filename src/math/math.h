@@ -6,6 +6,7 @@
 #define SIN_TAYLOR_TERMS 6  // how many taylor terms we use to calculate each sample of the sine function
 
 extern const int32 pi;
+extern const int32 pi_half;
 extern int32 _sin_samples[SIN_SAMPLES];
 
 typedef struct {

@@ -1,6 +1,7 @@
 #include "math.h"
 
 const int32 pi = 0x3243F;
+const int32 pi_half = 0x19220;
 int32 _sin_samples[SIN_SAMPLES];
 
 // long long __divdi3(long long a, long long b) {
