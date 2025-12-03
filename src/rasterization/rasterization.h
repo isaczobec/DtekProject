@@ -56,8 +56,12 @@ extern int32 minLightLevel;
 extern int32 depthBuffer[TOTAL_PIXELS]; // stores the depth of all pixels of the screen.
 // sets all pixels of the depth buffer to the max possible value.
 void clearDepthBuffer();
-int32 getDepth(uint16 i, uint16 j);
-void setDepth(uint16 i, uint16 j, int32 depth);
+static inline int32 getDepth(uint16 i, uint16 j) {
+    return depthBuffer[j*PIXEL_BUFFER_X_SIZE + i];
+}
+static inline void setDepth(uint16 i, uint16 j, int32 depth) {
+    depthBuffer[j*PIXEL_BUFFER_X_SIZE + i] = depth;
+}
 
 void initRasterization();
 void drawModel(const ObjectInstance* object);

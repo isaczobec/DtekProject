@@ -48,11 +48,6 @@ void initDrawing() {
 
 }
 
-inline void draw(uint16 x, uint16 y, uint8 rgb) {
-    int offset = x + y * PIXEL_BUFFER_X_SIZE;
-    *(_drawBuffer + offset) = rgb;
-}
-
 
 void swapBuffer() {
 
@@ -81,16 +76,6 @@ void exitDrawing() {
 void initGizmoLayer(GizmoLayer* layer) {
     // set all pixel colors in the gizmo stack to the 'transparent color'
     layer->gizmoTopPtr = 0;
-}
-void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color) {
-
-    if (x >= PIXEL_BUFFER_X_SIZE || y >= PIXEL_BUFFER_Y_SIZE || layer->gizmoTopPtr >= TOTAL_PIXELS) return;
-    
-    int index = x + y * PIXEL_BUFFER_X_SIZE;
-    layer->gizmoStack[layer->gizmoTopPtr].index = index;
-    layer->gizmoStack[layer->gizmoTopPtr].prevColor = _drawBuffer[index];
-    _drawBuffer[index] = color;
-    layer->gizmoTopPtr++;
 }
 void clearGizmoLayer(GizmoLayer* layer) {
     for (int i = layer->gizmoTopPtr - 1; i >= 0; i--) {

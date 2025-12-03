@@ -31,7 +31,10 @@ extern GizmoLayer gizmoLayer;
 void initDrawing();
 
 /* Draw a pixel to `x,y`, coloring it `rgb`.*/
-void draw(uint16 x, uint16 y, uint8 rgb);
+static inline void draw(uint16 x, uint16 y, uint8 rgb) {
+    int offset = x + y * PIXEL_BUFFER_X_SIZE;
+    *(_drawBuffer + offset) = rgb;
+}
 
 /* swap front and back buffers. */
 void swapBuffer();
@@ -41,5 +44,14 @@ void exitDrawing();
 
 
 void initGizmoLayer(GizmoLayer* layer);
-void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color);
+static inline void drawToGizmoLayer(GizmoLayer* layer, uint16 x, uint16 y, uint8 color) {
+
+    if (x >= PIXEL_BUFFER_X_SIZE || y >= PIXEL_BUFFER_Y_SIZE || layer->gizmoTopPtr >= TOTAL_PIXELS) return;
+    
+    int index = x + y * PIXEL_BUFFER_X_SIZE;
+    layer->gizmoStack[layer->gizmoTopPtr].index = index;
+    layer->gizmoStack[layer->gizmoTopPtr].prevColor = _drawBuffer[index];
+    _drawBuffer[index] = color;
+    layer->gizmoTopPtr++;
+}
 void clearGizmoLayer(GizmoLayer* layer);

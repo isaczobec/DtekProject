@@ -6,7 +6,7 @@
 #include "camera.h"
 #include "color.h"
 #include "models.h"
-
+#include "../performance_analysis/performance_analysis.h"
 
 Vec3 lightVec = {N_FP(0,0x4000), FP(1,0x0000), N_FP(0,0x4000)};
 int32 minLightLevel = FP(0,0x4000);
@@ -22,12 +22,6 @@ void clearDepthBuffer() {
         }
     }
 }
-int32 getDepth(uint16 i, uint16 j) {
-    return depthBuffer[j*PIXEL_BUFFER_X_SIZE + i];
-}
-void setDepth(uint16 i, uint16 j, int32 depth) {
-    depthBuffer[j*PIXEL_BUFFER_X_SIZE + i] = depth;
-}
 
 void initRasterization() {
     // normalize light vector
@@ -39,12 +33,15 @@ void initRasterization() {
 
 void drawModel(const ObjectInstance* object) {
 
+
     if (object->objectInstanceFlags & OBJECTINSTANCE_FLAG_HIDDEN) {return;}
 
     Model* model = object->model;
-
+    
     for (int triangleIndex = 0; triangleIndex < model->indexBufferCount; triangleIndex += 3) {
-
+        
+        clearCsrRegs();
+        
         // get the verticies
         Vec3* v0 = model->vertexBuffer + *(model->indexBuffer + triangleIndex);
         Vec3* v1 = model->vertexBuffer + *(model->indexBuffer + triangleIndex + 1);
@@ -138,6 +135,10 @@ void drawModel(const ObjectInstance* object) {
 
         int32 p2_x = FP_TOINT(fpMul(fpAdd(v2_t.x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1));
         int32 p2_y = FP_TOINT(fpMul(fpAdd(fpMul(v2_t.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1));
+        
+        
+        incrementCsrCounterVars();
+
 
         // calculate the differences
         int32 p01_x = p1_x - p0_x;

@@ -11,6 +11,7 @@
 #include "rasterization/color.h"
 #include "chess_engine/chess.h"
 #include "game/game.h"
+#include "performance_analysis/performance_analysis.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -87,6 +88,7 @@ int main() {
         }
         #endif
         
+
         
             clearGizmoLayer(&gizmoLayer);
             clearDepthBuffer();
@@ -94,12 +96,16 @@ int main() {
             
             updateCameraTransform(&camera);
             centerRenderRegionAtCamera(&camera);
+
+            resetCsrCounterVars();
+            clearCsrRegs();
             for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                 for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
                     // print("drawing");
                     drawModel(&chunks[i]._objects[objIdx]);
                 }
             }
+            printCsrCounterVars();
 
             swapBuffer();
             
