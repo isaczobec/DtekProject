@@ -31,6 +31,7 @@ static const int32 BOTH = 2;
 
 static const int32 InProgress = 0;
 static const int32 GameOver = 1;
+static const int32 Check = 2;
 
 //The starting states of a standard chess board
 

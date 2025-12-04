@@ -51,6 +51,7 @@ int main() {
     initChunking();
     
      Game game = GAMEINIT;
+     game.gamestate = Check;
      game.positions = POS0;
      for(int i = 0; i < 4; i++) {
         game.castling[i] = 0;
@@ -70,6 +71,9 @@ int main() {
      print_board(game.positions.StatePerSide[2]);
      print_board(check_legal_moves(&game, (uint64)1<<12, 3));
      print_board(check_legal_moves(&game, (uint64)1<<44, 5));
+
+     make_move(&game, 1<<12, 1<<28);
+     printf("%d", game.gamestate);
 
 
 
