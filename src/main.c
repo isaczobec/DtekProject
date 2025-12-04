@@ -50,24 +50,30 @@ int main() {
     initRasterization();
     initChunking();
     
-    // Game game = GAMEINIT;
-    // game.positions.StatePerPiece[0] += (uint64)1<<37;
-    // game.positions.StatePerSide[0] += (uint64)1<<37;
-    // game.positions.StatePerSide[2] += (uint64)1<<37;
-    // game.positions.StatePerPiece[10] += (uint64)1<<30;
-    // game.positions.StatePerSide[1] += (uint64)1<<30;
-    // game.positions.StatePerSide[2] += (uint64)1<<30;
+     Game game = GAMEINIT;
+     game.positions = POS0;
+     for(int i = 0; i < 4; i++) {
+        game.castling[i] = 0;
+     }
+     game.positions.StatePerPiece[5] += (uint64)1<<44;
+     game.positions.StatePerSide[0] += (uint64)1<<44;
+     game.positions.StatePerSide[2] += (uint64)1<<44;
 
-    // print_board(game.positions.StatePerSide[2]);
+     game.positions.StatePerPiece[3] += (uint64)1<<12;
+     game.positions.StatePerSide[0] += (uint64)1<<12;
+     game.positions.StatePerSide[2] += (uint64)1<<12;
+     
+     game.positions.StatePerPiece[9] += (uint64)1<<28;
+     game.positions.StatePerSide[1] += (uint64)1<<28;
+     game.positions.StatePerSide[2] += (uint64)1<<28;
 
-    // print_board(check_legal_moves(&game, (uint64)1<<37, 0));
-
-    // make_move(&game, (uint64)1<<37, (uint64)1<<30);
-
-    // print_board(game.positions.StatePerSide[2]);
+     print_board(game.positions.StatePerSide[2]);
+     print_board(check_legal_moves(&game, (uint64)1<<12, 3));
+     print_board(check_legal_moves(&game, (uint64)1<<44, 5));
 
 
-    gameInit();
+
+    /*gameInit();
 
     camera.position.y = FP(6,0);
     camera.rotation.x = FP(0,0xC800);
@@ -116,7 +122,7 @@ int main() {
 
             ctr += 1;
 
-    }
+    }*/
 
     exitDrawing();
 
