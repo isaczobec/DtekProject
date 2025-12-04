@@ -53,26 +53,35 @@ int main() {
      Game game = GAMEINIT;
      game.gamestate = Check;
      game.positions = POS0;
+     game.turn = !game.turn;
      for(int i = 0; i < 4; i++) {
         game.castling[i] = 0;
      }
-     game.positions.StatePerPiece[5] += (uint64)1<<44;
-     game.positions.StatePerSide[0] += (uint64)1<<44;
-     game.positions.StatePerSide[2] += (uint64)1<<44;
+     game.positions.StatePerPiece[5] += (uint64)1<<63;
+     game.positions.StatePerSide[0] += (uint64)1<<63;
+     game.positions.StatePerSide[2] += (uint64)1<<63;
 
-     game.positions.StatePerPiece[3] += (uint64)1<<12;
-     game.positions.StatePerSide[0] += (uint64)1<<12;
-     game.positions.StatePerSide[2] += (uint64)1<<12;
+     game.positions.StatePerPiece[9] += (uint64)1<<61;
+     game.positions.StatePerSide[1] += (uint64)1<<61;
+     game.positions.StatePerSide[2] += (uint64)1<<61;
      
-     game.positions.StatePerPiece[9] += (uint64)1<<28;
-     game.positions.StatePerSide[1] += (uint64)1<<28;
-     game.positions.StatePerSide[2] += (uint64)1<<28;
+     game.positions.StatePerPiece[9] += (uint64)1<<45;
+     game.positions.StatePerSide[1] += (uint64)1<<45;
+     game.positions.StatePerSide[2] += (uint64)1<<45;
+
+     Game opp_game = game;
+
+     opp_game.turn = !game.turn;
 
      print_board(game.positions.StatePerSide[2]);
-     print_board(check_legal_moves(&game, (uint64)1<<12, 3));
-     print_board(check_legal_moves(&game, (uint64)1<<44, 5));
+     print_board(check_legal_moves(&game, (uint64)1<<45, 9));
+     print_board(check_legal_moves(&opp_game, (uint64)1<<63, 5));
 
-     make_move(&game, 1<<12, 1<<28);
+     make_move(&game, (uint64)1<<45, (uint64)1<<53);
+     print_board(game.positions.StatePerSide[2]);
+     print_board(game.positions.StatePerSide[1]);
+     print_board(game.positions.StatePerPiece[9]);
+     print_board(check_legal_moves(&game, (uint64)1<<63, 5));
      printf("%d", game.gamestate);
 
 
