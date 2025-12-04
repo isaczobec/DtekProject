@@ -1300,13 +1300,7 @@ glyphs[160] = (BBFGlyph){
     .bitmapPtr = &bitmaps[605],
     .bitmapRows = 0
 };
-glyphs[8208] = (BBFGlyph){
-    .advanceWidth = 6,
-    .xOffset = 0,
-    .yOffset = 3,
-    .bitmapPtr = &bitmaps[605],
-    .bitmapRows = 1
-};
+
 
 }
 

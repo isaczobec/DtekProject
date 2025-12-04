@@ -9,12 +9,18 @@ volatile int* const BUTTON_POINTER = (volatile int*)0x040000D0;
 
 extern void enable_interrupt(void);
 
+InputState currentState;
+
+
 // returns the bitmask of the switches.
 int get_sw() {
   return (*SWITCH_POINTER) & (0x3FF);
 }
 
 void handle_switch_interrupt() {
+
+    currentState.switches = (uint8)get_sw();
+
     uint8 position_switch_mask = (uint8)get_sw() & 0x3F; // the switch positions corresponding to changing the position of the player
     setSelectedSquare(position_switch_mask);
 }
@@ -23,6 +29,7 @@ void handle_button_interrupt() {
     // print("button interrupt\n");
     int buttonPressed = (*BUTTON_POINTER) & 1;
     if (buttonPressed) {
+        currentState.pressedButton = 1;
         confirmSelectedSquare();
     }
 }
@@ -68,6 +75,15 @@ void init() {
 int poll() {
     asm volatile ("nop");
     return 0;
+}
+
+InputState getInputState() {
+	InputState curr = currentState;
+	currentState = (InputState){
+		.switches = get_sw(),
+		.pressedButton = 0
+	};
+	return curr;
 }
 
 #endif
