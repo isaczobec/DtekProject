@@ -15,4 +15,9 @@
 #define DTEK 1
 #define WINDOWS 2
 
+/* Function to initialize platform specefic functions.*/
 void init();
+
+/* Function to run to get input and poll events.
+Returns 1 if the program should exit, else 0.*/
+int poll();

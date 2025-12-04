@@ -8,6 +8,7 @@
 #include "SDL3/SDL.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "../game/game.h"
 
 uint8* _drawBuffer;
 const uint32 PIXEL_BUFFER_X_SIZE = 320;
@@ -65,5 +66,4 @@ void clearGizmoLayer(GizmoLayer* layer) {
     }
     layer->gizmoTopPtr = 0;
 }
-
 #endif

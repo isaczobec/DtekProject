@@ -65,6 +65,9 @@ void init() {
     *(BUTTON_POINTER + 2) = *(BUTTON_POINTER + 2) | 1;
 }
 
-
+int poll() {
+    asm volatile ("nop");
+    return 0;
+}
 
 #endif
