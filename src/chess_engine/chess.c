@@ -326,9 +326,9 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 56*!game->turn);
             temp_game.positions.StatePerSide[2] -= shift((uint64)1, 56*!game->turn);
             temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 56*!game->turn);
-            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+4);
-            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+4);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+4);
+            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+3);
+            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+3);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+3);
 
         } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 63*!game->turn)) {
             temp_game.castling[game->turn] = 0;
