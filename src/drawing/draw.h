@@ -26,6 +26,7 @@ typedef struct {
 } GizmoLayer;
 
 extern GizmoLayer gizmoLayer;
+extern GizmoLayer textLayer;
 
 /* Initialize everything needed to draw pixels to the screen.*/
 void initDrawing();

@@ -19,6 +19,7 @@ SDL_Renderer* ren;
 SDL_Texture* tex;
 
 GizmoLayer gizmoLayer;
+GizmoLayer textLayer;
 
 /* Initialize everything needed to draw pixels to the screen.*/
 void initDrawing() {
@@ -35,6 +36,7 @@ void initDrawing() {
     print("drawing initialized!");
 
     initGizmoLayer(&gizmoLayer);
+    initGizmoLayer(&textLayer);
 }
 
 /* Draw a pixel to `x,y`, coloring it `rgb`.*/

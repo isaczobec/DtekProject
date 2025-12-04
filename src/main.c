@@ -12,6 +12,7 @@
 #include "chess_engine/chess.h"
 #include "game/game.h"
 #include "performance_analysis/performance_analysis.h"
+#include "rasterization/font.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -50,6 +51,7 @@ int main() {
     initDrawing();
     initRasterization();
     initChunking();
+    init_glyphs();
     
     // Game game = GAMEINIT;
     // game.positions.StatePerPiece[0] += (uint64)1<<37;
@@ -99,6 +101,8 @@ int main() {
             }
         }
         printCsrCounterVars();
+
+        draw_string("HELLO THERE", 40, 40);
 
         swapBuffer();
         

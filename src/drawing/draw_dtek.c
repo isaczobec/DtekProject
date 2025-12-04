@@ -19,6 +19,8 @@ volatile uint8* buffer = (volatile uint8*)0x08000000;
 volatile uint8* back_buffer = (volatile uint8*)0x08000000 + PIXEL_BUFFER_Y_SIZE * PIXEL_BUFFER_X_SIZE * sizeof(char);
 
 GizmoLayer gizmoLayer;
+GizmoLayer textLayer;
+
 
 void initDrawing() {
     print("Hello from DTEK-V board!\n");
@@ -45,7 +47,7 @@ void initDrawing() {
     print(").");
 
     initGizmoLayer(&gizmoLayer);
-
+    initGizmoLayer(&textLayer);
 }
 
 
