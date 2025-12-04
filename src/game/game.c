@@ -80,8 +80,10 @@ void gameInit() {
         pices_handles[i] = NO_PIECE;
     }
 
+    draw_string("Player 1 Turn!", 30,30);
+
     updateBoardWithPieces();
-    print("Initialized game!");
+    print("Initialized game!\n");
 }
 
 void updateBoardWithPieces()
@@ -176,6 +178,11 @@ void confirmSelectedSquare() {
 
         if (res == 0) {
             print("move was illegal!\n");
+
+            clearGizmoLayer(&textLayer);
+            draw_string("Move was ILLEGAL!", 200, 30);
+            swapBuffer();
+
             setStateToWaitingForInput(1);
             return;
         }
@@ -190,11 +197,22 @@ void confirmSelectedSquare() {
     }
 }
 
+void printStatusText() {
+    if (game.turn % 2 == 0) {
+        draw_string("PLAYER 1 TURN!", 30, 30);
+    } else {
+        draw_string("PLAYER 2 TURN!", 30, 30);
+    }
+}
+
 void setStateToWaitingForInput(uint8 draw) {
     hoveredPos1 = 0;
     hoveredPos2 = 1;
     selectedPos1 = NO_POS;
     selectedPos2 = NO_POS;
+
+    printStatusText();
+    
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
     if (draw) {
         clearGizmoLayer(&gizmoLayer);

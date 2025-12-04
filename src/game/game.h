@@ -10,6 +10,7 @@
 #include "../rasterization/color.h"
 #include "../rasterization/models.h"
 #include "../rasterization/chessboard_model.h"
+#include "../rasterization/font.h"
 
 #define GAMESTATE_UNITIALIZED 1
 #define GAMESTATE_ACTIVE_WAITING_FOR_MOVE 2

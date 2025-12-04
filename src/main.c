@@ -100,9 +100,8 @@ int main() {
                 drawModel(&chunks[i]._objects[objIdx]);
             }
         }
+        setStateToWaitingForInput(1);
         printCsrCounterVars();
-
-        draw_string("HELLO THERE", 40, 40);
 
         swapBuffer();
         
