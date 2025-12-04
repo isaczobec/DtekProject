@@ -162,20 +162,20 @@ uint64 check_king_moves(Game *game, uint64 curpos) {
     Game temp_game = *game;
 
     if(game->castling[game->turn]) {
-        if(not_check_check(game, curpos) && not_check_check(game, shift(curpos, RIGHT+2*game->turn*LEFT))
-            && not_check_check(game, shift(curpos, 2*(RIGHT+2*game->turn*LEFT))) &&
-            !(game->positions.StatePerSide[2]&shift(curpos, RIGHT+2*game->turn*LEFT)) &&
-            !(game->positions.StatePerSide[2]&shift(curpos, 2*(RIGHT+2*game->turn*LEFT)))) {
-                legal_moves += shift(curpos, 2*(RIGHT+2*game->turn*LEFT));
+        if(not_check_check(game, curpos) && not_check_check(game, shift(curpos, RIGHT))
+            && not_check_check(game, shift(curpos, 2*RIGHT)) &&
+            !(game->positions.StatePerSide[2]&shift(curpos, RIGHT)) &&
+            !(game->positions.StatePerSide[2]&shift(curpos, 2*RIGHT))) {
+                legal_moves += shift(curpos, 2*RIGHT);
             }
     }
     if(game->castling[game->turn+2]) {
-            if(not_check_check(game, curpos) && not_check_check(game, shift(curpos, LEFT+2*game->turn*RIGHT))
-            && not_check_check(game, shift(curpos, 2*(LEFT+2*game->turn*RIGHT))) &&
-            !(game->positions.StatePerSide[2]&shift(curpos, LEFT+2*game->turn*RIGHT)) &&
-            !(game->positions.StatePerSide[2]&shift(curpos, 2*(LEFT+2*game->turn*RIGHT))) &&
-            !(game->positions.StatePerSide[2]&shift(curpos, 3*(LEFT+2*game->turn*RIGHT)))) {
-                legal_moves += shift(curpos, 2*(LEFT+2*game->turn*RIGHT));
+            if(not_check_check(game, curpos) && not_check_check(game, shift(curpos, LEFT))
+            && not_check_check(game, shift(curpos, 2*LEFT)) &&
+            !(game->positions.StatePerSide[2]&shift(curpos, LEFT)) &&
+            !(game->positions.StatePerSide[2]&shift(curpos, 2*LEFT)) &&
+            !(game->positions.StatePerSide[2]&shift(curpos, 3*LEFT))) {
+                legal_moves += shift(curpos, 2*LEFT);
             }
     }
     temp_game.positions.StatePerPiece[game->turn+KING] -= curpos;
@@ -314,21 +314,21 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.positions.StatePerSide[!game->turn] -= shift(newpos, (2*game->turn*UP+DOWN));
             temp_game.positions.StatePerSide[2] -= shift(newpos, (2*game->turn*UP+DOWN));   
 
-        } else if(current_piece == KING && newpos&shift(curpos, 2*(2*LEFT*game->turn+RIGHT))) {
-            temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 63*!game->turn);
-            temp_game.positions.StatePerSide[2] -= shift((uint64)1, 63*!game->turn);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 63*!game->turn);
-            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 59*!game->turn+2);
-            temp_game.positions.StatePerSide[2] += shift((uint64)1, 59*!game->turn+2);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 59*!game->turn+2);
+        } else if(current_piece == KING && newpos&shift(curpos, 2*RIGHT)) {
+            temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 7+56*!game->turn);
+            temp_game.positions.StatePerSide[2] -= shift((uint64)1, 7+56*!game->turn);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 7+56*!game->turn);
+            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+5);
+            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+5);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+5);
 
-        } else if(current_piece == KING && newpos&shift(curpos, 2*(2*RIGHT*game->turn+LEFT))) {
-            temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 49*!game->turn+7);
-            temp_game.positions.StatePerSide[2] -= shift((uint64)1, 49*!game->turn+7);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 49*!game->turn+7);
-            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 55*!game->turn+4);
-            temp_game.positions.StatePerSide[2] += shift((uint64)1, 55*!game->turn+4);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 55*!game->turn+4);
+        } else if(current_piece == KING && newpos&shift(curpos, 2*LEFT)) {
+            temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 56*!game->turn);
+            temp_game.positions.StatePerSide[2] -= shift((uint64)1, 56*!game->turn);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 56*!game->turn);
+            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+4);
+            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+4);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+4);
 
         } else if(current_piece == ROOK && curpos == shift((uint64)1, 63*!game->turn)) {
             temp_game.castling[game->turn] = 0;
