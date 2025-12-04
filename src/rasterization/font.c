@@ -1310,7 +1310,7 @@ glyphs[8208] = (BBFGlyph){
 
 }
 
-void draw_string(const char* s, uint16 i, uint16 j) {
+void draw_string(const char* s, uint16 i, uint16 j, uint8 color) {
     uint16 cursorX = i; 
     uint16 cursorY = j; 
 
@@ -1322,21 +1322,21 @@ void draw_string(const char* s, uint16 i, uint16 j) {
     int currIdx = 0;
     while(s[currIdx] != '\0') {
 
-        print("trying to write: ");
-        print(s);
-        print("\n");
-        print("drawing a pixel!: -");
-        char buf[2];
-        buf[0] = s[currIdx];
-        buf[1] = '\0';
-        print(buf);
+        // print("trying to write: ");
+        // print(s);
+        // print("\n");
+        // print("drawing a pixel!: -");
+        // char buf[2];
+        // buf[0] = s[currIdx];
+        // buf[1] = '\0';
+        // print(buf);
         
-        print("-\n");
-        print("\n ascii code is: "); print_dec(s[currIdx]); print("\n");
+        // print("-\n");
+        // print("\n ascii code is: "); print_dec(s[currIdx]); print("\n");
         
         // get the correct glyph (cast to unsigned to avoid negative char indexing)
         BBFGlyph g = glyphs[(unsigned char)s[currIdx]];
-        print("bitmap rows: "); print_dec(g.bitmapRows); print("\n");
+        // print("bitmap rows: "); print_dec(g.bitmapRows); print("\n");
 
         // loop through all the bitmask rows in the glyph
         for (int rIdx = 0; rIdx < g.bitmapRows; ++rIdx) {
@@ -1346,7 +1346,7 @@ void draw_string(const char* s, uint16 i, uint16 j) {
                 if ((0x80 >> cIdx) & (*bitmap)) {
                     uint16 x = cursorX + g.xOffset + cIdx;
                     uint16 y = cursorY + g.yOffset + rIdx;
-                    drawToGizmoLayer(&textLayer, x, y, 0xFF);
+                    drawToGizmoLayer(&textLayer, x, y, color);
                 }
             }
         }

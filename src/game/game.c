@@ -36,7 +36,10 @@ uint8 getBoardIndex(uint8 x, uint8 y) {
     return y*BOARD_LEN + x;
 }
 
-void gameInit() {
+void gameInit(uint8 player1color, uint8 player2color) {
+
+    COLOR_ARR[0] = player1color;
+    COLOR_ARR[1] = player2color;
 
     whiteChessBoardModel = createChessBoardModel(boardVertexData, boardIndexData, 0);
     blackChessBoardModel = createChessBoardModel(&boardVertexData[128], &boardIndexData[192], 1);
@@ -56,7 +59,7 @@ void gameInit() {
 
     // create the board
     Transform t = {
-        .pos = {BOARD_LEFT_CORNER_X,N_FP(0,0x3000),BOARD_LEFT_CORNER_Y},
+        .pos = {BOARD_LEFT_CORNER_X,N_FP(0,0x1000),BOARD_LEFT_CORNER_Y},
         .rotation = {0,0,0},
         .scale = {FP(1,0), FP(1,0), FP(1,0)}
     };
@@ -80,7 +83,7 @@ void gameInit() {
         pices_handles[i] = NO_PIECE;
     }
 
-    draw_string("Player 1 Turn!", 30,30);
+    draw_string("Player 1 Turn!", 30,30, 0xFF);
 
     updateBoardWithPieces();
     print("Initialized game!\n");
@@ -112,7 +115,7 @@ void updateBoardWithPieces()
                     // there was a piece here, create it
                     int32 boardX = squareIdx % BOARD_LEN;
                     int32 boardY = squareIdx / BOARD_LEN;
-                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE);
+                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE_PIECES_X);
                     int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY, 0), SQUARE_SIZE);
 
                     Transform t = {
@@ -180,7 +183,7 @@ void confirmSelectedSquare() {
             print("move was illegal!\n");
 
             clearGizmoLayer(&textLayer);
-            draw_string("Move was ILLEGAL!", 200, 30);
+            draw_string("Move was ILLEGAL!", 200, 30, 0xFF);
             swapBuffer();
 
             setStateToWaitingForInput(1);
@@ -199,9 +202,9 @@ void confirmSelectedSquare() {
 
 void printStatusText() {
     if (game.turn % 2 == 0) {
-        draw_string("PLAYER 1 TURN!", 30, 30);
+        draw_string("PLAYER 1 TURN!", 30, 30, 0xFF);
     } else {
-        draw_string("PLAYER 2 TURN!", 30, 30);
+        draw_string("PLAYER 2 TURN!", 30, 30, 0xFF);
     }
 }
 
@@ -211,7 +214,7 @@ void setStateToWaitingForInput(uint8 draw) {
     selectedPos1 = NO_POS;
     selectedPos2 = NO_POS;
 
-    printStatusText();
+    printStatusText(); 
     
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
     if (draw) {

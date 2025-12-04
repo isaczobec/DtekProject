@@ -1,4 +1,5 @@
 #pragma once
+#include "types.h"
 
 // check which platform we are compiling to
 #if defined(__DTEK__)
@@ -15,9 +16,16 @@
 #define DTEK 1
 #define WINDOWS 2
 
+typedef struct {
+    uint16 switches;
+    uint8 pressedButton;
+} InputState;
+
 /* Function to initialize platform specefic functions.*/
 void init();
 
 /* Function to run to get input and poll events.
 Returns 1 if the program should exit, else 0.*/
 int poll();
+
+InputState getInputState();
