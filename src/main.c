@@ -51,8 +51,26 @@ int main() {
     initChunking();
     
      Game game = GAMEINIT;
-     game.gamestate = Check;
-     game.positions = POS0;
+     game.turn = !game.turn;
+     game.positions.StatePerSide[2] -= (uint64)1<<6;
+     game.positions.StatePerSide[2] -= (uint64)1<<5;
+     game.positions.StatePerSide[1] -= (uint64)1<<6;
+     game.positions.StatePerSide[1] -= (uint64)1<<5;
+     game.positions.StatePerPiece[KNIGHT+6] -= (uint64)1<<6;
+     game.positions.StatePerPiece[BISHOP+6] -= (uint64)1<<5;
+
+    print_board(game.positions.StatePerSide[2]);
+    print_board(check_legal_moves(&game, (uint64)1<<4, 11));
+
+    make_move(&game, (uint64)1<<4, (uint64)1<<6);
+
+    print_board(game.positions.StatePerPiece[ROOK+6]);
+    print_board(game.positions.StatePerPiece[KING+6]);
+
+
+     
+     
+     /*game.positions = POS0;
      game.turn = !game.turn;
      for(int i = 0; i < 4; i++) {
         game.castling[i] = 0;
@@ -82,7 +100,7 @@ int main() {
      print_board(game.positions.StatePerSide[1]);
      print_board(game.positions.StatePerPiece[9]);
      print_board(check_legal_moves(&game, (uint64)1<<63, 5));
-     printf("%d", game.gamestate);
+     printf("%d", game.gamestate);*/
 
 
 
