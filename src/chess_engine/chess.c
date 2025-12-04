@@ -353,12 +353,10 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
         }
         temp_game.turn = !temp_game.turn;
         if(!not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
-            printf("gets here");
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
                 moves|check_legal_moves(&temp_game, shift(1, i), NULL);
             }
-            printf("possible moves: %llx", moves);
             if (!moves) {
                 temp_game.gamestate = CheckMate;
             }
