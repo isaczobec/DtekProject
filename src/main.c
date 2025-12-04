@@ -82,45 +82,101 @@ int main() {
     while(1) {
 
         #if defined(__WINDOWS__)
-        SDL_Event event;    
+        SDL_Event event;
+        static uint8 win_switch_mask = 0; // 6-bit mask, toggled with number keys 0..5
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) return 0;
+if (event.type == SDL_EVENT_KEY_DOWN) {
+    SDL_KeyboardEvent *ke = &event.key;
+
+    SDL_Scancode sc = ke->scancode;
+    SDL_Keycode key = ke->key;
+
+    print("down!");
+
+    int num = -1;
+
+    if (key >= '0' && key <= '9') {
+        num = key - '0';
+    }
+
+    if (num >= 0 && num <= 5) {
+        win_switch_mask ^= (1 << num);
+        setSelectedSquare(win_switch_mask);
+    }
+
+    if (key == 'b' || key == 'B') {
+        confirmSelectedSquare();
+    }
+}
         }
         #endif
         
 
         
-            clearGizmoLayer(&gizmoLayer);
-            clearDepthBuffer();
-            fill(0);
-            
-            updateCameraTransform(&camera);
-            centerRenderRegionAtCamera(&camera);
+        clearGizmoLayer(&gizmoLayer);
+        clearDepthBuffer();
+        fill(0);
+        
+        updateCameraTransform(&camera);
+        centerRenderRegionAtCamera(&camera);
 
-            resetCsrCounterVars();
-            clearCsrRegs();
-            for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
-                for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
-                    // print("drawing");
-                    drawModel(&chunks[i]._objects[objIdx]);
-                }
+        resetCsrCounterVars();
+        clearCsrRegs();
+        for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
+            for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
+                // print("drawing");
+                drawModel(&chunks[i]._objects[objIdx]);
             }
-            printCsrCounterVars();
+        }
+        printCsrCounterVars();
 
-            swapBuffer();
-            
-            gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
-            while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
-                asm volatile ("nop");
-                // if (gameState == GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
-                //     print("gamestate changed to waiting to render, doing rendering!\n");
-                //     break;
-                // } else {
-                //     print("a");
-                // }
-            } 
+        swapBuffer();
+        
+        gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
+        while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
 
-            ctr += 1;
+            #if defined(__DTEK__)
+            asm volatile ("nop");
+            #elif defined(__WINDOWS__)
+            SDL_Event event;
+            static uint8 win_switch_mask = 0; // 6-bit mask, toggled with number keys 0..5
+            while(SDL_PollEvent(&event)) {
+                if (event.type == SDL_EVENT_QUIT) return 0;
+if (event.type == SDL_EVENT_KEY_DOWN) {
+    SDL_KeyboardEvent *ke = &event.key;
+
+    SDL_Scancode sc = ke->scancode;
+    SDL_Keycode key = ke->key;
+
+    int num = -1;
+
+    if (key >= '1' && key <= '9') {
+        num = key - '1';
+    }
+
+    if (num >= 0 && num <= 5) {
+        print_dec(num);
+        print("\n");
+        win_switch_mask ^= (1 << num);
+        setSelectedSquare(win_switch_mask);
+    }
+
+    if (key == 'b' || key == 'B') {
+        confirmSelectedSquare();
+    }
+}
+            }
+            #endif
+            // if (gameState == GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
+            //     print("gamestate changed to waiting to render, doing rendering!\n");
+            //     break;
+            // } else {
+            //     print("a");
+            // }
+        } 
+
+        ctr += 1;
 
     }
 

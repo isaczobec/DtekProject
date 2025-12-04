@@ -132,6 +132,8 @@ void setSelectedSquare(uint8 selected) {
         return;
     }
     
+    print("setting selected to "); print_dec(selected); print("\n");
+    
     ObjectHandle* selectorToMove;
     if (selectedPos1 == NO_POS) {
         selectorToMove = selector1SquareHandle;
@@ -152,6 +154,8 @@ void setSelectedSquare(uint8 selected) {
     Vec3 newPos = {xWorldPos, N_FP(0,0x3000), yWorldPos};
     setObjectPosition(selectorToMove, &newPos);
     drawModel(selectorToMove->objectInstance);
+    if (selectedPos1 != NO_POS) drawModel(selector1SquareHandle->objectInstance);
+    swapBuffer();
     // print("jsdaiods");
 }
 
@@ -164,6 +168,7 @@ void confirmSelectedSquare() {
         hoveredPos2 = (hoveredPos1+1) % 64;
         selector2SquareHandle->objectInstance->objectInstanceFlags &= ~OBJECTINSTANCE_FLAG_HIDDEN;
         setSelectedSquare(hoveredPos2);
+        swapBuffer();
     } else {
         selectedPos2 = hoveredPos2;
         
@@ -180,6 +185,7 @@ void confirmSelectedSquare() {
 
         setStateToWaitingForInput(0);
         gameState = GAMESTATE_ACTIVE_WAITING_TO_RENDER;
+        swapBuffer();
         return;
     }
 }
@@ -193,5 +199,6 @@ void setStateToWaitingForInput(uint8 draw) {
     if (draw) {
         clearGizmoLayer(&gizmoLayer);
         drawModel(selector1SquareHandle->objectInstance);
+        swapBuffer();
     }
 }

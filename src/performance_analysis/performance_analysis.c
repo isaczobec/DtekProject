@@ -21,6 +21,7 @@ uint32 mhpmcounter9h;
 
 // clears all control and status registers.
 void clearCsrRegs() {
+    #if defined(__DTEK__)
     asm volatile ("csrw mcycle, x0");
     asm volatile ("csrw mcycleh, x0");
     asm volatile ("csrw minstret, x0");
@@ -39,9 +40,11 @@ void clearCsrRegs() {
     asm volatile ("csrw mhpmcounter8h, x0");
     asm volatile ("csrw mhpmcounter9, x0");
     asm volatile ("csrw mhpmcounter9h, x0");
+    #endif
 }
 
 void printCsrRegs() {
+    #if defined(__DTEK__)
     uint32 timel;
     
     print("REGS:\n");
@@ -55,9 +58,10 @@ void printCsrRegs() {
     asm volatile ("csrr %0, mhpmcounter7" : "=r"(timel)); print("mhpmcounter7: "); print_dec(timel); print("\n");
     asm volatile ("csrr %0, mhpmcounter8" : "=r"(timel)); print("mhpmcounter8: "); print_dec(timel); print("\n");
     asm volatile ("csrr %0, mhpmcounter9" : "=r"(timel)); print("mhpmcounter9: "); print_dec(timel); print("\n");
-
+    #endif
 }
 void resetCsrCounterVars() {
+    #if defined(__DTEK__)
     mcycle = 0;
     mcycleh = 0;
     minstret = 0;
@@ -76,10 +80,12 @@ void resetCsrCounterVars() {
     mhpmcounter8h = 0;
     mhpmcounter9 = 0;
     mhpmcounter9h = 0;
+    #endif
 }
 
 void incrementCsrCounterVars() {
 
+    #if defined(__DTEK__)
     uint32 timel;
     
     
@@ -101,9 +107,11 @@ void incrementCsrCounterVars() {
     mhpmcounter8 += timel;
     asm volatile ("csrr %0, mhpmcounter9" : "=r"(timel));  
     mhpmcounter9 += timel;
+    #endif
 }
 
 void printCsrCounterVars() {
+    #if defined(__DTEK__)
     print("Regs Counted:\n");
     print("CV_mcycle: "); print_dec(mcycle); print("\n");
     print("CV_minstret: "); print_dec(minstret); print("\n");
@@ -114,4 +122,5 @@ void printCsrCounterVars() {
     print("CV_mhpmcounter7: "); print_dec(mhpmcounter7); print("\n");
     print("CV_mhpmcounter8: "); print_dec(mhpmcounter8); print("\n");
     print("CV_mhpmcounter9: "); print_dec(mhpmcounter9); print("\n");
+    #endif
 }
