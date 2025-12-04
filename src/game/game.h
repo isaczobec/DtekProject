@@ -17,7 +17,7 @@
 #define GAMESTATE_ACTIVE_WAITING_TO_RENDER 3
 
 static const int32 SQUARE_SIZE = FP(1,0x5CCC);
-static const int32 SQUARE_SIZE_PIECES_X = FP(1,0x4ECC); // Other offset for pieces because they for some reason are not aligned
+static const int32 SQUARE_SIZE_PIECES = FP(1,0x4ECC); // Other offset for pieces because they for some reason are not aligned
 static const int32 BOARD_LEFT_CORNER_X = N_FP(4,0x8000);
 static const int32 BOARD_LEFT_CORNER_Y = FP(1,0);
 

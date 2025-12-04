@@ -189,7 +189,7 @@ void drawModel(const ObjectInstance* object) {
                     }
 
 
-                    if (depth < getDepth(i,j)) {
+                    if (depth <= getDepth(i,j)) {
                         // draw(i,j,0xFF);
 
                         // print_dec(lightDot); print("\n");

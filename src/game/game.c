@@ -115,8 +115,8 @@ void updateBoardWithPieces()
                     // there was a piece here, create it
                     int32 boardX = squareIdx % BOARD_LEN;
                     int32 boardY = squareIdx / BOARD_LEN;
-                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE_PIECES_X);
-                    int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY, 0), SQUARE_SIZE);
+                    int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE_PIECES);
+                    int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY, 0), SQUARE_SIZE_PIECES);
 
                     Transform t = {
                         .pos = {xWorldPos, 0, yWorldPos},
@@ -133,7 +133,7 @@ void updateBoardWithPieces()
 
 void setSelectedSquare(uint8 selected) {
 
-    if (gameState != GAMESTATE_ACTIVE_WAITING_FOR_MOVE || selected == selectedPos1) {
+    if (gameState != GAMESTATE_ACTIVE_WAITING_FOR_MOVE) {
         return;
     }
     
@@ -158,8 +158,8 @@ void setSelectedSquare(uint8 selected) {
     int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY,0),SQUARE_SIZE);
     Vec3 newPos = {xWorldPos, N_FP(0,0x3000), yWorldPos};
     setObjectPosition(selectorToMove, &newPos);
-    drawModel(selectorToMove->objectInstance);
     if (selectedPos1 != NO_POS) drawModel(selector1SquareHandle->objectInstance);
+    drawModel(selectorToMove->objectInstance);
     swapBuffer();
     // print("jsdaiods");
 }
@@ -170,7 +170,7 @@ void confirmSelectedSquare() {
 
     if (selectedPos1 == NO_POS) {
         selectedPos1 = hoveredPos1;
-        hoveredPos2 = (hoveredPos1+1) % 64;
+        hoveredPos2 = hoveredPos1;
         selector2SquareHandle->objectInstance->objectInstanceFlags &= ~OBJECTINSTANCE_FLAG_HIDDEN;
         setSelectedSquare(hoveredPos2);
         swapBuffer();
@@ -209,8 +209,8 @@ void printStatusText() {
 }
 
 void setStateToWaitingForInput(uint8 draw) {
-    hoveredPos1 = 0;
-    hoveredPos2 = 1;
+    hoveredPos1 = hoveredPos1;
+    hoveredPos2 = hoveredPos1;
     selectedPos1 = NO_POS;
     selectedPos2 = NO_POS;
 

@@ -30,7 +30,8 @@ static const int32 BOTH = 2;
 //Identifier for gamestate
 
 static const int32 InProgress = 0;
-static const int32 GameOver = 1;
+static const int32 CheckMate = 1;
+static const int32 Check = 2;
 
 //The starting states of a standard chess board
 
@@ -58,6 +59,7 @@ static const uint64 InitialStatePerSide[] = {
 typedef struct{
     uint64 StatePerPiece[12]; //See Initial State for order of pieces
     uint64 StatePerSide[3]; //See Initial State for order of sides
+    uint64 EnPassantPerSide[2];
 } Positions;
 
 typedef struct{ 
@@ -84,7 +86,26 @@ InitialStatePerPiece[11]\
 InitialStatePerSide[0],\
 InitialStatePerSide[1],\
 InitialStatePerSide[2]\
+}, {\
+(uint64)0, (uint64)0\
 }}
+
+#define POS0 (Positions){{\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+0,\
+}, {\
+0, 0, 0}, {0, 0}\
+}
 
 #define GAMEINIT (Game){\
 (int32)InProgress,\
