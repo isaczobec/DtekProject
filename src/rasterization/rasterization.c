@@ -177,7 +177,6 @@ void drawModel(const ObjectInstance* object) {
                         
                         // source about perspective correct interpolation: https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
                         // linearly interpolate the depth
-                        int32 interpolatedDepth = b0 + b1 + b2;
                         int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
                         
                         if (interpolatedOneOverZ == 0) continue;

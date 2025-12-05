@@ -87,23 +87,37 @@ the values of $\alpha, \beta, \gamma$ are obtained by using a cross product to c
 
 However, the $Z$ coordinate of a point is not linear over a triangle. Instead, we use the following formula to interpolate over it:
 
-$$Z_{pixel} = \frac{\alpha + \beta + \gamma}{\alpha/Z_1 + \beta/Z_2 + \gamma/Z_3}$$
+$$Z_{pixel} = \frac{1}{\alpha/Z_1 + \beta/Z_2 + \gamma/Z_3}$$
 
-(we used [this](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html) page as a reference)
+(we used [this](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html) page as a reference).
+
+#### Light value calculation
+
+To give the models a sense of depth, it is nice to make each face have a reasonable light value. This was achieved by calculating the normal vector $N$ for each triangle using a cross product of two of its edge vectors. Then, we define a global ''light direction'' (unit) vector $L$, which signifies from where the light in the world is coming. We then compute the dot product $N \cdot L$ of theese, which is equal of the cosine of the angle between them. The more negative the value is, the greater the angle between the light vector and the normal, and the more the face should be illuminated. We simply multiply each channel of the color of a face with this light value to get the final color.
 
 ### Implementation
 
-To store the 3D models in memory, we will create a `vec3` struct to represent an arbitrary point or vertex. theese will be stored in an ordered list, representing a mesh. Optionally, we will store an index buffer for each model, which contains groups of 3 indicies into the array of vertecies, to indicate a triangle. This saves memory space and prevents storing the same vertex multiple times in some cases. The models will live in static memory for the duration of the program.
+To perform the math mentioned above, we need to be able to store fractional values. To do this, we decided upon using 16.16 fixed point signed arithmetic. this means that bit 31 has a value of $-2^{15}$, and bits 30 to 0 have a value of $2^{k-16}$. We then implemented basic operations and then vector operations in this format, and functions to convert between regular integers to fixed point.
 
-We may also write a script to parse/convert `.obj` files to theese arrays, so that we dont have to write the values ourselves.
+To store the 3D models in memory, we created a `vec3` struct to represent an arbitrary point or vertex. theese were be stored in an array, representing a mesh. Also, we stored an index buffer for each model, which contains groups of 3 indicies into the array of vertecies, to indicate a triangle. This saves memory space and prevents storing the same vertex multiple times in some cases. The models will live in static memory for the duration of the program.
 
-For the rasterization: We will write to the `320x240` VGA-buffer, and swap the front and back buffers once we have finnished rendering a frame. For the rasterization, we will iterate over all triangles that end up in the screen space, and iterate over the pixels inside the bounding box of the triangle, and do the inside-test for each one. Triangles failing the backface-culling test will automatically be skipped.
+We also wrote a python script to parse/convert `.obj` files to theese arrays, so that we dont have to write the values ourselves.
 
-Instead of computing the actual matricies for transforming all the verticies into world space, we will only store the necessary values for each object and perform the necessary calculations. This is because the matrix operations sometimes calculate redundant values, and may use more memory than needed.
+For the rasterization: We simply write calculated color values to the `320x240` VGA-buffer. For the rasterization, we iterate iterate over all triangles that end up in the screen space, and iterate over the pixels inside the bounding box of the triangle, and do the inside-test for each one. Triangles failing the backface-culling test are be skipped.
 
-The depth value will be stored in a depth buffer, while holds the same amount of pixels as in the screen. Before we overwrite the color/pixel buffer with a pixel in a triangle, we check that the depth is less than the value in the depth buffer, and if so, we overwrite the depth buffer with the new value.
+Instead of computing the actual matricies for transforming all the verticies into world space, we only store the necessary values for each object and perform the necessary calculations. This is because the matrix operations sometimes calculate redundant values, and may use more memory than needed.
+
+The depth value is stored in a depth buffer, which holds the same amount of pixels as in the screen. Before we overwrite the color/pixel buffer with a pixel in a triangle, we check that the depth is less than the value in the depth buffer, and if so, we overwrite the depth buffer with the new value. Before we start rendering a new frame, we clear the depth buffer (reset all pixels to the max value).
+
+The instances of different models (object instances) were stored in either a tightly packed array belonging to a chunk (a partition of the world) if it is close enough to the camera, otherwise it is stored in a single tightly packed array. The point of this was to be able to only consider objects in chunks that are close enough to the player when rendering, but after changing our plans from Zarch to Chess the need for this disappeared. In addition, since the address of object instances may change over its lifetime (if it comes into render distance or switches chunks) might change, objects are refered to using an `ObjectHandle` struct with a managed pointer to an object instance. 
 
 ## 4 Verification 
 *The verification paragraph should answer: How did you test or verify that you solution is correct?*
 
-Since our project is of a very visual nature, we will know that the software rasterizer is working when it displays images that are reasonable and mirror what we intend to render. We might also target a certain framerate as a performance target, for instance 15 fps. 
+Since our project is of a very visual nature, we knew that the software rasterizer was working when it displayed images that are reasonable and mirror what we intend to render. For example, it was easy to see when depth ordering and perspective projection began working correctly.
+
+## 5 Reflecitions
+
+We learned a lot from the project, e.g. how a compiler toolchain works, how c-code corresponds to machine code instructions, and how to structure a low level c project.
+
+The whole chunking system would likely have generated large performance benefits if we would have created our original game idea, where objects would often have moved in and out of view and render distance. The chunks allow visible objects to be tightly packed in memory, while being able to check in $O(1)$ time check if all objects in a chunk should be rendered (determine if the camera is angled toward or away from the chunk, skip trying to render the objects in its array if it is facing away). However, since all objects are now constantly visible, the only effect of the chunk system was rather to marginally decrease performance. 
