@@ -120,10 +120,6 @@ void drawModel(const ObjectInstance* object) {
         v1_t.z = fpDiv(v1_t.z, clipLen);
         v2_t.z = fpDiv(v2_t.z, clipLen);
 
-        int32 d_z0 = fpMul(v0_t.z, z_rec_0);
-        int32 d_z1 = fpMul(v1_t.z, z_rec_1);
-        int32 d_z2 = fpMul(v2_t.z, z_rec_2);
-
         // transform the verticies from clip space (-1,1) to screen space
         int32 p0_x = FP_TOINT(fpMul(fpAdd(v0_t.x, FP(1,0)),FP(PIXEL_BUFFER_X_SIZE,0) >> 1));
         int32 p0_y = FP_TOINT(fpMul(fpAdd(fpMul(v0_t.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1));
@@ -181,11 +177,11 @@ void drawModel(const ObjectInstance* object) {
                         
                         // source about perspective correct interpolation: https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
                         // linearly interpolate the depth
-                        int32 interpolatedDepth = fpMul(b0,d_z0) + fpMul(b1,d_z1) + fpMul(b2,d_z2);
+                        int32 interpolatedDepth = b0 + b1 + b2;
                         int32 interpolatedOneOverZ = fpMul(b0,z_rec_0) + fpMul(b1,z_rec_1) + fpMul(b2,z_rec_2);
                         
                         if (interpolatedOneOverZ == 0) continue;
-                        depth = fpDiv(interpolatedDepth,interpolatedOneOverZ);
+                        depth = fpDiv(N_FP(1,0),interpolatedOneOverZ);
                     }
 
 
