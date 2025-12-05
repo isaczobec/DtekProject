@@ -33,12 +33,14 @@ void initRasterization() {
 
 void drawModel(const ObjectInstance* object) {
 
-
+    
     if (object->objectInstanceFlags & OBJECTINSTANCE_FLAG_HIDDEN) {return;}
-
+    
     Model* model = object->model;
-
+    
     for (int triangleIndex = 0; triangleIndex < model->indexBufferCount; triangleIndex += 3) {
+        
+        clearCsrRegs();
 
         // get the verticies
         Vec3* v0 = model->vertexBuffer + *(model->indexBuffer + triangleIndex);
@@ -135,7 +137,7 @@ void drawModel(const ObjectInstance* object) {
         int32 p2_y = FP_TOINT(fpMul(fpAdd(fpMul(v2_t.y,FP(-1,0)), FP(1,0)),FP(PIXEL_BUFFER_Y_SIZE,0) >> 1));
 
 
-        clearCsrRegs();
+        incrementCsrCounterVars();
 
 
         // calculate the differences
@@ -206,6 +208,5 @@ void drawModel(const ObjectInstance* object) {
                 }
             } 
         } 
-        incrementCsrCounterVars();
     }
 }
