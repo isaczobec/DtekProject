@@ -51,60 +51,29 @@ int main() {
     initChunking();
     
      Game game = GAMEINIT;
-     //game.turn = !game.turn;
-     game.positions.StatePerSide[2] -= (uint64)1<<57;
-     game.positions.StatePerSide[2] -= (uint64)1<<58;
-     game.positions.StatePerSide[2] -= (uint64)1<<59;
-     game.positions.StatePerSide[1] -= (uint64)1<<57;
-     game.positions.StatePerSide[1] -= (uint64)1<<58;
-     game.positions.StatePerSide[1] -= (uint64)1<<59;
-     game.positions.StatePerPiece[KNIGHT] -= (uint64)1<<57;
-     game.positions.StatePerPiece[BISHOP] -= (uint64)1<<58;
-     game.positions.StatePerPiece[QUEEN] -= (uint64)1<<59;
-
-
-    print_board(game.positions.StatePerSide[2]);
-    print_board(check_legal_moves(&game, (uint64)1<<60, 5));
-
-    make_move(&game, (uint64)1<<60, (uint64)1<<58);
-
-    print_board(game.positions.StatePerPiece[ROOK]);
-    print_board(game.positions.StatePerPiece[KING]);
-
-
+       
      
-     
-     /*game.positions = POS0;
-     game.turn = !game.turn;
+     game.positions = POS0;
      for(int i = 0; i < 4; i++) {
         game.castling[i] = 0;
      }
-     game.positions.StatePerPiece[5] += (uint64)1<<63;
-     game.positions.StatePerSide[0] += (uint64)1<<63;
-     game.positions.StatePerSide[2] += (uint64)1<<63;
+     game.positions.StatePerPiece[0] += (uint64)1<<8;
+     game.positions.StatePerSide[0] += (uint64)1<<8;
+     game.positions.StatePerSide[2] += (uint64)1<<8;
 
-     game.positions.StatePerPiece[9] += (uint64)1<<61;
-     game.positions.StatePerSide[1] += (uint64)1<<61;
-     game.positions.StatePerSide[2] += (uint64)1<<61;
-     
-     game.positions.StatePerPiece[9] += (uint64)1<<45;
-     game.positions.StatePerSide[1] += (uint64)1<<45;
-     game.positions.StatePerSide[2] += (uint64)1<<45;
+     game.positions.StatePerPiece[11] += (uint64)1<<7;
+     game.positions.StatePerSide[1] += (uint64)1<<7;
+     game.positions.StatePerSide[2] += (uint64)1<<7;
 
      Game opp_game = game;
-
-     opp_game.turn = !game.turn;
-
+     opp_game.turn = !opp_game.turn;
      print_board(game.positions.StatePerSide[2]);
-     print_board(check_legal_moves(&game, (uint64)1<<45, 9));
-     print_board(check_legal_moves(&opp_game, (uint64)1<<63, 5));
+     print_board(check_legal_moves(&opp_game, (uint64)1<<7, 11));
 
-     make_move(&game, (uint64)1<<45, (uint64)1<<53);
-     print_board(game.positions.StatePerSide[2]);
-     print_board(game.positions.StatePerSide[1]);
-     print_board(game.positions.StatePerPiece[9]);
-     print_board(check_legal_moves(&game, (uint64)1<<63, 5));
-     printf("%d", game.gamestate);*/
+     make_move(&game, (uint64)1<<8, (uint64)1);
+     promote(&game, (uint64)1, KNIGHT);
+     print_board(game.positions.StatePerPiece[KNIGHT]);
+     printf("%d", game.gamestate);
 
 
 
