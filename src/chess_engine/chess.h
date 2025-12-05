@@ -118,3 +118,22 @@ POSINIT,\
 int make_move(Game *game, uint64 curpos, uint64 newpos); //returns 1 when move is successful, otherwise 0
 uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece); //returns an integer where every 1 is a possible move for the piece on curpos
 void print_board(uint64 position); //prints out position in 8x8 grid
+
+uint64 shift(uint64 value, int shift);
+int not_blocked_by_piece(Game *game, uint64 check_pos);
+int not_outside(uint64 curpos, int direction);
+int horse_block(uint64 curpos, int direction);
+int not_check_check(Game *game, uint64 curpos);
+int moves_out_of_check(Game *game, uint64 curpos, uint64 newpos, uint64 current_piece);
+int takes_piece(Game *game, uint64 check_pos);
+uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece);
+int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece);
+uint64 check_king_moves(Game *game, uint64 curpos);
+uint64 check_queen_moves(Game *game, uint64 curpos);
+uint64 check_rook_moves(Game *game, uint64 curpos);
+uint64 check_bishop_moves(Game *game, uint64 curpos);
+uint64 check_pawn_moves(Game *game, uint64 curpos);
+uint64 check_knight_moves(Game *game, uint64 curpos);
+uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece);
+int make_move(Game *game, uint64 curpos, uint64 newpos);
+void print_board(uint64 position);

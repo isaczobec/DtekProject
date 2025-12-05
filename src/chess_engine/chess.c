@@ -326,9 +326,9 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.positions.StatePerSide[game->turn] -= shift((uint64)1, 56*!game->turn);
             temp_game.positions.StatePerSide[2] -= shift((uint64)1, 56*!game->turn);
             temp_game.positions.StatePerPiece[6*game->turn+ROOK] -= shift((uint64)1, 56*!game->turn);
-            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+4);
-            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+4);
-            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+4);
+            temp_game.positions.StatePerSide[game->turn] += shift((uint64)1, 56*!game->turn+3);
+            temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+3);
+            temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+3);
 
         } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 63*!game->turn)) {
             temp_game.castling[game->turn] = 0;
@@ -372,7 +372,7 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
 }
 
 void print_board(uint64 position) {
-    printf("\n");
+    print("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             char dig = ' ';
@@ -382,8 +382,8 @@ void print_board(uint64 position) {
             } else {
                 dig = '0';
             }
-            printf("%c", dig);
+            print_dec(dig);
         }
-        printf("\n");
+        print("\n");
     }
 }

@@ -137,8 +137,6 @@ void setSelectedSquare(uint8 selected) {
         return;
     }
     
-    print("setting selected to "); print_dec(selected); print("\n");
-    
     ObjectHandle* selectorToMove;
     if (selectedPos1 == NO_POS) {
         selectorToMove = selector1SquareHandle;
