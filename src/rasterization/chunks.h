@@ -6,7 +6,7 @@
 #define MAX_OBJECTS_GLOBAL 4096
 
 #define CHUNK_SIZE 32
-#define MAX_OBJECTS_PER_CHUNK 64
+#define MAX_OBJECTS_PER_CHUNK 128
 #define AMOUNT_CHUNKS_SQRT ((1 << 16)/CHUNK_SIZE) // 2^16 is largest fixed point integer we can store
 #define AMOUNT_CHUNKS (AMOUNT_CHUNKS_SQRT*AMOUNT_CHUNKS_SQRT)
 

@@ -194,10 +194,26 @@ int main() {
                 for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                     for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
                         // print("drawing");
+                        if (chunks[i]._objects[objIdx].objectInstanceFlags & OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER) 
+                            continue;
                         drawModel(&chunks[i]._objects[objIdx]);
                     }
                 }
+                swapBuffer();
+                printCsrCounterVars();
+                setStateToWaitingForInput(1);
+                swapBuffer();
 
+                
+                gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
+                while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
+                    int action = poll();
+                    if (action == 1) {
+                        return 0;
+                    }
+                }
+                ctr += 1;
+                
                 if (gameStatus == GAME_STATUS_OVER) {
                     print("Game is over!\n");
                     // get the input state to clear the button flag
@@ -213,23 +229,7 @@ int main() {
                         }
                     }
                     break;
-                } else {
-                    setStateToWaitingForInput(1);
                 }
-
-                printCsrCounterVars();
-        
-                swapBuffer();
-                
-                gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
-                while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
-                    int action = poll();
-                    if (action == 1) {
-                        return 0;
-                    }
-                }
-                ctr += 1;
-        
 
             } 
         

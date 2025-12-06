@@ -32,13 +32,18 @@ uint8 hoveredPos2 = 1;
 uint8 selectedPos1 = NO_POS;
 uint8 selectedPos2 = NO_POS;
 
+uint8 pieces_ptr = 0;
+
 uint8 getBoardIndex(uint8 x, uint8 y) {
     return y*BOARD_LEN + x;
 }
 
 void gameInit(uint8 player1color, uint8 player2color) {
 
+    gameStatus = GAME_STATUS_IN_PROGRESS;
     
+    pieces_ptr = 0;
+
     COLOR_ARR[0] = player1color;
     COLOR_ARR[1] = player2color;
     
@@ -88,7 +93,6 @@ void gameInit(uint8 player1color, uint8 player2color) {
     
     updateBoardWithPieces();
     print("Initialized game!\n");
-    gameStatus = GAME_STATUS_IN_PROGRESS;
 }
 
 void updateBoardWithPieces()
@@ -123,11 +127,12 @@ void updateBoardWithPieces()
             }
         }
     }
+    pieces_ptr = current_piece_index;
 }
 
 void DestroyPieces()
 {
-    for (int i = 0; i < AMOUNT_PIECES; i++)
+    for (int i = 0; i < pieces_ptr; i++)
     {
         if (pices_handles[i] != NO_PIECE)
         {
@@ -183,15 +188,7 @@ void confirmSelectedSquare() {
 
         if (game.gamestate == Check) {
             print("CHECK!\n");
-        } else if (game.gamestate == CheckMate) {
-            gameStatus = GAME_STATUS_OVER;
-            draw_string("CHECKMATE! :D", 140, 25, 0xFF);
-            draw_string("PRESS BUTTON TO", 140, 35, 0xFF);
-            draw_string("RETURN TO MENU", 140, 45, 0xFF);
-            print("CHECK_MATE!\n");
-            swapBuffer();
-        }
-        
+        } 
         int res = make_move(&game, 1ULL<<selectedPos1, 1ULL<<selectedPos2);
 
         if (res == 0) {
@@ -214,13 +211,13 @@ void confirmSelectedSquare() {
             // get the input state to clear the button flag
             getInputState();
             
-            draw_string("PROMOTION TIME! :D", 140, 15, 0xFF);
-            draw_string("USE SWITCHES 0-1 TO SELECT,", 140, 25, 0xFF);
-            draw_string("AND THEN PRESS BUTTON", 140, 35, 0xFF);
-            draw_string("00: BISHOP", 140, 45, 0xFF);
-            draw_string("01: KNIGHT", 140, 55, 0xFF);
-            draw_string("10: ROOK", 140, 65, 0xFF);
-            draw_string("11: OUEEN", 140, 75, 0xFF);
+            draw_string("PROMOTION TIME! :D", 140, 25, 0xFF);
+            draw_string("USE SWITCHES 0-1 TO SELECT,", 140, 35, 0xFF);
+            draw_string("AND THEN PRESS BUTTON", 140, 45, 0xFF);
+            draw_string("00: BISHOP", 140, 55, 0xFF);
+            draw_string("01: KNIGHT", 140, 65, 0xFF);
+            draw_string("10: ROOK", 140, 75, 0xFF);
+            draw_string("11: OUEEN", 140, 85, 0xFF);
             swapBuffer();
             
             while (1) {
@@ -242,10 +239,18 @@ void confirmSelectedSquare() {
             }
             
         }
+
+        if (game.gamestate == CheckMate) {
+            gameStatus = GAME_STATUS_OVER;
+            draw_string("CHECKMATE! :D", 140, 25, 0xFF);
+            draw_string("PRESS BUTTON TO", 140, 35, 0xFF);
+            draw_string("RETURN TO MENU", 140, 45, 0xFF);
+            print("CHECK_MATE!\n");
+            swapBuffer();
+        }
         
         updateBoardWithPieces();
 
-        setStateToWaitingForInput(0);
         gameState = GAMESTATE_ACTIVE_WAITING_TO_RENDER;
         swapBuffer();
         return;
@@ -271,7 +276,8 @@ void setStateToWaitingForInput(uint8 draw) {
     selectedPos2 = NO_POS;
 
     printStatusText(); 
-    
+    swapBuffer();
+
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
     if (draw) {
         clearGizmoLayer(&gizmoLayer);
