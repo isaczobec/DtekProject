@@ -222,7 +222,7 @@ void confirmSelectedSquare() {
             
             while (1) {
                 int action = poll();
-                if (action == 1) return 0;
+                if (action == 1) return;
                 InputState state = getInputState();
                 
                 if (state.pressedButton) {

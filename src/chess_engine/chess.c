@@ -353,7 +353,7 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             return 1;
         }
         temp_game.turn = !temp_game.turn;
-        if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*game->turn+KING])) {
+        if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             temp_game.gamestate = InProgress;
         } else {
             temp_game.gamestate = Check;
@@ -384,7 +384,7 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
         temp_game.positions.StatePerPiece[6*game->turn+PAWN] -= curpos;
         temp_game.positions.StatePerPiece[6*game->turn+promoteTo] += curpos;
         temp_game.turn = !temp_game.turn;
-        if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*game->turn+KING])) {
+        if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             temp_game.gamestate = InProgress;
         } else {
             temp_game.gamestate = Check;

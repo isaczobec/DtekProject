@@ -121,8 +121,6 @@ uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece); //return
 void print_board(uint64 position); //prints out position in 8x8 grid
 int promote(Game *game, uint64 curpos, int32 promoteTo); //Promotes a pawn on curpos into piece promoteTo. returns 1 on success, otherwise 0;
 
-
-
 // Methods added to header
 uint64 shift(uint64 value, int shift);
 int not_blocked_by_piece(Game *game, uint64 check_pos);

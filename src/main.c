@@ -199,7 +199,7 @@ int main() {
                         drawModel(&chunks[i]._objects[objIdx]);
                     }
                 }
-                swapBuffer();
+                    swapBuffer();
                 printCsrCounterVars();
                 setStateToWaitingForInput(1);
                 swapBuffer();
