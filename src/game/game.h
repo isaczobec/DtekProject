@@ -15,6 +15,10 @@
 #define GAMESTATE_UNITIALIZED 1
 #define GAMESTATE_ACTIVE_WAITING_FOR_MOVE 2
 #define GAMESTATE_ACTIVE_WAITING_TO_RENDER 3
+#define GAMESTATE_WAITING_FOR_PROMOTION_INPUT 4
+
+#define GAME_STATUS_IN_PROGRESS 1
+#define GAME_STATUS_OVER 2
 
 static const int32 SQUARE_SIZE = FP(1,0x5CCC);
 static const int32 SQUARE_SIZE_PIECES = FP(1,0x4ECC); // Other offset for pieces because they for some reason are not aligned
@@ -25,10 +29,12 @@ static uint8 COLOR_ARR[AMOUNT_SIDES] = {0xFF, 0xF0};
 
 extern Game game;
 extern ObjectHandle* pices_handles[AMOUNT_PIECES];
-extern uint8 gameState;
+extern uint8 gameState; // Used for game control to determine what to do next. Takes values of the `GAME_STATE_[...]` macros.
+extern uint8 gameStatus; // if the game is in progress or over. Takes values of the `GAME_STATUS_[...]` macros.
 
 void setStateToWaitingForInput(uint8 draw);
 void gameInit(uint8 player1color, uint8 player2color);
 void updateBoardWithPieces();
+void DestroyPieces();
 void setSelectedSquare(uint8 selected);
 void confirmSelectedSquare();

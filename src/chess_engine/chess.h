@@ -32,6 +32,7 @@ static const int32 BOTH = 2;
 static const int32 InProgress = 0;
 static const int32 CheckMate = 1;
 static const int32 Check = 2;
+static const int32 Promote = 3;
 
 //The starting states of a standard chess board
 
@@ -118,7 +119,11 @@ POSINIT,\
 int make_move(Game *game, uint64 curpos, uint64 newpos); //returns 1 when move is successful, otherwise 0
 uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece); //returns an integer where every 1 is a possible move for the piece on curpos
 void print_board(uint64 position); //prints out position in 8x8 grid
+int promote(Game *game, uint64 curpos, int32 promoteTo); //Promotes a pawn on curpos into piece promoteTo. returns 1 on success, otherwise 0;
 
+
+
+// Methods added to header
 uint64 shift(uint64 value, int shift);
 int not_blocked_by_piece(Game *game, uint64 check_pos);
 int not_outside(uint64 curpos, int direction);
@@ -136,4 +141,5 @@ uint64 check_pawn_moves(Game *game, uint64 curpos);
 uint64 check_knight_moves(Game *game, uint64 curpos);
 uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece);
 int make_move(Game *game, uint64 curpos, uint64 newpos);
+int promote(Game *game, uint64 curpos, int32 promoteTo);
 void print_board(uint64 position);

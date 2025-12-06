@@ -71,7 +71,7 @@ int horse_block(uint64 curpos, int direction) {
 int not_check_check(Game *game, uint64 curpos) {
     for (int i = 0; i < *(&all_pieces+1) - all_pieces; i++) {
         if(i != 5) {
-            if(check_legal_moves(game, curpos, i)&game->positions.StatePerPiece[6*!game->turn+i]) {
+            if(check_legal_moves(game, curpos, 6*game->turn+i)&game->positions.StatePerPiece[6*!game->turn+i]) {
                 return 0;
             }
         }
@@ -346,12 +346,18 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
                 temp_game.positions.StatePerSide[2] -=newpos;
                 break;
             }}
+
+        if(current_piece == 6*temp_game.turn+PAWN && temp_game.positions.StatePerPiece[6*temp_game.turn+PAWN]&file_1_8) {
+            temp_game.gamestate = Promote;
+            *game = temp_game;
+            return 1;
+        }
+        temp_game.turn = !temp_game.turn;
         if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*game->turn+KING])) {
             temp_game.gamestate = InProgress;
         } else {
             temp_game.gamestate = Check;
         }
-        temp_game.turn = !temp_game.turn;
         if(!not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
@@ -371,8 +377,37 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
     return 0;
 }
 
+int promote(Game *game, uint64 curpos, int32 promoteTo) {
+    Game temp_game = *game;
+    if ((promoteTo == 1 || promoteTo == 2 || promoteTo == 3 || promoteTo == 4) &&
+         temp_game.positions.StatePerPiece[6*game->turn+PAWN]&curpos) {
+        temp_game.positions.StatePerPiece[6*game->turn+PAWN] -= curpos;
+        temp_game.positions.StatePerPiece[6*game->turn+promoteTo] += curpos;
+        temp_game.turn = !temp_game.turn;
+        if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*game->turn+KING])) {
+            temp_game.gamestate = InProgress;
+        } else {
+            temp_game.gamestate = Check;
+        }
+        if(!not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
+            uint64 moves = 0;
+            for(int i = 0; i < 64; i++) {
+                moves|check_legal_moves(&temp_game, shift(1, i), NULL);
+            }
+            if (!moves) {
+                temp_game.gamestate = CheckMate;
+            }
+        }
+        temp_game.turn = !temp_game.turn;
+        *game = temp_game;
+        game->turn = !game->turn;
+        return 1;
+    }
+    return 0;
+}
+
 void print_board(uint64 position) {
-    print("\n");
+    printf("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             char dig = ' ';
@@ -382,8 +417,8 @@ void print_board(uint64 position) {
             } else {
                 dig = '0';
             }
-            print_dec(dig);
+            printf("%c", dig);
         }
-        print("\n");
+        printf("\n");
     }
 }

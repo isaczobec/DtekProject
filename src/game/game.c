@@ -7,7 +7,6 @@ Model* models_map[AMOUNT_PIECES_TYPES];
 
 #define NO_PIECE ((ObjectHandle*)0x00)
 ObjectHandle* pices_handles[AMOUNT_PIECES];
-uint8 pieces_ptr = 0;
 
 Vec3 boardVertexData[128*2];
 uint16 boardIndexData[192*2];
@@ -27,6 +26,7 @@ ObjectHandle* selector2SquareHandle;
 #define NO_POS 0xFF
 
 uint8 gameState=GAMESTATE_UNITIALIZED;
+uint8 gameStatus; 
 uint8 hoveredPos1 = 0;
 uint8 hoveredPos2 = 1;
 uint8 selectedPos1 = NO_POS;
@@ -38,13 +38,14 @@ uint8 getBoardIndex(uint8 x, uint8 y) {
 
 void gameInit(uint8 player1color, uint8 player2color) {
 
+    
     COLOR_ARR[0] = player1color;
     COLOR_ARR[1] = player2color;
-
+    
     whiteChessBoardModel = createChessBoardModel(boardVertexData, boardIndexData, 0);
     blackChessBoardModel = createChessBoardModel(&boardVertexData[128], &boardIndexData[192], 1);
     selectorSquareModel = createChessBoardSquare(selectorSquareVertexData, selectorSquareIndexData);
-
+    
     // initialize models map
     models_map[PAWN] = m_pawn;
     models_map[BISHOP] = m_bishop;
@@ -52,11 +53,11 @@ void gameInit(uint8 player1color, uint8 player2color) {
     models_map[ROOK] = m_rook;
     models_map[QUEEN] = m_queen;
     models_map[KING] = m_king;
-
+    
     // initialize game state
     game = GAMEINIT;    
     selectedSquare = 0;
-
+    
     // create the board
     Transform t = {
         .pos = {BOARD_LEFT_CORNER_X,N_FP(0,0x1000),BOARD_LEFT_CORNER_Y},
@@ -65,11 +66,11 @@ void gameInit(uint8 player1color, uint8 player2color) {
     };
     whiteBoardHandle = createObjectInstance(&whiteChessBoardModel, t, COLOR_ARR[0]);
     blackBoardHandle = createObjectInstance(&blackChessBoardModel, t, COLOR_ARR[1]);
-
+    
     // Make theese objects always render behind other objects
     whiteBoardHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_BOTTOM_DEPTH_CHECK;
     blackBoardHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_BOTTOM_DEPTH_CHECK;
-
+    
     selector1SquareHandle = createObjectInstance(&selectorSquareModel, t, 0x0F);
     selector1SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_ONLY_RENDER_EDGES;
     selector1SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER;
@@ -77,29 +78,23 @@ void gameInit(uint8 player1color, uint8 player2color) {
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_ONLY_RENDER_EDGES;
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER;
     selector2SquareHandle->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_FLAG_HIDDEN;
-
+    
     // init the piece array with null pointers
     for (int i = 0; i < AMOUNT_PIECES; i++) {
         pices_handles[i] = NO_PIECE;
     }
-
+    
     draw_string("Player 1 Turn!", 30,30, 0xFF);
-
+    
     updateBoardWithPieces();
     print("Initialized game!\n");
+    gameStatus = GAME_STATUS_IN_PROGRESS;
 }
 
 void updateBoardWithPieces()
 {
     // delete existing pieces
-    for (int i = 0; i < AMOUNT_PIECES; i++)
-    {
-        if (pices_handles[i] != NO_PIECE)
-        {
-            destroyObject(pices_handles[i]);
-            pices_handles[i] = NO_PIECE;
-        }
-    }
+    DestroyPieces();
     int current_piece_index = 0;
 
     // create pieces
@@ -128,7 +123,18 @@ void updateBoardWithPieces()
             }
         }
     }
-    pieces_ptr = current_piece_index;
+}
+
+void DestroyPieces()
+{
+    for (int i = 0; i < AMOUNT_PIECES; i++)
+    {
+        if (pices_handles[i] != NO_PIECE)
+        {
+            destroyObject(pices_handles[i]);
+            pices_handles[i] = NO_PIECE;
+        }
+    }
 }
 
 void setSelectedSquare(uint8 selected) {
@@ -174,6 +180,17 @@ void confirmSelectedSquare() {
         swapBuffer();
     } else {
         selectedPos2 = hoveredPos2;
+
+        if (game.gamestate == Check) {
+            print("CHECK!\n");
+        } else if (game.gamestate == CheckMate) {
+            gameStatus = GAME_STATUS_OVER;
+            draw_string("CHECKMATE! :D", 140, 25, 0xFF);
+            draw_string("PRESS BUTTON TO", 140, 35, 0xFF);
+            draw_string("RETURN TO MENU", 140, 45, 0xFF);
+            print("CHECK_MATE!\n");
+            swapBuffer();
+        }
         
         int res = make_move(&game, 1ULL<<selectedPos1, 1ULL<<selectedPos2);
 
@@ -189,6 +206,43 @@ void confirmSelectedSquare() {
         }
 
         print("performing move...\n");
+
+        // check for special conditions
+        if (game.gamestate == Promote) {
+            gameState = GAMESTATE_WAITING_FOR_PROMOTION_INPUT;
+
+            // get the input state to clear the button flag
+            getInputState();
+            
+            draw_string("PROMOTION TIME! :D", 140, 15, 0xFF);
+            draw_string("USE SWITCHES 0-1 TO SELECT,", 140, 25, 0xFF);
+            draw_string("AND THEN PRESS BUTTON", 140, 35, 0xFF);
+            draw_string("00: BISHOP", 140, 45, 0xFF);
+            draw_string("01: KNIGHT", 140, 55, 0xFF);
+            draw_string("10: ROOK", 140, 65, 0xFF);
+            draw_string("11: OUEEN", 140, 75, 0xFF);
+            swapBuffer();
+            
+            while (1) {
+                int action = poll();
+                if (action == 1) return 0;
+                InputState state = getInputState();
+                
+                if (state.pressedButton) {
+                    // use only bottom three three switches and add one
+                    // so that the input is converted to piece identifiers
+                    int32 inputPieceId = (state.switches & 0x3) + 1; 
+                    int promoteRes = promote(&game, 1ULL<<selectedPos2, inputPieceId);
+                    
+                    if (promoteRes == 0) {
+                        print("no success promoting!\n");
+                    }
+                    break;
+                }
+            }
+            
+        }
+        
         updateBoardWithPieces();
 
         setStateToWaitingForInput(0);
@@ -203,6 +257,10 @@ void printStatusText() {
         draw_string("PLAYER 1 TURN!", 30, 30, 0xFF);
     } else {
         draw_string("PLAYER 2 TURN!", 30, 30, 0xFF);
+    }
+
+    if (game.gamestate == Check) {
+        draw_string("CHEK :D", 140, 15, 0xFF);
     }
 }
 
@@ -220,4 +278,5 @@ void setStateToWaitingForInput(uint8 draw) {
         drawModel(selector1SquareHandle->objectInstance);
         swapBuffer();
     }
+    gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
 }

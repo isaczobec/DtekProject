@@ -45,8 +45,8 @@ int poll() {
 			}
 
 			if (num >= 0 && num <= 8) {
-				print_dec(num);
-				print("\n");
+				// print_dec(num);
+				// print("\n");
 				_win_switch_mask ^= (1 << num);
 				setSelectedSquare(_win_switch_mask & 0x3F);
 			}

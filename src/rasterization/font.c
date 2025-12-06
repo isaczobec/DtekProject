@@ -1308,9 +1308,9 @@ void draw_string(const char* s, uint16 i, uint16 j, uint8 color) {
     uint16 cursorX = i; 
     uint16 cursorY = j; 
 
-    print("\ndrawing a string: ");
-    print(s);
-    print("\n");
+    // print("\ndrawing a string: ");
+    // print(s);
+    // print("\n");
     
 
     int currIdx = 0;
