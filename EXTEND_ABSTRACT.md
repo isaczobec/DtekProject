@@ -8,10 +8,13 @@ In more specific terms, the input to the rasterizer is a collection of 3D object
 space, and the position and rotation of a camera. The output is a buffer of bytes that represent a 2D image/
 projection of the 3D world.
 
-We require that the software rasterizer must produce a reasonable amount of frames per second, for a smooth 
-experience. However, due to time constraints we do not require more sophisticated 3D effects, such as textures, 
-ambient occlusion, or shadows. 
+We originally required that the software rasterizer must produce a reasonable amount of frames per second, for a smooth 
+experience. However, due to time constraints we could not get a good fps, which caused us to change what game we made.
 
+Originally, we had planned to make a copy of the game Zarch, a 3d shoot'em up from the 80's. But, due to the low frame rate of the rasterizer, we decided that we should go for something turn based instead. Thus we decided to make chess instead.
+
+The requirements for the chess engine is that it should be able to do all legal moves in chess, which includes for example: en passant, check, checkmate, castling and promotion.
+ 
 ## 3 Solution 
 *The solution paragraph should state: How did you design and implement your solution?*
 
@@ -111,13 +114,38 @@ The depth value is stored in a depth buffer, which holds the same amount of pixe
 
 The instances of different models (object instances) were stored in either a tightly packed array belonging to a chunk (a partition of the world) if it is close enough to the camera, otherwise it is stored in a single tightly packed array. The point of this was to be able to only consider objects in chunks that are close enough to the player when rendering, but after changing our plans from Zarch to Chess the need for this disappeared. In addition, since the address of object instances may change over its lifetime (if it comes into render distance or switches chunks) might change, objects are refered to using an `ObjectHandle` struct with a managed pointer to an object instance. 
 
+### Chess Engine
+
+In order to make the chess engine runnable on the dtek board, we chose to use multiple uint64s to represent the board Where bit 0 is A8, increasing to the right and then going to the next rank, ending at bit 63 as H1. One for each type of piece per side and one for each side in total and one for every piece. This lets us use bitwise operators in order to compare boardstates. For example, to see if apiece is captured, we can simple AND the position we moved to with the enemy board in order to see if a piece was present. Similarly, we can use bitshifts to update positions, for example, moving a white pawn forwards is equivalent to shifting its position right by 8. This requires a couple extra rules so a piece can't walk out of the board and appear on the other side.
+
+When a move is made, we check all the legal moves of the selected tile, and look if the attempted move was legal. The conditions that are checked is it a move that piece could make, for example a rook can't go diagonal, does the move put your own king in check, is the piece blocked in a direction, does the piece capture an enemy and if applicable, special moves such as en passant or castling.
+
+The engine sets special flags depending on the current game state. Normally, it's inProgress, if your king is in check, it's check, if you've been checkmated, it's checkmate and if you have to promote a piece it's promote.
+
+Checking if the king is in check is done by iterating through every type of piece, placing one on the same square as your king, and checking if it could capture an enemy piece that is of the same type as itself. This is done so we can avoid iterating through every enemy piece and checking their legal moves, instead we just have to check the legal move of 5 different pieces, which on average is much faster.
+
+Castling is essentially just a hardcoded check if the king or corrosponding rook has moved this game, and if not checking that all squares between them are clear and that the king does not move through check.
+
+En Passant is implemented by having an "enPassantBoard", which updates the corrosponding bit if a pawn is moved two steps forward, resetting on the next turn. This board is then checked when looking at the legal moves of a pawn.
+
+Checkmate is implemented by checking that no enemy piece has any legal moves, this is only checked if the enemy king is in check, as it is very computationally heavy.
+
+Promotion is very simple, if a pawn moves to the final rank, the move is interrupted and the gamestate flag is set to promotion. Then the function promote, takes which piece to promote to, validates that it's a piece that you can promote to, and finishes the move.
+
 ## 4 Verification 
 *The verification paragraph should answer: How did you test or verify that you solution is correct?*
 
 Since our project is of a very visual nature, we knew that the software rasterizer was working when it displayed images that are reasonable and mirror what we intend to render. For example, it was easy to see when depth ordering and perspective projection began working correctly.
 
-## 5 Reflecitions
+For the chess_engine, in development, we set up test scenarios that tested the thing that was being worked on. The bugs that slipped through there are then easily findable when trying to play the actual game, for example by trying to castle it's easy to find if you are unable to castle.
+
+## 5 Contribution
+
+We divided the work on this project very cleanly, Isac made the rasterizer, while Linus made the underlying chess engine. We had some debugging and feedback on eachothers code, but since we both had the best understanding of our own work, it was still fixed by the one who wrote that part of the code.
+
+## 6 Reflecitions
 
 We learned a lot from the project, e.g. how a compiler toolchain works, how c-code corresponds to machine code instructions, and how to structure a low level c project.
+
 
 The whole chunking system would likely have generated large performance benefits if we would have created our original game idea, where objects would often have moved in and out of view and render distance. The chunks allow visible objects to be tightly packed in memory, while being able to check in $O(1)$ time check if all objects in a chunk should be rendered (determine if the camera is angled toward or away from the chunk, skip trying to render the objects in its array if it is facing away). However, since all objects are now constantly visible, the only effect of the chunk system was rather to marginally decrease performance. 
