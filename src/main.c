@@ -11,6 +11,7 @@
 #include "rasterization/color.h"
 #include "chess_engine/chess.h"
 #include "game/game.h"
+#include "performance_analysis/performance_analysis.h"
 
 // #define __WINDOWS__
 #if defined(__WINDOWS__)
@@ -18,6 +19,14 @@
 #include "SDL3/SDL.h"
 #include <stdio.h>
 #endif
+
+void *memset(void *dst, int v, unsigned n)
+{
+    unsigned char *p = dst;
+    unsigned char val = (unsigned char)v;
+    while (n--) *p++ = val;
+    return dst;
+}
 
 void delay(unsigned int cycles) {
     for (int i = 0; i < cycles; i++) {
@@ -50,35 +59,38 @@ int main() {
     initRasterization();
     initChunking();
     
-     Game game = GAMEINIT;
+   /*  Game game = GAMEINIT;
     
 
-    print_board(game.positions.StatePerSide[2]);
-    make_move(&game, (uint64)1<<52, (uint64)1<<36);
-    print_board(game.positions.StatePerSide[2]);
-    printf("%d\n", game.gamestate);
-    /* game.turn = !game.turn;
+    game.turn = !game.turn;
      game.positions = POS0;
      for(int i = 0; i < 4; i++) {
         game.castling[i] = 0;
      }
      game.positions.StatePerPiece[6] += (uint64)1<<55;
-     game.positions.StatePerSide[1] += (uint64)1<<5;
-     game.positions.StatePerSide[2] += (uint64)1<<5;
+     game.positions.StatePerSide[1] += (uint64)1<<55;
+     game.positions.StatePerSide[2] += (uint64)1<<55;
 
-     game.positions.StatePerPiece[11] += (uint64)1<<7;
+     game.positions.StatePerPiece[5] += (uint64)1<<7;
      game.positions.StatePerSide[0] += (uint64)1<<7;
      game.positions.StatePerSide[2] += (uint64)1<<7;
 
-     Game opp_game = game;
-     opp_game.turn = !opp_game.turn;
-     print_board(game.positions.StatePerSide[2]);
-     print_board(check_legal_moves(&opp_game, (uint64)1<<7, 5));
+     game.positions.StatePerPiece[2] += (uint64)1<<6;
+     game.positions.StatePerSide[0] += (uint64)1<<6;
+     game.positions.StatePerSide[2] += (uint64)1<<6;
+
+     /*game.positions.StatePerPiece[2] += (uint64)1<<14;
+     game.positions.StatePerSide[0] += (uint64)1<<14;
+     game.positions.StatePerSide[2] += (uint64)1<<14;
+
+    resetCsrCounterVars();
+    clearCsrRegs();
 
      make_move(&game, (uint64)1<<55, (uint64)1<<63);
-     promote(&game, (uint64)1<<63, KNIGHT);
-     print_board(game.positions.StatePerPiece[KNIGHT+6]);
-     printf("%d", game.gamestate);*/
+     promote(&game, (uint64)1<<63, QUEEN);
+    //make_move(&game, (uint64)1<<52, (uint64)1<<36);
+
+     printCsrRegs();*/
 
 
 
