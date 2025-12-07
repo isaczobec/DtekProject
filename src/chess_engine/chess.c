@@ -117,13 +117,12 @@ int takes_piece(Game *game, uint64 check_pos) {
     return 0;
 }
 
-int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece);
 
 uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece) {    
     uint64 legal_moves = 0;
     if (not_blocked_by_piece(game, shift(curpos, direction)) && not_outside(curpos, direction)) {
 
-        if (!has_recursed) {
+        if (!has_recursed && !takes_piece(game, shift(curpos, direction))) {
             if(!not_revealed_check_check(game, curpos, direction, current_piece)) {
                 return legal_moves;
         }}
@@ -136,23 +135,24 @@ uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recu
             return legal_moves;
         }
         if(is_recursive && shift(curpos, direction)) {
-        legal_moves += check_direction(game, shift(curpos, direction), direction, is_recursive, 1, current_piece);
-    }
+            legal_moves += check_direction(game, shift(curpos, direction), direction, is_recursive, 1, current_piece);
+        }
     }
     return legal_moves;
 }
 
-int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece) {    
+int not_revealed_check_check(Game *game, uint64 curpos, int32 direction, int32 current_piece) {    
     
     for (int i = 0; i < *(&ANY+1) - ANY; i++) {
-        if (i != direction && -i != direction) {
+        int32 dir = ANY[i];
+        if (dir != direction && -dir != direction) {
             if (i < 4 && 
-                check_direction(game, curpos, i, 0, 1, current_piece)&(game->positions.StatePerPiece[6*!game->turn+ROOK]|game->positions.StatePerPiece[6*!game->turn+QUEEN]) &&
-                check_direction(game, curpos, -i, 0, 1, current_piece)&shift(game->positions.StatePerPiece[6*game->turn+KING], i) && not_outside(game->positions.StatePerPiece[6*game->turn+KING], i)) {
+                check_direction(game, curpos, dir, 0, 1, current_piece)&((game->positions.StatePerPiece[6*!game->turn+ROOK]|game->positions.StatePerPiece[6*!game->turn+QUEEN])) &&
+                check_direction(game, curpos, -dir, 0, 1, current_piece)&shift(game->positions.StatePerPiece[6*game->turn+KING], dir) && not_outside(game->positions.StatePerPiece[6*game->turn+KING], dir)) {
                     return 0;
             } else if (i > 3 &&
-                check_direction(game, curpos, i, 0, 1, current_piece)&(game->positions.StatePerPiece[6*!game->turn+BISHOP]|game->positions.StatePerPiece[6*!game->turn+QUEEN]) &&
-                check_direction(game, curpos, -i, 0, 1, current_piece)&shift(game->positions.StatePerPiece[6*game->turn+KING], i) && not_outside(game->positions.StatePerPiece[6*game->turn+KING], i)) {
+                check_direction(game, curpos, dir, 0, 1, current_piece)&(game->positions.StatePerPiece[6*!game->turn+BISHOP]|game->positions.StatePerPiece[6*!game->turn+QUEEN]) &&
+                check_direction(game, curpos, -dir, 0, 1, current_piece)&shift(game->positions.StatePerPiece[6*game->turn+KING], dir) && not_outside(game->positions.StatePerPiece[6*game->turn+KING], dir)) {
                     return 0;
             }
         }

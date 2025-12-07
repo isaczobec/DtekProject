@@ -131,7 +131,7 @@ int not_check_check(Game *game, uint64 curpos);
 int moves_out_of_check(Game *game, uint64 curpos, uint64 newpos, uint64 current_piece);
 int takes_piece(Game *game, uint64 check_pos);
 uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece);
-int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece);
+int not_revealed_check_check(Game *game, uint64 curpos, int32 direction, int32 current_piece);
 uint64 check_king_moves(Game *game, uint64 curpos);
 uint64 check_queen_moves(Game *game, uint64 curpos);
 uint64 check_rook_moves(Game *game, uint64 curpos);
