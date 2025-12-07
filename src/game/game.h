@@ -11,6 +11,7 @@
 #include "../rasterization/models.h"
 #include "../rasterization/chessboard_model.h"
 #include "../rasterization/font.h"
+#include "../chess_engine/chess.h"
 
 #define GAMESTATE_UNITIALIZED 1
 #define GAMESTATE_ACTIVE_WAITING_FOR_MOVE 2
@@ -34,7 +35,7 @@ extern uint8 gameStatus; // if the game is in progress or over. Takes values of 
 
 void setStateToWaitingForInput(uint8 draw);
 void gameInit(uint8 player1color, uint8 player2color);
-void updateBoardWithPieces();
+void UpdateBoardWithPieces();
 void DestroyPieces();
 void setSelectedSquare(uint8 selected);
 void confirmSelectedSquare();

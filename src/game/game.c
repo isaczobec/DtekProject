@@ -8,6 +8,9 @@ Model* models_map[AMOUNT_PIECES_TYPES];
 #define NO_PIECE ((ObjectHandle*)0x00)
 ObjectHandle* pices_handles[AMOUNT_PIECES];
 
+ObjectHandle* possible_moves_objects[AMOUNT_SQUARES];
+int possible_moves_ptr = 0;
+
 Vec3 boardVertexData[128*2];
 uint16 boardIndexData[192*2];
 
@@ -33,6 +36,8 @@ uint8 selectedPos1 = NO_POS;
 uint8 selectedPos2 = NO_POS;
 
 uint8 pieces_ptr = 0;
+
+void destroy_possible_moves_markers(void);
 
 uint8 getBoardIndex(uint8 x, uint8 y) {
     return y*BOARD_LEN + x;
@@ -88,14 +93,60 @@ void gameInit(uint8 player1color, uint8 player2color) {
     for (int i = 0; i < AMOUNT_PIECES; i++) {
         pices_handles[i] = NO_PIECE;
     }
+    for (int i = 0; i < AMOUNT_PIECES; i++) {
+        possible_moves_objects[i] = NO_PIECE;
+    }
     
     draw_string("Player 1 Turn!", 30,30, 0xFF);
     
-    updateBoardWithPieces();
+    UpdateBoardWithPieces();
     print("Initialized game!\n");
 }
 
-void updateBoardWithPieces()
+void create_possible_moves_markers(uint64 possibleMoves)
+{
+    // delete existing pieces
+    destroy_possible_moves_markers();
+
+    // create pieces
+    for (uint32 squareIdx = 0; squareIdx < AMOUNT_SQUARES; ++squareIdx)
+    {
+        print_dec(squareIdx); print("\n");
+        print_dec(possibleMoves); print("\n");
+        if (possibleMoves & (1ULL << squareIdx))
+        {
+
+        print("creating move marker");  
+
+        // there was a piece here, create it
+        int32 boardX = squareIdx % BOARD_LEN;
+        int32 boardY = squareIdx / BOARD_LEN;
+        int32 xWorldPos = BOARD_LEFT_CORNER_X + fpMul(FP(boardX, 0), SQUARE_SIZE_PIECES);
+        int32 yWorldPos = BOARD_LEFT_CORNER_Y + fpMul(FP(boardY, 0), SQUARE_SIZE_PIECES);
+
+        Transform t = {
+            .pos = {xWorldPos, FP(0,0x0800), yWorldPos},
+            .rotation = {0, 0, 0},
+            .scale = {FP(1, 0), FP(1, 0), FP(1, 0)}};
+        possible_moves_objects[possible_moves_ptr] = createObjectInstance(&selectorSquareModel, t, 0xFA);
+        possible_moves_objects[possible_moves_ptr]->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER;
+        possible_moves_ptr += 1;
+        }
+    }
+}
+
+void destroy_possible_moves_markers() {
+    for (int i = 0; i < possible_moves_ptr; i++)
+    {
+        if (possible_moves_objects[i] != NO_PIECE)
+        {
+            destroyObject(possible_moves_objects[i]);
+            possible_moves_objects[i] = NO_PIECE;
+        }
+    }
+    possible_moves_ptr = 0;
+}
+void UpdateBoardWithPieces()
 {
     // delete existing pieces
     DestroyPieces();
@@ -130,6 +181,7 @@ void updateBoardWithPieces()
     pieces_ptr = current_piece_index;
 }
 
+
 void DestroyPieces()
 {
     for (int i = 0; i < pieces_ptr; i++)
@@ -152,13 +204,20 @@ void setSelectedSquare(uint8 selected) {
     if (selectedPos1 == NO_POS) {
         selectorToMove = selector1SquareHandle;
         hoveredPos1 = selected;
+
+
     } else {
         selectorToMove = selector2SquareHandle;
         hoveredPos2 = selected;
     }
 
-    // print("clearing gizmo layer\n");
+    // refresh gizmo layer but keep existing possible-move markers visible
     clearGizmoLayer(&gizmoLayer);
+    for (int i = 0; i < possible_moves_ptr; i++) {
+        if (possible_moves_objects[i] != NO_PIECE) {
+            drawModel(possible_moves_objects[i]->objectInstance);
+        }
+    }
     
     // print("moving and rendering\n");
     uint8 boardY = selected / 8;
@@ -181,9 +240,19 @@ void confirmSelectedSquare() {
         selectedPos1 = hoveredPos1;
         hoveredPos2 = hoveredPos1;
         selector2SquareHandle->objectInstance->objectInstanceFlags &= ~OBJECTINSTANCE_FLAG_HIDDEN;
+
+        uint64 possible_moves = check_legal_moves(&game, 1ULL << selectedPos1, NULL_PIECE);
+        create_possible_moves_markers(possible_moves);
+        for (int i = 0; i < possible_moves_ptr; i++) {
+            drawModel(possible_moves_objects[i]->objectInstance);
+        }
+
         setSelectedSquare(hoveredPos2);
         swapBuffer();
     } else {
+
+        destroy_possible_moves_markers();
+
         selectedPos2 = hoveredPos2;
 
         if (game.gamestate == Check) {
@@ -250,7 +319,7 @@ void confirmSelectedSquare() {
             swapBuffer();
         }
         
-        updateBoardWithPieces();
+        UpdateBoardWithPieces();
 
         gameState = GAMESTATE_ACTIVE_WAITING_TO_RENDER;
         swapBuffer();
