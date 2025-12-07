@@ -184,6 +184,9 @@ uint64 check_king_moves(Game *game, uint64 curpos) {
     temp_game.positions.StatePerPiece[game->turn+KING] -= curpos;
     temp_game.positions.StatePerSide[game->turn] -= curpos;
     temp_game.positions.StatePerSide[2] -= curpos;
+    if (temp_game.positions.StatePerSide[!temp_game.turn]&curpos) {
+        temp_game.positions.StatePerSide[!temp_game.turn] -= curpos;
+    }
     for (int i = 0; i < *(&ANY+1) - ANY; i++) {
         if(not_check_check(&temp_game, shift(curpos, ANY[i]))) {
             legal_moves += check_direction(game, curpos, ANY[i], 0, 0, 6*game->turn+KING);
