@@ -59,10 +59,10 @@ int not_outside(uint64 curpos, int direction) {
 }
 
 int horse_block(uint64 curpos, int direction) {
-    if (curpos&rank_a && (direction == 10 || direction == -10 || direction == 17 || -17) ||
-        curpos&rank_h && (direction == 6 || direction == -6 || direction == 15 || -15) ||
-        curpos&rank_b && (direction == 10 || direction == -10) ||
-        curpos&rank_g && (direction == 6 || direction == -6)) {
+    if (curpos&rank_a && (direction == 6 || direction == -10 || direction == 15 || direction == -17) ||
+        curpos&rank_h && (direction == 10 || direction == -6 || direction == 17 || direction == -15) ||
+        curpos&rank_b && (direction == 6 || direction == -10) ||
+        curpos&rank_g && (direction == 10 || direction == -6)) {
         return 0;
     }
     return 1;
@@ -184,10 +184,11 @@ uint64 check_king_moves(Game *game, uint64 curpos) {
     temp_game.positions.StatePerPiece[game->turn+KING] -= curpos;
     temp_game.positions.StatePerSide[game->turn] -= curpos;
     temp_game.positions.StatePerSide[2] -= curpos;
-    if (temp_game.positions.StatePerSide[!temp_game.turn]&curpos) {
-        temp_game.positions.StatePerSide[!temp_game.turn] -= curpos;
-    }
+
     for (int i = 0; i < *(&ANY+1) - ANY; i++) {
+        if (temp_game.positions.StatePerSide[!temp_game.turn]&shift(curpos, ANY[i])) {
+        temp_game.positions.StatePerSide[!temp_game.turn] -= shift(curpos, ANY[i]);
+        }
         if(not_check_check(&temp_game, shift(curpos, ANY[i]))) {
             legal_moves += check_direction(game, curpos, ANY[i], 0, 0, 6*game->turn+KING);
         }
