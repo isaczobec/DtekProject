@@ -8,6 +8,7 @@
 #endif
 
 //Identifier for each piece
+static const int32 NULL_PIECE = -1;
 static const int32 PAWN = 0;
 static const int32 BISHOP = 1;
 static const int32 KNIGHT = 2;

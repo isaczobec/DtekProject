@@ -119,7 +119,7 @@ int takes_piece(Game *game, uint64 check_pos) {
 
 int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece);
 
-uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece) {
+uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece) {    
     uint64 legal_moves = 0;
     if (not_blocked_by_piece(game, shift(curpos, direction)) && not_outside(curpos, direction)) {
 
@@ -142,7 +142,8 @@ uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recu
     return legal_moves;
 }
 
-int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece) {
+int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece) {    
+    
     for (int i = 0; i < *(&ANY+1) - ANY; i++) {
         if (i != direction && -i != direction) {
             if (i < 4 && 
@@ -257,7 +258,7 @@ uint64 check_knight_moves(Game *game, uint64 curpos) {
 
 uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece) {
 
-    if(&current_piece == NULL) {
+    if(current_piece == NULL_PIECE) {
     for (int i = 0; i < 6; i++) {
         if(game->positions.StatePerPiece[i+game->turn*6]&curpos) {
             current_piece = i;
@@ -291,6 +292,13 @@ uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece) {
 }
 
 int make_move(Game *game, uint64 curpos, uint64 newpos) {
+
+    // check that there actually is a piece belonging to the
+    // current side on the selected square
+    if (!(game->positions.StatePerSide[game->turn]&curpos)) {
+        return 0;
+    }
+
     int current_piece = 0;
     for (int i = 0; i < 6; i++) {
         if(game->positions.StatePerPiece[i+game->turn*6]&curpos) {
@@ -361,7 +369,7 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.gamestate = Check;
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
-                moves|check_legal_moves(&temp_game, shift(1, i), NULL);
+                moves|=check_legal_moves(&temp_game, shift(1, i), NULL_PIECE);
             }
             if (!moves) {
                 temp_game.gamestate = CheckMate;
@@ -390,7 +398,7 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
             temp_game.gamestate = Check;
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
-                moves|check_legal_moves(&temp_game, shift(1, i), NULL);
+                moves|=check_legal_moves(&temp_game, shift(1, i), NULL_PIECE);
             }
             if (!moves) {
                 temp_game.gamestate = CheckMate;
