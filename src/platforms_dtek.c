@@ -1,5 +1,7 @@
 // Author: Isac Zobec
 
+// some code to enable and handle interrupts copied from lab 3 
+
 #if defined(__DTEK__)
 #include "platforms.h"
 #include "io/io.h" 
