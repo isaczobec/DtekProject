@@ -117,6 +117,8 @@ int takes_piece(Game *game, uint64 check_pos) {
     return 0;
 }
 
+int not_revealed_check_check(Game *game, uint64 curpos, uint64 direction, int32 current_piece);
+
 uint64 check_direction(Game *game, uint64 curpos, int32 direction, int32 is_recursive, int32 has_recursed, int32 current_piece) {
     uint64 legal_moves = 0;
     if (not_blocked_by_piece(game, shift(curpos, direction)) && not_outside(curpos, direction)) {
@@ -330,9 +332,9 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.positions.StatePerSide[2] += shift((uint64)1, 56*!game->turn+3);
             temp_game.positions.StatePerPiece[6*game->turn+ROOK] += shift((uint64)1, 56*!game->turn+3);
 
-        } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 63*!game->turn)) {
+        } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 7+56*!game->turn)) {
             temp_game.castling[game->turn] = 0;
-        } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 49*!game->turn+7)) {
+        } else if(current_piece == ROOK+6*game->turn && curpos == shift((uint64)1, 56*!game->turn)) {
             temp_game.castling[game->turn+2] = 0;
         } else if(current_piece == KING+6*game->turn && curpos == shift((uint64)1, 56*!game->turn+4)) {
             temp_game.castling[game->turn] = 0;
@@ -357,8 +359,6 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.gamestate = InProgress;
         } else {
             temp_game.gamestate = Check;
-        }
-        if(!not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
                 moves|check_legal_moves(&temp_game, shift(1, i), NULL);
@@ -388,8 +388,6 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
             temp_game.gamestate = InProgress;
         } else {
             temp_game.gamestate = Check;
-        }
-        if(!not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
                 moves|check_legal_moves(&temp_game, shift(1, i), NULL);
@@ -406,7 +404,7 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
     return 0;
 }
 
-void print_board(uint64 position) {
+/*void print_board(uint64 position) {
     printf("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
@@ -421,4 +419,4 @@ void print_board(uint64 position) {
         }
         printf("\n");
     }
-}
+}*/

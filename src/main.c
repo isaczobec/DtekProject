@@ -52,23 +52,6 @@ int main() {
     initRasterization();
     initChunking();
     init_glyphs();
-    
-    // Game game = GAMEINIT;
-    // game.positions.StatePerPiece[0] += (uint64)1<<37;
-    // game.positions.StatePerSide[0] += (uint64)1<<37;
-    // game.positions.StatePerSide[2] += (uint64)1<<37;
-    // game.positions.StatePerPiece[10] += (uint64)1<<30;
-    // game.positions.StatePerSide[1] += (uint64)1<<30;
-    // game.positions.StatePerSide[2] += (uint64)1<<30;
-
-    // print_board(game.positions.StatePerSide[2]);
-
-    // print_board(check_legal_moves(&game, (uint64)1<<37, 0));
-
-    // make_move(&game, (uint64)1<<37, (uint64)1<<30);
-
-    // print_board(game.positions.StatePerSide[2]);
-
     fill(0);
 
     
