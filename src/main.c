@@ -172,8 +172,7 @@ int main() {
                 updateCameraTransform(&camera);
                 centerRenderRegionAtCamera(&camera);
         
-                resetCsrCounterVars();
-                clearCsrRegs();
+
                 for (int i = 0; i < RENDER_REGION_TOTAL_CHUNKS; ++i) {
                     for (int objIdx = 0; objIdx < chunks[i]._backPtr; objIdx += 1) {
                         // print("drawing");
@@ -183,12 +182,10 @@ int main() {
                     }
                 }
                     swapBuffer();
-                printCsrCounterVars();
                 setStateToWaitingForInput(1);
                 swapBuffer();
 
                 
-                gameState = GAMESTATE_ACTIVE_WAITING_FOR_MOVE;
                 while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
                     int action = poll();
                     if (action == 1) {
