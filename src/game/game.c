@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "game.h"
 
 Game game;
@@ -130,6 +132,7 @@ void create_possible_moves_markers(uint64 possibleMoves)
             .scale = {FP(1, 0), FP(1, 0), FP(1, 0)}};
         possible_moves_objects[possible_moves_ptr] = createObjectInstance(&selectorSquareModel, t, 0xFA);
         possible_moves_objects[possible_moves_ptr]->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_RENDER_TO_GIZMO_LAYER;
+        possible_moves_objects[possible_moves_ptr]->objectInstance->objectInstanceFlags |= OBJECTINSTANCE_ONLY_RENDER_EDGES;
         possible_moves_ptr += 1;
         }
     }

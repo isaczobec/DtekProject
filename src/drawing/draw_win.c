@@ -1,4 +1,6 @@
-// #define __WINDOWS__
+// Author: Isac Zobec
+// ! Not included in final DTEK-binary !
+
 #if defined(__WINDOWS__)
 
 

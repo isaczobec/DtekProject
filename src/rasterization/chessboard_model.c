@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "chessboard_model.h"
 
 Model createChessBoardModel(Vec3* vertexDataPtr, uint16* indexDataPtr, uint8 startAtIndex) {

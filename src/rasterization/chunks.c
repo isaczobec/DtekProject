@@ -1,3 +1,7 @@
+// Author: Isac Zobec
+// This became largely irrelevant in the final
+// game, which ended up not needing chunks at all
+
 #include "chunks.h"
 
 ObjectHandle _objectHandles[MAX_OBJECTS_GLOBAL];

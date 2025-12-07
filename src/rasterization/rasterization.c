@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "rasterization.h"
 #include "../drawing/draw.h"
 #include "../math/math.h"

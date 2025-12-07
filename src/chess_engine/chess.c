@@ -1,3 +1,5 @@
+// Author: Linus Bredin
+
 #include "chess.h"
 #include "../io/io.h"
 
@@ -378,9 +380,8 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
                 moves = moves|check_legal_moves(&temp_game, shift((uint64)1, i), NULL_PIECE);
-                printf("piece: %d, status: %d\n", i, temp_game.gamestate);
-                print_board(moves);
-                printf("\n");
+                print("piece: "); print_dec(i); print(" , status: "); print_dec(temp_game.gamestate);
+                print("\n");
             }
 
             if (!moves) {
@@ -425,7 +426,7 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
 }
 
 void print_board(uint64 position) {
-    printf("\n");
+    print("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             char dig = ' ';
@@ -435,8 +436,8 @@ void print_board(uint64 position) {
             } else {
                 dig = '0';
             }
-            printf("%c", dig);
+            print_dec(dig);
         }
-        printf("\n");
+        print("\n");
     }
 }

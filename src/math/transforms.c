@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "transforms.h"
 
 void applyTransform(Vec3* v, Vec3* res, const Transform* transform) {

@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "object_modification.h"
 
 void setObjectPosition(ObjectHandle* handle, Vec3* newPosition) {

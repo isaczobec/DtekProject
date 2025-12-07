@@ -1,3 +1,4 @@
+# Author: Isac Zobec
 
 import math
 import os

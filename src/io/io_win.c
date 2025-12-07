@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #if defined(__WINDOWS__)
 #include "io.h"
 #include <stdio.h>

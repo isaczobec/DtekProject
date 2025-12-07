@@ -1,3 +1,5 @@
+// Author: Isac Zobec & Linus Bredin
+
 #pragma once
 #include "../types.h"
 #include "fixed_point.h"

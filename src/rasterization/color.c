@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "color.h"
 
 uint8 multiplyColor(uint8 color, int32 val) {

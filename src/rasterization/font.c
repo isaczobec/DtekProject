@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "font.h"
 
 typedef struct {

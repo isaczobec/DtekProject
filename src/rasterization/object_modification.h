@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "chunks.h"
 #include "rasterization.h"
 #include "../math/math.h"

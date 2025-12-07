@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "rasterization.h"
 
 Vec3 vertexData[VERTEX_DATA_TOTAL_SIZE_BYTES] = {

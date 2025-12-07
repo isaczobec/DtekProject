@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "../types.h"
 #include "../drawing/draw.h"
 

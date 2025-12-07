@@ -1,7 +1,14 @@
-
 # Building
 
 This project can be built either for windows or for the DTEK board.
+
+## Building for DTEK-board
+
+To compile for the DTEK-board, you need the `riscv32-unknown-elf-gcc`
+toolchain. Make sure to install it if you do not have it.
+
+To compile the game for the DTEK-board, enter the `build-dtek` directory
+and run `make`.
 
 ## Building for Windows 
 
@@ -31,3 +38,12 @@ https://github.com/libsdl-org/SDL/releases
 - the output binary will be called `out.exe`. If you want to move this to another folder and
   run it from there, make sure to also move the SDL3.dll file to that directory (the SDL binary)
   which is dynamically linked against at runtime.
+
+
+# Used assets
+
+The chess piece models were not created by us. They can for example be found here:
+https://sketchfab.com/3d-models/knight-low-poly-431d71b3c88f4461bf7848d474b8367f
+
+Credits:
+"Knight - Low Poly" (https://skfb.ly/XHzT) by Chris is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).

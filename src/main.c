@@ -1,3 +1,4 @@
+// Author: Isac Zobec & Linus Bredin
 #include "platforms.h"
 #include "drawing/draw.h"
 #include "types.h"

@@ -1,3 +1,5 @@
+// Author: Isac Zobec & Linus Bredin
+
 #include "math.h"
 
 const int32 pi = 0x3243F;

@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #pragma once
 #include "rasterization.h"
 

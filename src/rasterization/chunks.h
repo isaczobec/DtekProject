@@ -1,3 +1,7 @@
+// Author: Isac Zobec
+// This became largely irrelevant in the final
+// game, which ended up not needing chunks at all
+
 #pragma once
 #include "../math/fixed_point.h"
 #include "../math/math.h"

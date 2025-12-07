@@ -1,3 +1,4 @@
+# Author: Isac Zobec
 
 class Glyph:
     def __init__(

@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #pragma once
 
 #define NULL 0x00

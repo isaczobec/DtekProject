@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #if defined(__DTEK__)
 #include "platforms.h"
 #include "io/io.h" 

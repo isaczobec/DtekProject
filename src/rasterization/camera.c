@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+
 #include "camera.h"
 
 Camera camera = {

@@ -1,3 +1,5 @@
+// Author: Linus Bredin
+
 #pragma once
 #include "../types.h"
 // #define __WINDOWS__

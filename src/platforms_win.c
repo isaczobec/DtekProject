@@ -1,3 +1,5 @@
+// Author: Isac Zobec
+// Not included in final DTEK-Binary
 
 #if defined(__WINDOWS__)
 #include "platforms.h"
