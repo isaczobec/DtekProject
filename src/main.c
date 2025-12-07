@@ -186,6 +186,7 @@ int main() {
                 swapBuffer();
 
                 
+
                 while(gameState != GAMESTATE_ACTIVE_WAITING_TO_RENDER) {
                     int action = poll();
                     if (action == 1) {

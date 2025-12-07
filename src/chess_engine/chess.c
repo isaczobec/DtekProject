@@ -234,7 +234,7 @@ uint64 check_pawn_moves(Game *game, uint64 curpos) {
     for (int i = 0; i < *(&RUPLUP+1) - RUPLUP; i++) {
         if((game->positions.StatePerSide[!game->turn]&shift(curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i]) ||
            game->positions.EnPassantPerSide[!game->turn]&shift(curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i])) &&
-           not_outside(curpos, RUPLUP[i]) &&
+           not_outside(curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i]) &&
             not_revealed_check_check(game, curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i], 6*game->turn+PAWN) &&
             moves_out_of_check(game, curpos, shift(curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i]), 6*game->turn+PAWN)) {
             legal_moves += shift(curpos, -2*game->turn*RUPLUP[i]+RUPLUP[i]);
