@@ -240,7 +240,8 @@ void confirmSelectedSquare() {
             
         }
 
-        if (game.gamestate == CheckMate) {
+        // check if checkmate is detected or if the king is manually taken
+        if (game.gamestate == CheckMate || game.positions.StatePerPiece[6+KING] == 0 || game.positions.StatePerPiece[KING] == 0) {
             gameStatus = GAME_STATUS_OVER;
             draw_string("CHECKMATE! :D", 140, 25, 0xFF);
             draw_string("PRESS BUTTON TO", 140, 35, 0xFF);
