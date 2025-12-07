@@ -81,7 +81,7 @@ int not_check_check(Game *game, uint64 curpos) {
 
 int moves_out_of_check(Game *game, uint64 curpos, uint64 newpos, uint64 current_piece) {
     Game temp_game = *game;
-    if (game->gamestate == Check) {
+    if (temp_game.gamestate == Check) {
         temp_game.gamestate = InProgress;
         temp_game.positions.StatePerPiece[current_piece] += newpos;
         temp_game.positions.StatePerSide[temp_game.turn] += newpos;
@@ -89,17 +89,18 @@ int moves_out_of_check(Game *game, uint64 curpos, uint64 newpos, uint64 current_
         temp_game.positions.StatePerPiece[current_piece] -= curpos;
         temp_game.positions.StatePerSide[temp_game.turn] -= curpos;
         temp_game.positions.StatePerSide[2] -= curpos;
-        int opp_piece = 0;
+        int opp_piece = NULL_PIECE;
         for (int i = 0; i < 6; i++) {
             if(temp_game.positions.StatePerPiece[i+!temp_game.turn*6]&newpos) {
                 opp_piece = i+6*!temp_game.turn;
                 break;
+            }
         }
         if (temp_game.positions.StatePerSide[!temp_game.turn]&newpos) {
-            temp_game.positions.StatePerSide[opp_piece] -= newpos;
+            temp_game.positions.StatePerPiece[opp_piece] -= newpos;
             temp_game.positions.StatePerSide[!temp_game.turn] -= newpos;
+            temp_game.positions.StatePerSide[2] -= newpos;
         }
-    }
         if(not_check_check(&temp_game, temp_game.positions.StatePerPiece[6*temp_game.turn+KING])) {
             return 1;
         }
@@ -186,11 +187,12 @@ uint64 check_king_moves(Game *game, uint64 curpos) {
     temp_game.positions.StatePerSide[2] -= curpos;
 
     for (int i = 0; i < *(&ANY+1) - ANY; i++) {
-        if (temp_game.positions.StatePerSide[!temp_game.turn]&shift(curpos, ANY[i])) {
-        temp_game.positions.StatePerSide[!temp_game.turn] -= shift(curpos, ANY[i]);
+        if(temp_game.positions.StatePerSide[!game->turn]&shift(curpos, ANY[i])) {
+           temp_game.positions.StatePerSide[!game->turn] -= shift(curpos, ANY[i]);
+           temp_game.positions.StatePerSide[2] -= shift(curpos, ANY[i]);
         }
         if(not_check_check(&temp_game, shift(curpos, ANY[i]))) {
-            legal_moves += check_direction(game, curpos, ANY[i], 0, 0, 6*game->turn+KING);
+            legal_moves += check_direction(&temp_game, curpos, ANY[i], 0, 0, 6*game->turn+KING);
         }
     }
     return legal_moves;
@@ -292,6 +294,8 @@ uint64 check_legal_moves(Game *game, uint64 curpos, int current_piece) {
         case 5:
             return check_king_moves(game, curpos);
             break;
+        default:
+            return 0;
     }
 }
 
@@ -373,8 +377,12 @@ int make_move(Game *game, uint64 curpos, uint64 newpos) {
             temp_game.gamestate = Check;
             uint64 moves = 0;
             for(int i = 0; i < 64; i++) {
-                moves|=check_legal_moves(&temp_game, shift(1, i), NULL_PIECE);
+                moves = moves|check_legal_moves(&temp_game, shift((uint64)1, i), NULL_PIECE);
+                printf("piece: %d, status: %d\n", i, temp_game.gamestate);
+                print_board(moves);
+                printf("\n");
             }
+
             if (!moves) {
                 temp_game.gamestate = CheckMate;
             }
@@ -416,7 +424,7 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
     return 0;
 }
 
-/*void print_board(uint64 position) {
+void print_board(uint64 position) {
     printf("\n");
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
@@ -431,4 +439,4 @@ int promote(Game *game, uint64 curpos, int32 promoteTo) {
         }
         printf("\n");
     }
-}*/
+}
