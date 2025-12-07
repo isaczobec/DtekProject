@@ -1,4 +1,4 @@
-# Software rasterizer + Zarch-like game
+# Software rasterizer + Chess
 
 ## 2 Objective and Requirements
 *These paragraphs should answer the questions: What should your project do and which are the main requirements?*
@@ -149,3 +149,4 @@ We learned a lot from the project, e.g. how a compiler toolchain works, how c-co
 
 
 The whole chunking system would likely have generated large performance benefits if we would have created our original game idea, where objects would often have moved in and out of view and render distance. The chunks allow visible objects to be tightly packed in memory, while being able to check in $O(1)$ time check if all objects in a chunk should be rendered (determine if the camera is angled toward or away from the chunk, skip trying to render the objects in its array if it is facing away). However, since all objects are now constantly visible, the only effect of the chunk system was rather to marginally decrease performance. 
+
